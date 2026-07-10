@@ -8,14 +8,8 @@ import {
   Phone,
   Brain,
   Building2,
-  ClipboardCheck,
   Compass,
-  Sparkles,
-  Bot,
-  GraduationCap,
   HeartPulse,
-  Users,
-  ShieldCheck,
   Quote,
   Search,
 } from "lucide-react";
@@ -333,63 +327,115 @@ function HomeAbout() {
 
 
 
-const SERVICES = [
-  { icon: Brain, title: "Individual Therapy", desc: "Evidence-based one-on-one clinical care with licensed psychologists." },
-  { icon: Building2, title: "Organizational Consulting", desc: "Diagnostics and interventions for culture, structure and change." },
-  { icon: ClipboardCheck, title: "Psychometric Assessments", desc: "Validated instruments across personality, EI, cognition and more." },
-  { icon: Compass, title: "Executive Coaching", desc: "Board-level coaching for founders, executives and rising leaders." },
-  { icon: Users, title: "Leadership Development", desc: "Curated programs to build resilient, values-aligned leaders." },
-  { icon: Sparkles, title: "Cognitive Crafting", desc: "Reframe patterns of thought using CBT, ACT and mindfulness." },
-  { icon: Bot, title: "AI Assistant", desc: "24/7 reflective companion tuned to your clinical program." },
-  { icon: GraduationCap, title: "Career Coaching", desc: "Purpose-led career navigation and transition support." },
-  { icon: HeartPulse, title: "Corporate Wellness", desc: "End-to-end mental health programs for high-performing teams." },
-  { icon: ShieldCheck, title: "Employee Assistance", desc: "Confidential EAP for organizations of every size." },
+const FLAGSHIP_SERVICES = [
+  {
+    icon: Brain,
+    title: "Individual Therapy",
+    tag: "One-on-one care, personalised to you",
+    desc: "Evidence-based therapy with licensed psychologists trained in CBT, trauma-informed care and more — matched to your goals, not a generic program.",
+  },
+  {
+    icon: Building2,
+    title: "Organizational Consulting",
+    tag: "Diagnose culture, design the fix",
+    desc: "We assess structure, culture and change-readiness, then design interventions that measurably shift how your organization works.",
+  },
+  {
+    icon: Compass,
+    title: "Executive Coaching",
+    tag: "Board-level coaching, one leader at a time",
+    desc: "One-on-one coaching for founders, executives and rising leaders — grounded in psychology, not generic frameworks.",
+  },
+  {
+    icon: HeartPulse,
+    title: "Corporate Wellness",
+    tag: "Built for high-performing teams",
+    desc: "End-to-end wellness programs — from EAP access to workshops — designed to fit inside a demanding work culture, not compete with it.",
+  },
 ];
 
-/** Row-based scroll-in delay, capped so a 10-card grid doesn't drag past ~400ms. */
-function rowRevealDelay(i: number, columns = 4, rowStep = 0.12, colStep = 0.05, cap = 0.4) {
-  const row = Math.floor(i / columns);
-  const col = i % columns;
-  return Math.min(row * rowStep + col * colStep, cap);
+function ServicesBackground() {
+  return (
+    <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden>
+      <div
+        className="absolute -top-[15%] -left-[10%] h-[55vh] w-[45vw] rounded-full opacity-[0.15] blur-[120px] dark:opacity-[0.05]"
+        style={{ background: "radial-gradient(circle, var(--brand) 0%, transparent 70%)" }}
+      />
+      <div
+        className="absolute bottom-[0%] -right-[12%] h-[50vh] w-[40vw] rounded-full opacity-[0.1] blur-[130px] dark:opacity-[0.04]"
+        style={{ background: "radial-gradient(circle, var(--foreground) 0%, transparent 75%)" }}
+      />
+    </div>
+  );
 }
 
 function Services() {
   return (
-    <section id="services" className="border-b border-border bg-muted/40 py-24">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="services" className="relative overflow-hidden border-b border-border bg-background py-24">
+      <ServicesBackground />
+      <div className="relative mx-auto max-w-7xl px-6">
         <ScrollReveal>
-          <SectionHeading eyebrow="Services" title="A full-spectrum practice" description="From one-on-one clinical care to enterprise-scale programs, everything we do is measurable, humane and research-backed." />
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+              <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
+              Services
+            </p>
+            <h2 className="mt-3 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl">
+              How We Help You
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+              From one-on-one clinical care to enterprise-scale programs, everything we do is measurable, humane and research-backed.
+            </p>
+          </div>
         </ScrollReveal>
-        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {SERVICES.map((s, i) => (
-            <motion.div
-              key={s.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-10% 0px" }}
-              transition={{ duration: 0.5, delay: rowRevealDelay(i), ease: EASE_OUT }}
-            >
-              <article
-                className="group relative flex h-full flex-col rounded-2xl border border-border bg-background p-6 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="grid h-11 w-11 place-items-center rounded-xl bg-foreground text-background transition group-hover:bg-brand group-hover:text-brand-foreground">
-                    <s.icon className="h-5 w-5" />
-                  </span>
-                  <span className="text-xs font-mono text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
+
+        <div className="mt-20 space-y-20">
+          {FLAGSHIP_SERVICES.map((s, i) => {
+            const reversed = i % 2 === 1;
+            return (
+              <ScrollReveal key={s.title}>
+                <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
+                  <div className={reversed ? "md:order-2" : ""}>
+                    <div className="relative mx-auto grid h-64 w-64 place-items-center sm:h-72 sm:w-72">
+                      <div
+                        aria-hidden
+                        className="absolute inset-0 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] bg-brand/15"
+                      />
+                      <div className="relative grid h-44 w-44 place-items-center rounded-[2rem] border border-border bg-background shadow-xl sm:h-52 sm:w-52">
+                        <span className="grid h-16 w-16 place-items-center rounded-2xl bg-foreground text-background">
+                          <s.icon className="h-7 w-7" />
+                        </span>
+                      </div>
+                      <div className="absolute -right-2 -top-2 grid h-10 w-10 place-items-center rounded-full border-2 border-background bg-brand text-brand-foreground shadow-md">
+                        <span className="text-xs font-black">{String(i + 1).padStart(2, "0")}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={reversed ? "md:order-1" : ""}>
+                    <h3 className="text-2xl font-bold tracking-tight sm:text-3xl">{s.title}</h3>
+                    <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-brand">{s.tag}</p>
+                    <p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground">{s.desc}</p>
+                    <Link
+                      to="/services"
+                      className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-xs font-bold uppercase tracking-wide text-background transition hover:opacity-90"
+                    >
+                      Learn more <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
                 </div>
-                <h3 className="mt-6 text-base font-semibold">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
-                <Link
-                  to="/services"
-                  className="mt-6 inline-flex items-center gap-1 text-xs font-semibold text-foreground opacity-0 transition group-hover:opacity-100"
-                >
-                  Learn more <ArrowRight className="h-3 w-3" />
-                </Link>
-              </article>
-            </motion.div>
-          ))}
+              </ScrollReveal>
+            );
+          })}
         </div>
+
+        <ScrollReveal delay={0.1} className="mt-20 flex justify-center">
+          <Link
+            to="/services"
+            className="inline-flex items-center gap-2 rounded-full border border-foreground px-6 py-3 text-xs font-bold uppercase tracking-wide text-foreground transition hover:bg-foreground hover:text-background"
+          >
+            Read more <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </ScrollReveal>
       </div>
     </section>
   );
@@ -648,9 +694,12 @@ function Psychologists() {
                     </div>
 
                     <div className="mt-auto flex flex-col gap-2 pt-5">
-                      <button className="w-full rounded-full bg-brand py-3 text-[11px] font-bold uppercase tracking-wide text-brand-foreground transition-transform duration-200 ease-out group-hover:scale-[1.02]">
+                      <Link
+                        to="/patient/doctors"
+                        className="w-full rounded-full bg-brand py-3 text-center text-[11px] font-bold uppercase tracking-wide text-brand-foreground transition-transform duration-200 ease-out group-hover:scale-[1.02]"
+                      >
                         Book now
-                      </button>
+                      </Link>
                       <Link
                         to="/patient/doctors"
                         className="w-full rounded-full border border-border py-3 text-center text-[11px] font-bold uppercase tracking-wide text-muted-foreground transition hover:border-foreground hover:text-foreground"

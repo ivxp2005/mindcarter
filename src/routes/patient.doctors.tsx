@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Search, Star, MapPin, X } from "lucide-react";
+import { toast } from "sonner";
 import { PortalPageHeader, PortalEmpty, PortalLoading } from "../components/portal-page-header";
 import { listDoctors, type Doctor } from "../services/patient-api";
 
@@ -158,7 +159,16 @@ function DoctorsPage() {
                   <p className="mt-1 text-sm font-semibold">{active.location}</p>
                 </div>
               </div>
-              <button className="w-full rounded-full bg-brand py-3 text-sm font-semibold text-brand-foreground">
+              <button
+                onClick={() => {
+                  // TODO: Supabase — insert into `bookings`
+                  toast.success(`Booking request sent to ${active.name}`, {
+                    description: "They'll confirm a time slot shortly.",
+                  });
+                  setActive(null);
+                }}
+                className="w-full rounded-full bg-brand py-3 text-sm font-semibold text-brand-foreground transition hover:opacity-90"
+              >
                 Book with {active.name.split(" ")[1]}
               </button>
             </div>

@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import appCss from "../styles.css?url";
+import { Toaster } from "../components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -140,6 +141,7 @@ function RootComponent() {
           <Outlet />
         </motion.div>
       </AnimatePresence>
+      <Toaster position="top-center" />
     </QueryClientProvider>
   );
 }
