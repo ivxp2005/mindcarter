@@ -1,0 +1,150 @@
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import type { ReactNode } from "react";
+import { useState } from "react";
+import { Home, LogOut, User, ChevronDown } from "lucide-react";
+
+export function PortalShell({
+  brand,
+  navItems,
+  children,
+}: {
+  brand: string;
+  navItems: { label: string; to?: string; exact?: boolean }[];
+  children: ReactNode;
+}) {
+  const location  = useLocation();
+  const navigate  = useNavigate();
+  const [dropOpen, setDropOpen] = useState(false);
+
+  const isDoctor  = brand.toLowerCase().includes("psychologist") || brand.toLowerCase().includes("doctor");
+  const initials  = isDoctor ? "Dr" : "Pt";
+  const userName  = isDoctor ? "Dr. Aditi Carter" : "Alex";
+  const userRole  = isDoctor ? "Psychologist" : "Patient";
+
+  const handleSignOut = () => {
+    localStorage.removeItem("mc_role");
+    navigate({ to: "/" });
+  };
+
+  return (
+    <div className="min-h-screen bg-muted/30 text-foreground">
+      {/* ── Sidebar ─────────────────────────────────────────── */}
+      <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-border bg-background lg:flex">
+        {/* Brand */}
+        <div className="flex h-16 items-center gap-2 border-b border-border px-6">
+          <span className="grid h-8 w-8 place-items-center rounded-md bg-foreground text-background">
+            <span className="text-sm font-black">M</span>
+          </span>
+          <div className="leading-tight">
+            <p className="text-sm font-semibold">Mindcarter.</p>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{brand}</p>
+          </div>
+        </div>
+
+        {/* Nav links */}
+        <nav className="flex flex-1 flex-col gap-1 p-3">
+          {navItems.map((n, i) => {
+            const active = n.to
+              ? n.exact
+                ? location.pathname === n.to
+                : location.pathname === n.to || location.pathname.startsWith(n.to + "/")
+              : i === 0;
+            const cls = `rounded-lg px-3 py-2 text-sm font-medium transition ${
+              active ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted"
+            }`;
+            return n.to ? (
+              <Link key={n.label} to={n.to} className={cls}>
+                {n.label}
+              </Link>
+            ) : (
+              <a key={n.label} href="#" className={cls}>
+                {n.label}
+              </a>
+            );
+          })}
+        </nav>
+
+        {/* Bottom actions: Back to home + Sign out */}
+        <div className="flex flex-col gap-1 border-t border-border p-3">
+          <Link
+            to="/"
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+          >
+            <Home className="h-4 w-4" /> Back to Home
+          </Link>
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-red-500"
+          >
+            <LogOut className="h-4 w-4" /> Sign Out
+          </button>
+        </div>
+      </aside>
+
+      {/* ── Main content ─────────────────────────────────────── */}
+      <div className="lg:pl-64">
+        {/* Top header */}
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/85 px-6 backdrop-blur">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            {brand} · <span className="text-foreground">{location.pathname}</span>
+          </p>
+
+          {/* Profile dropdown */}
+          <div className="relative">
+            <button
+              id="portal-profile-btn"
+              onClick={() => setDropOpen((v) => !v)}
+              className="flex items-center gap-2 rounded-full border border-border bg-background px-2 py-1 transition hover:bg-muted"
+            >
+              <span className="grid h-8 w-8 place-items-center rounded-full bg-foreground text-sm font-bold text-background">
+                {initials}
+              </span>
+              <span className="hidden text-sm font-medium sm:inline">{userName}</span>
+              <ChevronDown className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${dropOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            {dropOpen && (
+              <>
+                {/* Backdrop */}
+                <div className="fixed inset-0 z-10" onClick={() => setDropOpen(false)} />
+                {/* Menu */}
+                <div className="absolute right-0 top-12 z-20 w-52 overflow-hidden rounded-xl border border-border bg-background shadow-xl">
+                  {/* User info */}
+                  <div className="border-b border-border px-4 py-3">
+                    <p className="text-sm font-semibold">{userName}</p>
+                    <p className="text-xs text-muted-foreground">{userRole}</p>
+                  </div>
+                  <div className="p-1.5">
+                    <Link
+                      to="/"
+                      onClick={() => setDropOpen(false)}
+                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                    >
+                      <Home className="h-4 w-4" /> Back to Home
+                    </Link>
+                    <Link
+                      to={isDoctor ? "/patient/profile" : "/patient/profile"}
+                      onClick={() => setDropOpen(false)}
+                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                    >
+                      <User className="h-4 w-4" /> My Profile
+                    </Link>
+                    <div className="my-1 border-t border-border" />
+                    <button
+                      onClick={() => { setDropOpen(false); handleSignOut(); }}
+                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-red-50 hover:text-red-600"
+                    >
+                      <LogOut className="h-4 w-4" /> Sign Out
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </header>
+
+        <main className="mx-auto max-w-7xl px-6 py-10">{children}</main>
+      </div>
+    </div>
+  );
+}
