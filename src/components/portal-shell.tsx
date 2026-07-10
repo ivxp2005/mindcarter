@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useState } from "react";
-import { Home, LogOut, User, ChevronDown } from "lucide-react";
+import { Home, LogOut, ChevronDown } from "lucide-react";
 
 export function PortalShell({
   brand,
@@ -121,13 +121,6 @@ export function PortalShell({
                       className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
                     >
                       <Home className="h-4 w-4" /> Back to Home
-                    </Link>
-                    <Link
-                      to={isDoctor ? "/patient/profile" : "/patient/profile"}
-                      onClick={() => setDropOpen(false)}
-                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
-                    >
-                      <User className="h-4 w-4" /> My Profile
                     </Link>
                     <div className="my-1 border-t border-border" />
                     <button

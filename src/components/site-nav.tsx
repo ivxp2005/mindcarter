@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import logoImg from "../assets/mindcarter-logo.avif";
 import {
   Menu, X, ChevronDown,
-  LayoutDashboard, LogOut, User,
-  CalendarClock, MessageSquare, Users, ClipboardList, Home,
+  LayoutDashboard, LogOut,
+  CalendarClock, Users, Home,
 } from "lucide-react";
 
 const publicLinks = [
@@ -12,14 +12,6 @@ const publicLinks = [
   { to: "/about", label: "About" },
   { to: "/services", label: "Our Programs" },
   { to: "/contact", label: "Contact" },
-] as const;
-
-const patientLinks = [
-  { to: "/patient",             label: "Dashboard",   icon: LayoutDashboard },
-  { to: "/patient/bookings",    label: "Bookings",    icon: CalendarClock   },
-  { to: "/patient/doctors",     label: "Doctors",     icon: Users           },
-  { to: "/patient/messages",    label: "Messages",    icon: MessageSquare   },
-  { to: "/patient/assessments", label: "Assessments", icon: ClipboardList   },
 ] as const;
 
 const doctorLinks = [
@@ -62,13 +54,12 @@ export function SiteNav() {
     return () => document.removeEventListener("mousedown", fn);
   }, []);
 
-  const isPatient = role === "patient";
   const isDoctor  = role === "psychologist";
-  const portalTo  = isDoctor ? "/psychologist" : "/patient";
-  const roleLinks = isDoctor ? doctorLinks : isPatient ? patientLinks : null;
-  const userName  = isDoctor ? "Dr. Aditi Carter" : isPatient ? "Alex" : "";
-  const userRole  = isDoctor ? "Psychologist" : isPatient ? "Patient" : "";
-  const initials  = isDoctor ? "Dr" : isPatient ? "Ax" : "";
+  const portalTo  = "/psychologist";
+  const roleLinks = isDoctor ? doctorLinks : null;
+  const userName  = isDoctor ? "Dr. Aditi Carter" : "";
+  const userRole  = isDoctor ? "Psychologist" : "";
+  const initials  = isDoctor ? "Dr" : "";
 
   const handleSignOut = () => {
     localStorage.removeItem("mc_role");
@@ -169,24 +160,13 @@ export function SiteNav() {
                       My Portal
                     </Link>
 
-                    {isPatient && (
-                      <Link
-                        to="/patient/profile"
-                        onClick={() => setDropOpen(false)}
-                        className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
-                      >
-                        <User className="h-4 w-4" />
-                        My Profile
-                      </Link>
-                    )}
-
                     <Link
-                      to={isPatient ? "/patient/bookings" : "/psychologist"}
+                      to="/psychologist"
                       onClick={() => setDropOpen(false)}
                       className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
                     >
                       <CalendarClock className="h-4 w-4" />
-                      {isPatient ? "My Bookings" : "My Schedule"}
+                      My Schedule
                     </Link>
 
                     <Link
@@ -261,7 +241,7 @@ export function SiteNav() {
               <>
                 <div className="my-2 border-t border-border" />
                 <p className="px-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                  {isDoctor ? "Doctor Portal" : "Patient Portal"}
+                  Doctor Portal
                 </p>
                 {roleLinks.map((l) => (
                   <Link

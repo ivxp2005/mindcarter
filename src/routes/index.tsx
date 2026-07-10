@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { LayoutDashboard } from "lucide-react";
 import { motion, MotionConfig } from "framer-motion";
 import {
@@ -17,6 +17,7 @@ import amarRajanImg from "../assets/amar-rajan.png";
 import teamImg from "../assets/team.png";
 import { SiteShell } from "../components/site-shell";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "../components/scroll-reveal";
+import { useParallaxScroll } from "../hooks/use-parallax-scroll";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -42,16 +43,11 @@ function Index() {
   );
 }
 
-/** Shown above hero when a user is logged in via localStorage role */
+/** Shown above hero when a psychologist is logged in via localStorage role */
 function RoleWelcomeBanner() {
   const [role, setRole] = useState<string | null>(null);
   useEffect(() => { setRole(localStorage.getItem("mc_role")); }, []);
-  if (!role) return null;
-
-  const isDoctor = role === "psychologist";
-  const portalTo = isDoctor ? "/psychologist" : "/patient";
-  const label = isDoctor ? "Doctor Portal" : "Patient Portal";
-  const name = isDoctor ? "Dr. Aditi Carter" : "Alex";
+  if (role !== "psychologist") return null;
 
   return (
     <div
@@ -59,14 +55,14 @@ function RoleWelcomeBanner() {
       style={{ backgroundColor: "#111111", color: "#F4C430" }}
     >
       <span>
-        Welcome back, <strong>{name}</strong> — signed in as{" "}
-        <span className="capitalize font-semibold">{role}</span>
+        Welcome back, <strong>Dr. Aditi Carter</strong> — signed in as{" "}
+        <span className="capitalize font-semibold">psychologist</span>
       </span>
       <Link
-        to={portalTo}
+        to="/psychologist"
         className="inline-flex items-center gap-1.5 rounded-full border border-current px-3 py-1 text-xs font-semibold transition hover:bg-white/10"
       >
-        <LayoutDashboard className="h-3 w-3" />{label}
+        <LayoutDashboard className="h-3 w-3" />Doctor Portal
       </Link>
     </div>
   );
@@ -88,27 +84,6 @@ function LiveClock() {
       Live · {now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
     </div>
   );
-}
-
-/** Returns a smooth scrollY value updated via rAF — avoids scroll jank. */
-function useParallaxScroll() {
-  const [scrollY, setScrollY] = useState(0);
-  const rafRef = useRef<number>(0);
-
-  const onScroll = useCallback(() => {
-    cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => setScrollY(window.scrollY));
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(rafRef.current);
-    };
-  }, [onScroll]);
-
-  return scrollY;
 }
 
 function Hero() {
@@ -695,13 +670,14 @@ function Psychologists() {
 
                     <div className="mt-auto flex flex-col gap-2 pt-5">
                       <Link
-                        to="/patient/doctors"
+                        to="/booking"
+                        search={{ name: p.name, role: p.role, price: p.price }}
                         className="w-full rounded-full bg-brand py-3 text-center text-[11px] font-bold uppercase tracking-wide text-brand-foreground transition-transform duration-200 ease-out group-hover:scale-[1.02]"
                       >
                         Book now
                       </Link>
                       <Link
-                        to="/patient/doctors"
+                        to="/contact"
                         className="w-full rounded-full border border-border py-3 text-center text-[11px] font-bold uppercase tracking-wide text-muted-foreground transition hover:border-foreground hover:text-foreground"
                       >
                         View profile
@@ -717,7 +693,7 @@ function Psychologists() {
         <ScrollReveal delay={0.1}>
           <div className="mt-12 flex justify-center">
             <Link
-              to="/patient/doctors"
+              to="/contact"
               className="inline-flex items-center gap-2 rounded-full border border-foreground px-6 py-3 text-xs font-bold uppercase tracking-wide text-foreground transition hover:bg-foreground hover:text-background"
             >
               View more

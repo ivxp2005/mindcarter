@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Quote } from "lucide-react";
 import { SiteShell } from "../components/site-shell";
-import { PageHero } from "../components/page-hero";
 import amarRajanImg from "../assets/amar-rajan.png";
+import teamImg from "../assets/team.png";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "../components/scroll-reveal";
+import { useParallaxScroll } from "../hooks/use-parallax-scroll";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -22,16 +24,63 @@ export const Route = createFileRoute("/about")({
   component: AboutPage,
 });
 
+function AboutHero() {
+  const scrollY = useParallaxScroll();
+  const textY = Math.min(scrollY * 0.5, 120);
+  const textOpacity = Math.max(1 - scrollY / 400, 0);
+
+  return (
+    <section
+      className="relative flex h-[50vh] min-h-[380px] items-center justify-center overflow-hidden border-b border-border"
+      style={{
+        backgroundImage: `url(${teamImg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
+    >
+      <div aria-hidden className="absolute inset-0 bg-black/25" />
+
+      <div
+        className="relative mx-auto max-w-2xl px-6 text-center text-background"
+        style={{
+          transform: `translateY(${-textY}px)`,
+          opacity: textOpacity,
+          willChange: "transform, opacity",
+        }}
+      >
+        <Quote className="mx-auto h-6 w-6 text-brand" strokeWidth={2.5} />
+        <p className="mt-3 text-xs font-semibold uppercase tracking-[0.28em] text-background/70">
+          About
+        </p>
+        <h1 className="mt-4 text-3xl font-black italic leading-[1.15] tracking-tight sm:text-5xl">
+          &ldquo;Every breakthrough begins with being understood.&rdquo;
+        </h1>
+        <p className="mt-5 text-sm font-semibold uppercase tracking-[0.2em] text-background/70">
+          — The Mindcarter Team
+        </p>
+      </div>
+    </section>
+  );
+}
+
 function AboutPage() {
   return (
     <SiteShell>
-      <ScrollReveal yOffset={40}>
-        <PageHero
-          eyebrow="About"
-          title="A practice built where clinical rigor meets human curiosity."
-          description="Mindcarter was founded to close the gap between the science of psychology and the everyday realities of individuals, leaders and organizations."
-        />
-      </ScrollReveal>
+      <AboutHero />
+
+      <section className="border-b border-border bg-background py-16">
+        <ScrollReveal>
+          <div className="mx-auto max-w-3xl px-6 text-center">
+            <h2 className="text-2xl font-black leading-snug tracking-tight sm:text-3xl">
+              A practice built where clinical rigor meets human curiosity.
+            </h2>
+            <p className="mt-4 leading-relaxed text-muted-foreground">
+              Mindcarter was founded to close the gap between the science of psychology and the everyday realities of individuals, leaders and organizations.
+            </p>
+          </div>
+        </ScrollReveal>
+      </section>
 
       <section className="border-b border-border bg-background py-20">
         <ScrollReveal>
