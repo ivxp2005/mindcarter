@@ -17,6 +17,7 @@ import {
   Users,
   ShieldCheck,
   Quote,
+  Search,
 } from "lucide-react";
 import amarRajanImg from "../assets/amar-rajan.png";
 import teamImg from "../assets/team.png";
@@ -421,58 +422,132 @@ function SectionHeading({
   );
 }
 
+const WHY_ITEMS = [
+  { k: "01", t: "Evidence-based", sub: "Research, not intuition", d: "A premier authority in organizational behavior, offering evidence-based solutions grounded in academic rigor and published research." },
+  { k: "02", t: "Global expertise", sub: "Practitioners, not theorists", d: "A team of global experts and revered industry practitioners keeps us at the forefront of the latest trends." },
+  { k: "03", t: "Specialized offerings", sub: "Assessments to coaching", d: "Internationally recognized psychometric assessments, comprehensive training, developmental initiatives and coaching programs." },
+  { k: "04", t: "Lasting impact", sub: "Built to last", d: "Practical, research-rooted solutions that enhance organizational effectiveness and nurture employee satisfaction." },
+];
+
+function WhyItem({ item }: { item: (typeof WHY_ITEMS)[number] }) {
+  return (
+    <div className="group">
+      <p className="font-mono text-xs text-brand transition-transform duration-300 ease-out group-hover:-translate-y-0.5">{item.k}</p>
+      <h3 className="mt-3 text-lg font-semibold text-background">{item.t}</h3>
+      <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-brand/80">{item.sub}</p>
+      <p className="mt-2 text-sm leading-relaxed text-background/60">{item.d}</p>
+    </div>
+  );
+}
+
 function WhyChoose() {
-  const items = [
-    { k: "01", t: "Clinician-led", d: "Every program is designed and supervised by licensed psychologists." },
-    { k: "02", t: "Outcome tracking", d: "We measure progress with validated instruments — not vibes." },
-    { k: "03", t: "Enterprise-grade", d: "HIPAA and ISO 27001 aligned infrastructure across every session." },
-    { k: "04", t: "Human first", d: "Care that fits your language, culture and stage of life." },
-  ];
   return (
     <section className="border-b border-border bg-foreground py-24 text-background">
       <div className="mx-auto max-w-7xl px-6">
         <ScrollReveal>
-          <div className="grid gap-6 md:grid-cols-[1fr_1.4fr] md:items-start">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-background/60">
-                <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
-                Why Mindcarter
-              </p>
-              <h2 className="mt-3 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl">
-                Precision care, delivered with warmth.
-              </h2>
-            </div>
-            <div className="max-w-xl space-y-4 text-base leading-relaxed text-background/70">
-              <p>
-                Mindcarter stands out as a premier authority in organizational behavior, offering evidence-based solutions that drive results. Our commitment to academic rigor and the seamless integration of published research into our services sets us apart. With a team of global experts and revered industry practitioners, we remain at the forefront of the latest trends. Our specialized offerings encompass internationally recognized psychometric assessments, comprehensive training, tailor-made developmental initiatives, and impactful coaching programs.
-              </p>
-              <p>
-                At Mindcarter, our solutions are not only deeply rooted in research but also informed by a profound understanding of psychology. We consistently deliver practical, long-lasting solutions that enhance organizational effectiveness and nurture employee satisfaction. Choose Mindcarter for excellence in psychometric assessments, coaching, and management development programs.
-              </p>
-            </div>
+          <div className="text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-background/60">
+              <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
+              Why Mindcarter
+            </p>
+            <h2 className="mx-auto mt-3 max-w-2xl text-5xl font-black leading-[1.0] tracking-tight sm:text-6xl">
+              Why Choose <span className="text-brand">Mindcarter?</span>
+            </h2>
           </div>
         </ScrollReveal>
-        <StaggerContainer className="mt-14 grid gap-px overflow-hidden rounded-2xl bg-background/10 sm:grid-cols-2 lg:grid-cols-4">
-          {items.map((it) => (
-            <StaggerItem key={it.k} className="h-full">
-              <div className="group h-full bg-foreground p-8 transition-colors duration-300 ease-out hover:bg-background/[0.06]">
-                <p className="font-mono text-xs text-brand transition-transform duration-300 ease-out group-hover:-translate-y-0.5">{it.k}</p>
-                <h3 className="mt-4 text-lg font-semibold">{it.t}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-background/70">{it.d}</p>
+
+        <div className="relative mt-20">
+          <svg
+            aria-hidden
+            viewBox="0 0 1200 160"
+            preserveAspectRatio="none"
+            className="pointer-events-none absolute -top-14 left-0 hidden h-28 w-full lg:block"
+          >
+            <path
+              d="M0,140 Q600,-40 1200,140"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeDasharray="2 10"
+              strokeLinecap="round"
+              className="text-background/25"
+            />
+          </svg>
+
+          <div className="grid gap-14 lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:gap-10">
+            <StaggerContainer className="grid gap-14 sm:grid-cols-2 lg:grid-cols-1">
+              <StaggerItem><WhyItem item={WHY_ITEMS[0]} /></StaggerItem>
+              <StaggerItem><WhyItem item={WHY_ITEMS[2]} /></StaggerItem>
+            </StaggerContainer>
+
+            <ScrollReveal delay={0.15} className="relative order-first mx-auto w-52 shrink-0 sm:w-64 lg:order-none">
+              <div aria-hidden className="absolute inset-0 -z-10 scale-125 rounded-full bg-brand/20 blur-3xl" />
+              <div className="aspect-[3/4] overflow-hidden rounded-[2.5rem] border border-background/10 shadow-2xl">
+                <div
+                  aria-hidden
+                  style={{ backgroundImage: `url(${teamImg})`, backgroundSize: "cover", backgroundPosition: "center" }}
+                  className="h-full w-full"
+                />
               </div>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+            </ScrollReveal>
+
+            <StaggerContainer className="grid gap-14 sm:grid-cols-2 lg:grid-cols-1">
+              <StaggerItem><WhyItem item={WHY_ITEMS[1]} /></StaggerItem>
+              <StaggerItem><WhyItem item={WHY_ITEMS[3]} /></StaggerItem>
+            </StaggerContainer>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
-const PSYCHOLOGISTS = [
-  { name: "Dr. Aditi Carter", role: "Clinical Psychology · PhD", tags: ["CBT", "Trauma"] },
-  { name: "Dr. Marcus Vale", role: "Organizational Psychology · PsyD", tags: ["Leadership", "Culture"] },
-  { name: "Dr. Lena Ortiz", role: "Neuropsychology · PhD", tags: ["Cognition", "Assessment"] },
-  { name: "Dr. Rohan Mehra", role: "Executive Coach · MCC", tags: ["C-suite", "Founders"] },
+const PSYCHOLOGISTS: {
+  name: string;
+  role: string;
+  tags: string[];
+  hours: number;
+  languages: string[];
+  price: number;
+  nextAvailable: string;
+  photo?: string;
+}[] = [
+  {
+    name: "Dr. Aditi Carter",
+    role: "Clinical Psychologist",
+    tags: ["CBT", "Trauma"],
+    hours: 250,
+    languages: ["Malayalam", "English"],
+    price: 1000,
+    nextAvailable: "15 mins",
+  },
+  {
+    name: "Dr. Marcus Vale",
+    role: "Organizational Psychologist",
+    tags: ["Leadership", "Culture"],
+    hours: 500,
+    languages: ["Malayalam", "Tamil"],
+    price: 1200,
+    nextAvailable: "20 mins",
+  },
+  {
+    name: "Dr. Lena Ortiz",
+    role: "Neuropsychologist",
+    tags: ["Cognition", "Assessment"],
+    hours: 800,
+    languages: ["English", "Hindi"],
+    price: 1500,
+    nextAvailable: "30 mins",
+  },
+  {
+    name: "Dr. Rohan Mehra",
+    role: "Executive Coach",
+    tags: ["C-suite", "Founders"],
+    hours: 650,
+    languages: ["English", "Hindi"],
+    price: 1400,
+    nextAvailable: "45 mins",
+  },
 ];
 
 function Psychologists() {
@@ -498,45 +573,109 @@ function Psychologists() {
             </p>
           </div>
         </ScrollReveal>
-        <StaggerContainer className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {PSYCHOLOGISTS.map((p) => (
-            <StaggerItem key={p.name}>
-              <article
-                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-background transition-all duration-[400ms] ease-out hover:-translate-y-1 hover:scale-[1.015] hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]"
-              >
-                <div className="relative aspect-[4/5] overflow-hidden bg-muted">
-                  <div
-                    className="h-full w-full bg-gradient-to-br from-neutral-300 to-neutral-500 transition duration-700 group-hover:scale-105"
-                    aria-hidden
-                  />
-                  <div className="absolute inset-0 flex items-end justify-between p-4">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-background/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest">
+
+        <ScrollReveal delay={0.1}>
+          <div className="relative mx-auto mt-10 max-w-2xl">
+            <Search className="pointer-events-none absolute left-5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="search"
+              placeholder="Search by name, specialty, language, or tags…"
+              className="w-full rounded-full border border-border bg-background py-3.5 pl-12 pr-5 text-sm shadow-sm outline-none transition focus:border-foreground"
+            />
+          </div>
+        </ScrollReveal>
+
+        <StaggerContainer className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+          {PSYCHOLOGISTS.map((p) => {
+            const initials = p.name
+              .replace(/^Dr\.\s*/, "")
+              .split(" ")
+              .map((w) => w[0])
+              .join("")
+              .slice(0, 2);
+            return (
+              <StaggerItem key={p.name}>
+                <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-background transition-all duration-[400ms] ease-out hover:-translate-y-1 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]">
+                  <div className="relative aspect-[16/11] overflow-hidden bg-muted">
+                    {p.photo ? (
+                      <img
+                        src={p.photo}
+                        alt={p.name}
+                        className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div
+                        className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand/25 to-brand/5 text-3xl font-black text-foreground/20 transition duration-700 group-hover:scale-105"
+                        aria-hidden
+                      >
+                        {initials}
+                      </div>
+                    )}
+                    <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-background/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest">
                       <span className="relative flex h-1.5 w-1.5">
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75 motion-reduce:animate-none" />
                         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-brand" />
                       </span>
-                      Available
-                    </span>
-                    <span className="grid h-8 w-8 place-items-center rounded-full bg-brand transition-transform duration-200 ease-out group-hover:scale-110">
-                      <ArrowRight className="h-3.5 w-3.5" />
+                      Available in {p.nextAvailable}
                     </span>
                   </div>
-                </div>
-                <div className="flex flex-1 flex-col p-5">
-                  <p className="min-h-[2.4em] text-[11px] uppercase leading-snug tracking-[0.18em] text-muted-foreground">{p.role}</p>
-                  <h3 className="mt-2 text-base font-semibold">{p.name}</h3>
-                  <div className="mt-auto flex flex-wrap gap-1.5 pt-3">
-                    {p.tags.map((t) => (
-                      <span key={t} className="rounded-full border border-border px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
-                        {t}
-                      </span>
-                    ))}
+
+                  <div className="flex flex-1 flex-col p-6">
+                    <h3 className="text-lg font-bold leading-tight">{p.name}</h3>
+                    <p className="mt-1 text-[11px] uppercase leading-snug tracking-[0.16em] text-muted-foreground">{p.role}</p>
+
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {p.tags.map((t) => (
+                        <span key={t} className="rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="mt-5 grid grid-cols-3 gap-2 border-y border-border py-4 text-center">
+                      <div>
+                        <p className="text-base font-bold text-foreground">{p.hours}+</p>
+                        <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">Therapy hrs</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold leading-snug">{p.languages.join(", ")}</p>
+                        <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">Languages</p>
+                      </div>
+                      <div>
+                        <p className="text-base font-bold text-foreground">₹{p.price.toLocaleString("en-IN")}</p>
+                        <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">Per session</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-auto flex flex-col gap-2 pt-5">
+                      <button className="w-full rounded-full bg-brand py-3 text-[11px] font-bold uppercase tracking-wide text-brand-foreground transition-transform duration-200 ease-out group-hover:scale-[1.02]">
+                        Book now
+                      </button>
+                      <Link
+                        to="/patient/doctors"
+                        className="w-full rounded-full border border-border py-3 text-center text-[11px] font-bold uppercase tracking-wide text-muted-foreground transition hover:border-foreground hover:text-foreground"
+                      >
+                        View profile
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              </article>
-            </StaggerItem>
-          ))}
+                </article>
+              </StaggerItem>
+            );
+          })}
         </StaggerContainer>
+
+        <ScrollReveal delay={0.1}>
+          <div className="mt-12 flex justify-center">
+            <Link
+              to="/patient/doctors"
+              className="inline-flex items-center gap-2 rounded-full border border-foreground px-6 py-3 text-xs font-bold uppercase tracking-wide text-foreground transition hover:bg-foreground hover:text-background"
+            >
+              View more
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   );
@@ -559,74 +698,66 @@ const CLIENT_LOGOS = [
   { src: "/logos/ff7bfd_ace9fde15bf14613bb6ff2af3fa1e1b5~mv2.avif", alt: "RM" },
 ];
 
-// Split logos into rows of 5 for staggered reveal
-const CLIENT_ROWS = [
-  CLIENT_LOGOS.slice(0, 5),
-  CLIENT_LOGOS.slice(5, 10),
-  CLIENT_LOGOS.slice(10),
-];
+function ClientLogoTrack() {
+  const [paused, setPaused] = useState(false);
+  return (
+    <div
+      className="flex w-max items-center gap-5"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      style={{
+        animation: "mc-client-marquee 34s linear infinite",
+        animationPlayState: paused ? "paused" : "running",
+      }}
+    >
+      {[...CLIENT_LOGOS, ...CLIENT_LOGOS].map((logo, i) => (
+        <div
+          key={`${logo.alt}-${i}`}
+          className="flex shrink-0 items-center justify-center"
+          style={{ width: "150px", height: "60px" }}
+        >
+          <img
+            src={logo.src}
+            alt={logo.alt}
+            className="max-h-full max-w-full object-contain"
+            loading="lazy"
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function OurClients() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); io.disconnect(); } },
-      { threshold: 0.15 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
   return (
-    <section ref={sectionRef} className="border-b border-border bg-muted/40 py-24">
+    <section className="border-b border-border bg-background py-24">
+      <style>{`
+        @keyframes mc-client-marquee {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+      `}</style>
       <div className="mx-auto max-w-7xl px-6">
         <ScrollReveal>
-          <SectionHeading
-            eyebrow="Our Clients"
-            title="Trusted by industry leaders."
-            description="We partner and serve the best people in the industry with best in class services."
-          />
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+              <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
+              Our Clients
+            </p>
+            <h2 className="mt-3 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl">
+              Trusted by industry leaders.
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+              We partner and serve the best people in the industry with best in class services.
+            </p>
+          </div>
         </ScrollReveal>
 
-        <div className="mt-14 space-y-10">
-          {CLIENT_ROWS.map((row, rowIdx) => {
-            const isLastRow = rowIdx === CLIENT_ROWS.length - 1;
-            return (
-              <div
-                key={rowIdx}
-                className={
-                  isLastRow
-                    ? "flex flex-wrap justify-center gap-8"
-                    : "grid grid-cols-2 place-items-center gap-8 sm:grid-cols-3 lg:grid-cols-5"
-                }
-                style={{
-                  opacity: visible ? 1 : 0,
-                  transform: visible ? "translateY(0)" : "translateY(16px)",
-                  transition: `opacity 400ms ease ${rowIdx * 200}ms, transform 400ms ease ${rowIdx * 200}ms`,
-                }}
-              >
-                {row.map((logo) => (
-                  <div
-                    key={logo.alt}
-                    className="flex items-center justify-center"
-                    style={{ width: "140px", height: "56px" }}
-                  >
-                    <img
-                      src={logo.src}
-                      alt={logo.alt}
-                      className="max-h-full max-w-full object-contain"
-                      loading="lazy"
-                    />
-                  </div>
-                ))}
-              </div>
-            );
-          })}
-        </div>
+        <ScrollReveal delay={0.1}>
+          <div className="relative mt-14 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
+            <ClientLogoTrack />
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   );
