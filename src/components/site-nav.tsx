@@ -1,11 +1,19 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import logoImg from "../assets/mindcarter-logo.avif";
 import {
-  Menu, X, ChevronDown,
-  LayoutDashboard, LogOut,
-  CalendarClock, Users, Home,
+  Menu,
+  X,
+  ChevronDown,
+  LayoutDashboard,
+  LogOut,
+  CalendarClock,
+  Users,
+  Home,
 } from "lucide-react";
+import { logoutFn } from "../lib/auth.server";
+import { useSession } from "../lib/use-session";
 
 const publicLinks = [
   { to: "/", label: "Home" },
@@ -14,24 +22,24 @@ const publicLinks = [
   { to: "/contact", label: "Contact" },
 ] as const;
 
-const patientLinks = [
-  { to: "/", label: "My Wellness", icon: Home },
-] as const;
+const patientLinks = [{ to: "/patient", label: "My Wellness", icon: Home }] as const;
 
 const doctorLinks = [
   { to: "/psychologist", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/psychologist", label: "Schedule",  icon: CalendarClock   },
-  { to: "/psychologist", label: "Patients",  icon: Users           },
+  { to: "/psychologist", label: "Schedule", icon: CalendarClock },
+  { to: "/psychologist", label: "Patients", icon: Users },
 ] as const;
 
 export function SiteNav() {
-  const [scrolled,  setScrolled]  = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [dropOpen,  setDropOpen]  = useState(false);
-  const [role,      setRole]      = useState<string | null>(null);
-  const location  = useLocation();
-  const navigate  = useNavigate();
-  const dropRef   = useRef<HTMLDivElement>(null);
+  const [dropOpen, setDropOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const dropRef = useRef<HTMLDivElement>(null);
+  const { data: session } = useSession();
+  const role = session?.role ?? null;
 
   /* scroll border */
   useEffect(() => {
@@ -41,9 +49,8 @@ export function SiteNav() {
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
-  /* re-read role on every navigation */
+  /* close dropdown on navigation */
   useEffect(() => {
-    setRole(localStorage.getItem("mc_role"));
     setDropOpen(false);
   }, [location.pathname]);
 
@@ -58,17 +65,25 @@ export function SiteNav() {
     return () => document.removeEventListener("mousedown", fn);
   }, []);
 
-  const isDoctor  = role === "psychologist";
+  const isDoctor = role === "psychologist";
   const isPatient = role === "patient";
-  const portalTo  = isDoctor ? "/psychologist" : "/";
+  const portalTo = isDoctor ? "/psychologist" : "/patient";
   const roleLinks = isDoctor ? doctorLinks : isPatient ? patientLinks : null;
-  const userName  = isDoctor ? "Dr. Aditi Carter" : isPatient ? "Alex Morgan" : "";
-  const userRole  = isDoctor ? "Psychologist" : isPatient ? "Patient" : "";
-  const initials  = isDoctor ? "Dr" : isPatient ? "AM" : "";
+  const userName = session?.name ?? "";
+  const userRole = isDoctor ? "Psychologist" : isPatient ? "Patient" : "";
+  const initials = session
+    ? session.name
+        .split(" ")
+        .map((n) => n[0])
+        .filter(Boolean)
+        .slice(0, 2)
+        .join("")
+        .toUpperCase()
+    : "";
 
-  const handleSignOut = () => {
-    localStorage.removeItem("mc_role");
-    setRole(null);
+  const handleSignOut = async () => {
+    await logoutFn();
+    await queryClient.invalidateQueries({ queryKey: ["session"] });
     setDropOpen(false);
     navigate({ to: "/" });
   };
@@ -77,7 +92,9 @@ export function SiteNav() {
   const isDarkNav = isHome && !scrolled;
 
   const activeClass = isDarkNav ? "text-white font-semibold" : "text-foreground font-semibold";
-  const inactiveClass = isDarkNav ? "text-white/70 hover:text-white" : "text-muted-foreground hover:text-foreground";
+  const inactiveClass = isDarkNav
+    ? "text-white/70 hover:text-white"
+    : "text-muted-foreground hover:text-foreground";
 
   return (
     <header
@@ -90,7 +107,6 @@ export function SiteNav() {
       }`}
     >
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
-
         <Link to="/" className="flex items-center">
           <img
             src={logoImg}
@@ -177,17 +193,19 @@ export function SiteNav() {
                       className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
                     >
                       <LayoutDashboard className="h-4 w-4" />
-                      My Portal
+                      {isPatient ? "My Wellness" : "My Dashboard"}
                     </Link>
 
-                    <Link
-                      to="/psychologist"
-                      onClick={() => setDropOpen(false)}
-                      className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
-                    >
-                      <CalendarClock className="h-4 w-4" />
-                      My Schedule
-                    </Link>
+                    {isDoctor && (
+                      <Link
+                        to="/psychologist"
+                        onClick={() => setDropOpen(false)}
+                        className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                      >
+                        <CalendarClock className="h-4 w-4" />
+                        My Schedule
+                      </Link>
+                    )}
 
                     <Link
                       to="/"
@@ -218,7 +236,9 @@ export function SiteNav() {
               <Link
                 to="/login"
                 className={`text-sm font-medium transition-colors ${
-                  isDarkNav ? "text-white/80 hover:text-white" : "text-foreground/80 hover:text-foreground"
+                  isDarkNav
+                    ? "text-white/80 hover:text-white"
+                    : "text-foreground/80 hover:text-foreground"
                 }`}
               >
                 Login
@@ -297,7 +317,10 @@ export function SiteNav() {
                   </div>
                 </div>
                 <button
-                  onClick={() => { handleSignOut(); setMobileOpen(false); }}
+                  onClick={() => {
+                    handleSignOut();
+                    setMobileOpen(false);
+                  }}
                   className="flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium text-red-500 hover:bg-red-50"
                 >
                   <LogOut className="h-3.5 w-3.5" /> Sign Out

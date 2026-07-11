@@ -18,6 +18,7 @@ import teamImg from "../assets/team.png";
 import { SiteShell } from "../components/site-shell";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "../components/scroll-reveal";
 import { useParallaxScroll } from "../hooks/use-parallax-scroll";
+import { useSession } from "../lib/use-session";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -43,13 +44,12 @@ function Index() {
   );
 }
 
-/** Shown above hero when a user is logged in via localStorage role */
+/** Shown above hero when a user is signed in (real session, not local role guess) */
 function RoleWelcomeBanner() {
-  const [role, setRole] = useState<string | null>(null);
-  useEffect(() => { setRole(localStorage.getItem("mc_role")); }, []);
-  if (!role || (role !== "psychologist" && role !== "patient")) return null;
+  const { data: session } = useSession();
+  if (!session || (session.role !== "psychologist" && session.role !== "patient")) return null;
 
-  const isDoctor = role === "psychologist";
+  const isDoctor = session.role === "psychologist";
 
   return (
     <div
@@ -57,22 +57,21 @@ function RoleWelcomeBanner() {
       style={{ backgroundColor: "#111111", color: "#F4C430" }}
     >
       <span>
-        Welcome back,{" "}
-        <strong>{isDoctor ? "Dr. Aditi Carter" : "Alex Morgan"}</strong> — signed in as{" "}
-        <span className="capitalize font-semibold">{role}</span>
+        Welcome back, <strong>{session.name}</strong> — signed in as{" "}
+        <span className="capitalize font-semibold">{session.role}</span>
       </span>
       {isDoctor && (
         <Link
           to="/psychologist"
           className="inline-flex items-center gap-1.5 rounded-full border border-current px-3 py-1 text-xs font-semibold transition hover:bg-white/10"
         >
-          <LayoutDashboard className="h-3 w-3" />Doctor Portal
+          <LayoutDashboard className="h-3 w-3" />
+          Doctor Portal
         </Link>
       )}
     </div>
   );
 }
-
 
 function LiveClock() {
   const [now, setNow] = useState(() => new Date());
@@ -124,7 +123,9 @@ function Hero() {
       <div
         aria-hidden
         className="absolute inset-0 opacity-[0.08]"
-        style={{ background: "radial-gradient(ellipse 80% 60% at 50% 100%, #F4C430 0%, transparent 70%)" }}
+        style={{
+          background: "radial-gradient(ellipse 80% 60% at 50% 100%, #F4C430 0%, transparent 70%)",
+        }}
       />
 
       {/* ── Content — centered over video ── */}
@@ -172,8 +173,8 @@ function Hero() {
           transition={{ duration: 0.6, delay: 0.52, ease: EASE_OUT }}
           className="mt-6 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg"
         >
-          Empowering organizations and employees through evidence-based,
-          innovative organizational behavior strategies.
+          Empowering organizations and employees through evidence-based, innovative organizational
+          behavior strategies.
         </motion.p>
 
         {/* CTAs */}
@@ -221,7 +222,9 @@ function Hero() {
         transition={{ delay: 1.5, duration: 0.8 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5"
       >
-        <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-white/40">Scroll</span>
+        <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-white/40">
+          Scroll
+        </span>
         <motion.div
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
@@ -237,7 +240,6 @@ function HomeAbout() {
   return (
     <section className="relative overflow-hidden border-b border-border bg-background py-20 sm:py-28">
       <div className="mx-auto grid max-w-7xl items-center gap-16 px-6 lg:grid-cols-2 lg:gap-12">
-
         {/* ── Left — photo mosaic ──────────────────────────────── */}
         <ScrollReveal className="relative">
           <div className="grid aspect-square grid-cols-4 grid-rows-4 gap-[3px] bg-border">
@@ -271,12 +273,21 @@ function HomeAbout() {
         {/* ── Right — headline + copy ──────────────────────────── */}
         <ScrollReveal delay={0.15}>
           <h2 className="text-5xl font-black leading-[1.0] tracking-tight sm:text-6xl lg:text-7xl">
-            <span className="text-foreground">About</span>{" "}
-            <span className="text-brand">Us</span>
+            <span className="text-foreground">About</span> <span className="text-brand">Us</span>
           </h2>
           <div className="mt-6 max-w-xl space-y-4 text-base leading-relaxed text-muted-foreground">
             <p>
-              Mindcarter stands out as a premier authority in organizational behavior, offering evidence-based solutions that drive results. Our commitment to academic rigor and the seamless integration of published research into our services sets us apart. With a team of global experts and revered industry practitioners, we remain at the forefront of the latest trends. Our specialized offerings encompass internationally recognized psychometric assessments, comprehensive training, tailor-made developmental initiatives, and impactful coaching programs.  At Mindcarter, our solutions are not only deeply rooted in research but also informed by a profound understanding of psychology. We consistently deliver practical, long-lasting solutions that enhance organizational effectiveness and nurture employee satisfaction. Choose Mindcarter for excellence in psychometric assessments, coaching, and management development programs
+              Mindcarter stands out as a premier authority in organizational behavior, offering
+              evidence-based solutions that drive results. Our commitment to academic rigor and the
+              seamless integration of published research into our services sets us apart. With a
+              team of global experts and revered industry practitioners, we remain at the forefront
+              of the latest trends. Our specialized offerings encompass internationally recognized
+              psychometric assessments, comprehensive training, tailor-made developmental
+              initiatives, and impactful coaching programs. At Mindcarter, our solutions are not
+              only deeply rooted in research but also informed by a profound understanding of
+              psychology. We consistently deliver practical, long-lasting solutions that enhance
+              organizational effectiveness and nurture employee satisfaction. Choose Mindcarter for
+              excellence in psychometric assessments, coaching, and management development programs
             </p>
           </div>
           <Link
@@ -286,13 +297,10 @@ function HomeAbout() {
             Read More <ArrowRight className="h-4 w-4" />
           </Link>
         </ScrollReveal>
-
       </div>
     </section>
   );
 }
-
-
 
 const FLAGSHIP_SERVICES = [
   {
@@ -338,7 +346,10 @@ function ServicesBackground() {
 
 function Services() {
   return (
-    <section id="services" className="relative overflow-hidden border-b border-border bg-background py-24">
+    <section
+      id="services"
+      className="relative overflow-hidden border-b border-border bg-background py-24"
+    >
       <ServicesBackground />
       <div className="relative mx-auto max-w-7xl px-6">
         <ScrollReveal>
@@ -351,7 +362,8 @@ function Services() {
               How We Help You
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              From one-on-one clinical care to enterprise-scale programs, everything we do is measurable, humane and research-backed.
+              From one-on-one clinical care to enterprise-scale programs, everything we do is
+              measurable, humane and research-backed.
             </p>
           </div>
         </ScrollReveal>
@@ -380,8 +392,12 @@ function Services() {
                   </div>
                   <div className={reversed ? "md:order-1" : ""}>
                     <h3 className="text-2xl font-bold tracking-tight sm:text-3xl">{s.title}</h3>
-                    <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-brand">{s.tag}</p>
-                    <p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground">{s.desc}</p>
+                    <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-brand">
+                      {s.tag}
+                    </p>
+                    <p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground">
+                      {s.desc}
+                    </p>
                     <Link
                       to="/services"
                       className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-xs font-bold uppercase tracking-wide text-background transition hover:opacity-90"
@@ -436,16 +452,38 @@ function SectionHeading({
 }
 
 const WHY_ITEMS = [
-  { k: "01", t: "Evidence-based", sub: "Research, not intuition", d: "A premier authority in organizational behavior, offering evidence-based solutions grounded in academic rigor and published research." },
-  { k: "02", t: "Global expertise", sub: "Practitioners, not theorists", d: "A team of global experts and revered industry practitioners keeps us at the forefront of the latest trends." },
-  { k: "03", t: "Specialized offerings", sub: "Assessments to coaching", d: "Internationally recognized psychometric assessments, comprehensive training, developmental initiatives and coaching programs." },
-  { k: "04", t: "Lasting impact", sub: "Built to last", d: "Practical, research-rooted solutions that enhance organizational effectiveness and nurture employee satisfaction." },
+  {
+    k: "01",
+    t: "Evidence-based",
+    sub: "Research, not intuition",
+    d: "A premier authority in organizational behavior, offering evidence-based solutions grounded in academic rigor and published research.",
+  },
+  {
+    k: "02",
+    t: "Global expertise",
+    sub: "Practitioners, not theorists",
+    d: "A team of global experts and revered industry practitioners keeps us at the forefront of the latest trends.",
+  },
+  {
+    k: "03",
+    t: "Specialized offerings",
+    sub: "Assessments to coaching",
+    d: "Internationally recognized psychometric assessments, comprehensive training, developmental initiatives and coaching programs.",
+  },
+  {
+    k: "04",
+    t: "Lasting impact",
+    sub: "Built to last",
+    d: "Practical, research-rooted solutions that enhance organizational effectiveness and nurture employee satisfaction.",
+  },
 ];
 
 function WhyItem({ item }: { item: (typeof WHY_ITEMS)[number] }) {
   return (
     <div className="group">
-      <p className="font-mono text-xs text-brand transition-transform duration-300 ease-out group-hover:-translate-y-0.5">{item.k}</p>
+      <p className="font-mono text-xs text-brand transition-transform duration-300 ease-out group-hover:-translate-y-0.5">
+        {item.k}
+      </p>
       <h3 className="mt-3 text-lg font-semibold text-background">{item.t}</h3>
       <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-brand/80">{item.sub}</p>
       <p className="mt-2 text-sm leading-relaxed text-background/60">{item.d}</p>
@@ -489,24 +527,42 @@ function WhyChoose() {
 
           <div className="grid gap-14 lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:gap-10">
             <StaggerContainer className="grid gap-14 sm:grid-cols-2 lg:grid-cols-1">
-              <StaggerItem><WhyItem item={WHY_ITEMS[0]} /></StaggerItem>
-              <StaggerItem><WhyItem item={WHY_ITEMS[2]} /></StaggerItem>
+              <StaggerItem>
+                <WhyItem item={WHY_ITEMS[0]} />
+              </StaggerItem>
+              <StaggerItem>
+                <WhyItem item={WHY_ITEMS[2]} />
+              </StaggerItem>
             </StaggerContainer>
 
-            <ScrollReveal delay={0.15} className="relative order-first mx-auto w-52 shrink-0 sm:w-64 lg:order-none">
-              <div aria-hidden className="absolute inset-0 -z-10 scale-125 rounded-full bg-brand/20 blur-3xl" />
+            <ScrollReveal
+              delay={0.15}
+              className="relative order-first mx-auto w-52 shrink-0 sm:w-64 lg:order-none"
+            >
+              <div
+                aria-hidden
+                className="absolute inset-0 -z-10 scale-125 rounded-full bg-brand/20 blur-3xl"
+              />
               <div className="aspect-[3/4] overflow-hidden rounded-[2.5rem] border border-background/10 shadow-2xl">
                 <div
                   aria-hidden
-                  style={{ backgroundImage: `url(${teamImg})`, backgroundSize: "cover", backgroundPosition: "center" }}
+                  style={{
+                    backgroundImage: `url(${teamImg})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
                   className="h-full w-full"
                 />
               </div>
             </ScrollReveal>
 
             <StaggerContainer className="grid gap-14 sm:grid-cols-2 lg:grid-cols-1">
-              <StaggerItem><WhyItem item={WHY_ITEMS[1]} /></StaggerItem>
-              <StaggerItem><WhyItem item={WHY_ITEMS[3]} /></StaggerItem>
+              <StaggerItem>
+                <WhyItem item={WHY_ITEMS[1]} />
+              </StaggerItem>
+              <StaggerItem>
+                <WhyItem item={WHY_ITEMS[3]} />
+              </StaggerItem>
             </StaggerContainer>
           </div>
         </div>
@@ -582,7 +638,8 @@ function Psychologists() {
               </h2>
             </div>
             <p className="max-w-xl text-base leading-relaxed" style={{ color: "#3a2e00" }}>
-              Doctorate-level clinicians and coaches across therapy, organizational psychology and executive practice.
+              Doctorate-level clinicians and coaches across therapy, organizational psychology and
+              executive practice.
             </p>
           </div>
         </ScrollReveal>
@@ -635,11 +692,16 @@ function Psychologists() {
 
                   <div className="flex flex-1 flex-col p-6">
                     <h3 className="text-lg font-bold leading-tight">{p.name}</h3>
-                    <p className="mt-1 text-[11px] uppercase leading-snug tracking-[0.16em] text-muted-foreground">{p.role}</p>
+                    <p className="mt-1 text-[11px] uppercase leading-snug tracking-[0.16em] text-muted-foreground">
+                      {p.role}
+                    </p>
 
                     <div className="mt-3 flex flex-wrap gap-1.5">
                       {p.tags.map((t) => (
-                        <span key={t} className="rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+                        <span
+                          key={t}
+                          className="rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
+                        >
                           {t}
                         </span>
                       ))}
@@ -648,15 +710,25 @@ function Psychologists() {
                     <div className="mt-5 grid grid-cols-3 gap-2 border-y border-border py-4 text-center">
                       <div>
                         <p className="text-base font-bold text-foreground">{p.hours}+</p>
-                        <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">Therapy hrs</p>
+                        <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">
+                          Therapy hrs
+                        </p>
                       </div>
                       <div>
-                        <p className="text-xs font-semibold leading-snug">{p.languages.join(", ")}</p>
-                        <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">Languages</p>
+                        <p className="text-xs font-semibold leading-snug">
+                          {p.languages.join(", ")}
+                        </p>
+                        <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">
+                          Languages
+                        </p>
                       </div>
                       <div>
-                        <p className="text-base font-bold text-foreground">₹{p.price.toLocaleString("en-IN")}</p>
-                        <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">Per session</p>
+                        <p className="text-base font-bold text-foreground">
+                          ₹{p.price.toLocaleString("en-IN")}
+                        </p>
+                        <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">
+                          Per session
+                        </p>
                       </div>
                     </div>
 
@@ -698,12 +770,14 @@ function Psychologists() {
   );
 }
 
-
 const CLIENT_LOGOS = [
   { src: "/logos/ff7bfd_912cbb931bc744a19548cc7bb65dba75~mv2.avif", alt: "SunTec" },
   { src: "/logos/ff7bfd_161c6b1cd256424197b6975db81e4d88~mv2.avif", alt: "Allianz" },
   { src: "/logos/ff7bfd_7eaa659e4e3a4ebab83385be12220063~mv2.avif", alt: "UST Global" },
-  { src: "/logos/ff7bfd_1b12610f59024756aaf021d3235e7bcd~mv2.avif", alt: "TATA Consultancy Services" },
+  {
+    src: "/logos/ff7bfd_1b12610f59024756aaf021d3235e7bcd~mv2.avif",
+    alt: "TATA Consultancy Services",
+  },
   { src: "/logos/ff7bfd_d529e031d5b34105902848607a1bb1c7~mv2.avif", alt: "RR Donnelley" },
   { src: "/logos/ff7bfd_222d37932ae14e178000418c094e5400~mv2.avif", alt: "Reflections" },
   { src: "/logos/ff7bfd_a5a6d9b749014c61ac0d50781ae600e3~mv2.avif", alt: "D+H" },

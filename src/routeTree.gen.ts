@@ -9,23 +9,46 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyEmailRouteImport } from './routes/verify-email'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SecureAdminPortalRouteImport } from './routes/secure-admin-portal'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PortalManagementAccessRouteImport } from './routes/portal-management-access'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BookingRouteImport } from './routes/booking'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as PsychologistRouteRouteImport } from './routes/psychologist/route'
+import { Route as PatientRouteRouteImport } from './routes/patient/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PsychologistIndexRouteImport } from './routes/psychologist/index'
+import { Route as PatientIndexRouteImport } from './routes/patient/index'
 import { Route as PsychologistProfileRouteImport } from './routes/psychologist/profile'
 import { Route as PsychologistPatientsRouteImport } from './routes/psychologist/patients'
 import { Route as PsychologistNotificationsRouteImport } from './routes/psychologist/notifications'
 import { Route as PsychologistMeetingsRouteImport } from './routes/psychologist/meetings'
 import { Route as PsychologistDiariesRouteImport } from './routes/psychologist/diaries'
 import { Route as PsychologistAnalyticsRouteImport } from './routes/psychologist/analytics'
+import { Route as PatientSessionsRouteImport } from './routes/patient/sessions'
+import { Route as PatientProfileRouteImport } from './routes/patient/profile'
+import { Route as PatientNotificationsRouteImport } from './routes/patient/notifications'
+import { Route as PatientJournalRouteImport } from './routes/patient/journal'
+import { Route as PatientCareTeamRouteImport } from './routes/patient/care-team'
+import { Route as AuthGoogleRouteImport } from './routes/auth/google'
+import { Route as AuthGoogleCallbackRouteImport } from './routes/auth/google.callback'
 
+const VerifyEmailRoute = VerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
@@ -36,6 +59,11 @@ const SecureAdminPortalRoute = SecureAdminPortalRouteImport.update({
   path: '/secure-admin-portal',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PortalManagementAccessRoute = PortalManagementAccessRouteImport.update({
   id: '/portal-management-access',
   path: '/portal-management-access',
@@ -44,6 +72,11 @@ const PortalManagementAccessRoute = PortalManagementAccessRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -66,6 +99,11 @@ const PsychologistRouteRoute = PsychologistRouteRouteImport.update({
   path: '/psychologist',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PatientRouteRoute = PatientRouteRouteImport.update({
+  id: '/patient',
+  path: '/patient',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -75,6 +113,11 @@ const PsychologistIndexRoute = PsychologistIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PsychologistRouteRoute,
+} as any)
+const PatientIndexRoute = PatientIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PatientRouteRoute,
 } as any)
 const PsychologistProfileRoute = PsychologistProfileRouteImport.update({
   id: '/profile',
@@ -107,131 +150,262 @@ const PsychologistAnalyticsRoute = PsychologistAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => PsychologistRouteRoute,
 } as any)
+const PatientSessionsRoute = PatientSessionsRouteImport.update({
+  id: '/sessions',
+  path: '/sessions',
+  getParentRoute: () => PatientRouteRoute,
+} as any)
+const PatientProfileRoute = PatientProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => PatientRouteRoute,
+} as any)
+const PatientNotificationsRoute = PatientNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => PatientRouteRoute,
+} as any)
+const PatientJournalRoute = PatientJournalRouteImport.update({
+  id: '/journal',
+  path: '/journal',
+  getParentRoute: () => PatientRouteRoute,
+} as any)
+const PatientCareTeamRoute = PatientCareTeamRouteImport.update({
+  id: '/care-team',
+  path: '/care-team',
+  getParentRoute: () => PatientRouteRoute,
+} as any)
+const AuthGoogleRoute = AuthGoogleRouteImport.update({
+  id: '/auth/google',
+  path: '/auth/google',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthGoogleRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/patient': typeof PatientRouteRouteWithChildren
   '/psychologist': typeof PsychologistRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/booking': typeof BookingRoute
   '/contact': typeof ContactRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/portal-management-access': typeof PortalManagementAccessRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/secure-admin-portal': typeof SecureAdminPortalRoute
   '/services': typeof ServicesRoute
+  '/signup': typeof SignupRoute
+  '/verify-email': typeof VerifyEmailRoute
+  '/auth/google': typeof AuthGoogleRouteWithChildren
+  '/patient/care-team': typeof PatientCareTeamRoute
+  '/patient/journal': typeof PatientJournalRoute
+  '/patient/notifications': typeof PatientNotificationsRoute
+  '/patient/profile': typeof PatientProfileRoute
+  '/patient/sessions': typeof PatientSessionsRoute
   '/psychologist/analytics': typeof PsychologistAnalyticsRoute
   '/psychologist/diaries': typeof PsychologistDiariesRoute
   '/psychologist/meetings': typeof PsychologistMeetingsRoute
   '/psychologist/notifications': typeof PsychologistNotificationsRoute
   '/psychologist/patients': typeof PsychologistPatientsRoute
   '/psychologist/profile': typeof PsychologistProfileRoute
+  '/patient/': typeof PatientIndexRoute
   '/psychologist/': typeof PsychologistIndexRoute
+  '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/booking': typeof BookingRoute
   '/contact': typeof ContactRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/portal-management-access': typeof PortalManagementAccessRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/secure-admin-portal': typeof SecureAdminPortalRoute
   '/services': typeof ServicesRoute
+  '/signup': typeof SignupRoute
+  '/verify-email': typeof VerifyEmailRoute
+  '/auth/google': typeof AuthGoogleRouteWithChildren
+  '/patient/care-team': typeof PatientCareTeamRoute
+  '/patient/journal': typeof PatientJournalRoute
+  '/patient/notifications': typeof PatientNotificationsRoute
+  '/patient/profile': typeof PatientProfileRoute
+  '/patient/sessions': typeof PatientSessionsRoute
   '/psychologist/analytics': typeof PsychologistAnalyticsRoute
   '/psychologist/diaries': typeof PsychologistDiariesRoute
   '/psychologist/meetings': typeof PsychologistMeetingsRoute
   '/psychologist/notifications': typeof PsychologistNotificationsRoute
   '/psychologist/patients': typeof PsychologistPatientsRoute
   '/psychologist/profile': typeof PsychologistProfileRoute
+  '/patient': typeof PatientIndexRoute
   '/psychologist': typeof PsychologistIndexRoute
+  '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/patient': typeof PatientRouteRouteWithChildren
   '/psychologist': typeof PsychologistRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/booking': typeof BookingRoute
   '/contact': typeof ContactRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/portal-management-access': typeof PortalManagementAccessRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/secure-admin-portal': typeof SecureAdminPortalRoute
   '/services': typeof ServicesRoute
+  '/signup': typeof SignupRoute
+  '/verify-email': typeof VerifyEmailRoute
+  '/auth/google': typeof AuthGoogleRouteWithChildren
+  '/patient/care-team': typeof PatientCareTeamRoute
+  '/patient/journal': typeof PatientJournalRoute
+  '/patient/notifications': typeof PatientNotificationsRoute
+  '/patient/profile': typeof PatientProfileRoute
+  '/patient/sessions': typeof PatientSessionsRoute
   '/psychologist/analytics': typeof PsychologistAnalyticsRoute
   '/psychologist/diaries': typeof PsychologistDiariesRoute
   '/psychologist/meetings': typeof PsychologistMeetingsRoute
   '/psychologist/notifications': typeof PsychologistNotificationsRoute
   '/psychologist/patients': typeof PsychologistPatientsRoute
   '/psychologist/profile': typeof PsychologistProfileRoute
+  '/patient/': typeof PatientIndexRoute
   '/psychologist/': typeof PsychologistIndexRoute
+  '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/patient'
     | '/psychologist'
     | '/about'
     | '/booking'
     | '/contact'
+    | '/forgot-password'
     | '/login'
     | '/portal-management-access'
+    | '/reset-password'
     | '/secure-admin-portal'
     | '/services'
+    | '/signup'
+    | '/verify-email'
+    | '/auth/google'
+    | '/patient/care-team'
+    | '/patient/journal'
+    | '/patient/notifications'
+    | '/patient/profile'
+    | '/patient/sessions'
     | '/psychologist/analytics'
     | '/psychologist/diaries'
     | '/psychologist/meetings'
     | '/psychologist/notifications'
     | '/psychologist/patients'
     | '/psychologist/profile'
+    | '/patient/'
     | '/psychologist/'
+    | '/auth/google/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/booking'
     | '/contact'
+    | '/forgot-password'
     | '/login'
     | '/portal-management-access'
+    | '/reset-password'
     | '/secure-admin-portal'
     | '/services'
+    | '/signup'
+    | '/verify-email'
+    | '/auth/google'
+    | '/patient/care-team'
+    | '/patient/journal'
+    | '/patient/notifications'
+    | '/patient/profile'
+    | '/patient/sessions'
     | '/psychologist/analytics'
     | '/psychologist/diaries'
     | '/psychologist/meetings'
     | '/psychologist/notifications'
     | '/psychologist/patients'
     | '/psychologist/profile'
+    | '/patient'
     | '/psychologist'
+    | '/auth/google/callback'
   id:
     | '__root__'
     | '/'
+    | '/patient'
     | '/psychologist'
     | '/about'
     | '/booking'
     | '/contact'
+    | '/forgot-password'
     | '/login'
     | '/portal-management-access'
+    | '/reset-password'
     | '/secure-admin-portal'
     | '/services'
+    | '/signup'
+    | '/verify-email'
+    | '/auth/google'
+    | '/patient/care-team'
+    | '/patient/journal'
+    | '/patient/notifications'
+    | '/patient/profile'
+    | '/patient/sessions'
     | '/psychologist/analytics'
     | '/psychologist/diaries'
     | '/psychologist/meetings'
     | '/psychologist/notifications'
     | '/psychologist/patients'
     | '/psychologist/profile'
+    | '/patient/'
     | '/psychologist/'
+    | '/auth/google/callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PatientRouteRoute: typeof PatientRouteRouteWithChildren
   PsychologistRouteRoute: typeof PsychologistRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   BookingRoute: typeof BookingRoute
   ContactRoute: typeof ContactRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   PortalManagementAccessRoute: typeof PortalManagementAccessRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SecureAdminPortalRoute: typeof SecureAdminPortalRoute
   ServicesRoute: typeof ServicesRoute
+  SignupRoute: typeof SignupRoute
+  VerifyEmailRoute: typeof VerifyEmailRoute
+  AuthGoogleRoute: typeof AuthGoogleRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify-email': {
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/services': {
       id: '/services'
       path: '/services'
@@ -246,6 +420,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SecureAdminPortalRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/portal-management-access': {
       id: '/portal-management-access'
       path: '/portal-management-access'
@@ -258,6 +439,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -288,6 +476,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PsychologistRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/patient': {
+      id: '/patient'
+      path: '/patient'
+      fullPath: '/patient'
+      preLoaderRoute: typeof PatientRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -301,6 +496,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/psychologist/'
       preLoaderRoute: typeof PsychologistIndexRouteImport
       parentRoute: typeof PsychologistRouteRoute
+    }
+    '/patient/': {
+      id: '/patient/'
+      path: '/'
+      fullPath: '/patient/'
+      preLoaderRoute: typeof PatientIndexRouteImport
+      parentRoute: typeof PatientRouteRoute
     }
     '/psychologist/profile': {
       id: '/psychologist/profile'
@@ -344,8 +546,79 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PsychologistAnalyticsRouteImport
       parentRoute: typeof PsychologistRouteRoute
     }
+    '/patient/sessions': {
+      id: '/patient/sessions'
+      path: '/sessions'
+      fullPath: '/patient/sessions'
+      preLoaderRoute: typeof PatientSessionsRouteImport
+      parentRoute: typeof PatientRouteRoute
+    }
+    '/patient/profile': {
+      id: '/patient/profile'
+      path: '/profile'
+      fullPath: '/patient/profile'
+      preLoaderRoute: typeof PatientProfileRouteImport
+      parentRoute: typeof PatientRouteRoute
+    }
+    '/patient/notifications': {
+      id: '/patient/notifications'
+      path: '/notifications'
+      fullPath: '/patient/notifications'
+      preLoaderRoute: typeof PatientNotificationsRouteImport
+      parentRoute: typeof PatientRouteRoute
+    }
+    '/patient/journal': {
+      id: '/patient/journal'
+      path: '/journal'
+      fullPath: '/patient/journal'
+      preLoaderRoute: typeof PatientJournalRouteImport
+      parentRoute: typeof PatientRouteRoute
+    }
+    '/patient/care-team': {
+      id: '/patient/care-team'
+      path: '/care-team'
+      fullPath: '/patient/care-team'
+      preLoaderRoute: typeof PatientCareTeamRouteImport
+      parentRoute: typeof PatientRouteRoute
+    }
+    '/auth/google': {
+      id: '/auth/google'
+      path: '/auth/google'
+      fullPath: '/auth/google'
+      preLoaderRoute: typeof AuthGoogleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/google/callback': {
+      id: '/auth/google/callback'
+      path: '/callback'
+      fullPath: '/auth/google/callback'
+      preLoaderRoute: typeof AuthGoogleCallbackRouteImport
+      parentRoute: typeof AuthGoogleRoute
+    }
   }
 }
+
+interface PatientRouteRouteChildren {
+  PatientCareTeamRoute: typeof PatientCareTeamRoute
+  PatientJournalRoute: typeof PatientJournalRoute
+  PatientNotificationsRoute: typeof PatientNotificationsRoute
+  PatientProfileRoute: typeof PatientProfileRoute
+  PatientSessionsRoute: typeof PatientSessionsRoute
+  PatientIndexRoute: typeof PatientIndexRoute
+}
+
+const PatientRouteRouteChildren: PatientRouteRouteChildren = {
+  PatientCareTeamRoute: PatientCareTeamRoute,
+  PatientJournalRoute: PatientJournalRoute,
+  PatientNotificationsRoute: PatientNotificationsRoute,
+  PatientProfileRoute: PatientProfileRoute,
+  PatientSessionsRoute: PatientSessionsRoute,
+  PatientIndexRoute: PatientIndexRoute,
+}
+
+const PatientRouteRouteWithChildren = PatientRouteRoute._addFileChildren(
+  PatientRouteRouteChildren,
+)
 
 interface PsychologistRouteRouteChildren {
   PsychologistAnalyticsRoute: typeof PsychologistAnalyticsRoute
@@ -370,16 +643,34 @@ const PsychologistRouteRouteChildren: PsychologistRouteRouteChildren = {
 const PsychologistRouteRouteWithChildren =
   PsychologistRouteRoute._addFileChildren(PsychologistRouteRouteChildren)
 
+interface AuthGoogleRouteChildren {
+  AuthGoogleCallbackRoute: typeof AuthGoogleCallbackRoute
+}
+
+const AuthGoogleRouteChildren: AuthGoogleRouteChildren = {
+  AuthGoogleCallbackRoute: AuthGoogleCallbackRoute,
+}
+
+const AuthGoogleRouteWithChildren = AuthGoogleRoute._addFileChildren(
+  AuthGoogleRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PatientRouteRoute: PatientRouteRouteWithChildren,
   PsychologistRouteRoute: PsychologistRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   BookingRoute: BookingRoute,
   ContactRoute: ContactRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   PortalManagementAccessRoute: PortalManagementAccessRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SecureAdminPortalRoute: SecureAdminPortalRoute,
   ServicesRoute: ServicesRoute,
+  SignupRoute: SignupRoute,
+  VerifyEmailRoute: VerifyEmailRoute,
+  AuthGoogleRoute: AuthGoogleRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

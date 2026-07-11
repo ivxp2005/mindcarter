@@ -1,10 +1,17 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { PortalShell } from "../../components/portal-shell";
+import { meFn } from "../../lib/auth.server";
 
 export const Route = createFileRoute("/psychologist")({
   head: () => ({
     meta: [{ title: "Psychologist Portal — Mindcarter" }, { name: "robots", content: "noindex" }],
   }),
+  beforeLoad: async () => {
+    const user = await meFn();
+    if (!user || user.role !== "psychologist") {
+      throw redirect({ to: "/login" });
+    }
+  },
   component: PsychologistLayout,
 });
 
