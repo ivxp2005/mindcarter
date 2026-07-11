@@ -11,13 +11,20 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SecureAdminPortalRouteImport } from './routes/secure-admin-portal'
-import { Route as PsychologistRouteImport } from './routes/psychologist'
 import { Route as PortalManagementAccessRouteImport } from './routes/portal-management-access'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BookingRouteImport } from './routes/booking'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as PsychologistRouteRouteImport } from './routes/psychologist/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PsychologistIndexRouteImport } from './routes/psychologist/index'
+import { Route as PsychologistProfileRouteImport } from './routes/psychologist/profile'
+import { Route as PsychologistPatientsRouteImport } from './routes/psychologist/patients'
+import { Route as PsychologistNotificationsRouteImport } from './routes/psychologist/notifications'
+import { Route as PsychologistMeetingsRouteImport } from './routes/psychologist/meetings'
+import { Route as PsychologistDiariesRouteImport } from './routes/psychologist/diaries'
+import { Route as PsychologistAnalyticsRouteImport } from './routes/psychologist/analytics'
 
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
@@ -27,11 +34,6 @@ const ServicesRoute = ServicesRouteImport.update({
 const SecureAdminPortalRoute = SecureAdminPortalRouteImport.update({
   id: '/secure-admin-portal',
   path: '/secure-admin-portal',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PsychologistRoute = PsychologistRouteImport.update({
-  id: '/psychologist',
-  path: '/psychologist',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PortalManagementAccessRoute = PortalManagementAccessRouteImport.update({
@@ -59,22 +61,70 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PsychologistRouteRoute = PsychologistRouteRouteImport.update({
+  id: '/psychologist',
+  path: '/psychologist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PsychologistIndexRoute = PsychologistIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PsychologistRouteRoute,
+} as any)
+const PsychologistProfileRoute = PsychologistProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => PsychologistRouteRoute,
+} as any)
+const PsychologistPatientsRoute = PsychologistPatientsRouteImport.update({
+  id: '/patients',
+  path: '/patients',
+  getParentRoute: () => PsychologistRouteRoute,
+} as any)
+const PsychologistNotificationsRoute =
+  PsychologistNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => PsychologistRouteRoute,
+  } as any)
+const PsychologistMeetingsRoute = PsychologistMeetingsRouteImport.update({
+  id: '/meetings',
+  path: '/meetings',
+  getParentRoute: () => PsychologistRouteRoute,
+} as any)
+const PsychologistDiariesRoute = PsychologistDiariesRouteImport.update({
+  id: '/diaries',
+  path: '/diaries',
+  getParentRoute: () => PsychologistRouteRoute,
+} as any)
+const PsychologistAnalyticsRoute = PsychologistAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => PsychologistRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/psychologist': typeof PsychologistRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/booking': typeof BookingRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/portal-management-access': typeof PortalManagementAccessRoute
-  '/psychologist': typeof PsychologistRoute
   '/secure-admin-portal': typeof SecureAdminPortalRoute
   '/services': typeof ServicesRoute
+  '/psychologist/analytics': typeof PsychologistAnalyticsRoute
+  '/psychologist/diaries': typeof PsychologistDiariesRoute
+  '/psychologist/meetings': typeof PsychologistMeetingsRoute
+  '/psychologist/notifications': typeof PsychologistNotificationsRoute
+  '/psychologist/patients': typeof PsychologistPatientsRoute
+  '/psychologist/profile': typeof PsychologistProfileRoute
+  '/psychologist/': typeof PsychologistIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -83,34 +133,54 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/portal-management-access': typeof PortalManagementAccessRoute
-  '/psychologist': typeof PsychologistRoute
   '/secure-admin-portal': typeof SecureAdminPortalRoute
   '/services': typeof ServicesRoute
+  '/psychologist/analytics': typeof PsychologistAnalyticsRoute
+  '/psychologist/diaries': typeof PsychologistDiariesRoute
+  '/psychologist/meetings': typeof PsychologistMeetingsRoute
+  '/psychologist/notifications': typeof PsychologistNotificationsRoute
+  '/psychologist/patients': typeof PsychologistPatientsRoute
+  '/psychologist/profile': typeof PsychologistProfileRoute
+  '/psychologist': typeof PsychologistIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/psychologist': typeof PsychologistRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/booking': typeof BookingRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/portal-management-access': typeof PortalManagementAccessRoute
-  '/psychologist': typeof PsychologistRoute
   '/secure-admin-portal': typeof SecureAdminPortalRoute
   '/services': typeof ServicesRoute
+  '/psychologist/analytics': typeof PsychologistAnalyticsRoute
+  '/psychologist/diaries': typeof PsychologistDiariesRoute
+  '/psychologist/meetings': typeof PsychologistMeetingsRoute
+  '/psychologist/notifications': typeof PsychologistNotificationsRoute
+  '/psychologist/patients': typeof PsychologistPatientsRoute
+  '/psychologist/profile': typeof PsychologistProfileRoute
+  '/psychologist/': typeof PsychologistIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/psychologist'
     | '/about'
     | '/booking'
     | '/contact'
     | '/login'
     | '/portal-management-access'
-    | '/psychologist'
     | '/secure-admin-portal'
     | '/services'
+    | '/psychologist/analytics'
+    | '/psychologist/diaries'
+    | '/psychologist/meetings'
+    | '/psychologist/notifications'
+    | '/psychologist/patients'
+    | '/psychologist/profile'
+    | '/psychologist/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -119,30 +189,43 @@ export interface FileRouteTypes {
     | '/contact'
     | '/login'
     | '/portal-management-access'
-    | '/psychologist'
     | '/secure-admin-portal'
     | '/services'
+    | '/psychologist/analytics'
+    | '/psychologist/diaries'
+    | '/psychologist/meetings'
+    | '/psychologist/notifications'
+    | '/psychologist/patients'
+    | '/psychologist/profile'
+    | '/psychologist'
   id:
     | '__root__'
     | '/'
+    | '/psychologist'
     | '/about'
     | '/booking'
     | '/contact'
     | '/login'
     | '/portal-management-access'
-    | '/psychologist'
     | '/secure-admin-portal'
     | '/services'
+    | '/psychologist/analytics'
+    | '/psychologist/diaries'
+    | '/psychologist/meetings'
+    | '/psychologist/notifications'
+    | '/psychologist/patients'
+    | '/psychologist/profile'
+    | '/psychologist/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PsychologistRouteRoute: typeof PsychologistRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   BookingRoute: typeof BookingRoute
   ContactRoute: typeof ContactRoute
   LoginRoute: typeof LoginRoute
   PortalManagementAccessRoute: typeof PortalManagementAccessRoute
-  PsychologistRoute: typeof PsychologistRoute
   SecureAdminPortalRoute: typeof SecureAdminPortalRoute
   ServicesRoute: typeof ServicesRoute
 }
@@ -161,13 +244,6 @@ declare module '@tanstack/react-router' {
       path: '/secure-admin-portal'
       fullPath: '/secure-admin-portal'
       preLoaderRoute: typeof SecureAdminPortalRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/psychologist': {
-      id: '/psychologist'
-      path: '/psychologist'
-      fullPath: '/psychologist'
-      preLoaderRoute: typeof PsychologistRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/portal-management-access': {
@@ -205,6 +281,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/psychologist': {
+      id: '/psychologist'
+      path: '/psychologist'
+      fullPath: '/psychologist'
+      preLoaderRoute: typeof PsychologistRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -212,17 +295,89 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/psychologist/': {
+      id: '/psychologist/'
+      path: '/'
+      fullPath: '/psychologist/'
+      preLoaderRoute: typeof PsychologistIndexRouteImport
+      parentRoute: typeof PsychologistRouteRoute
+    }
+    '/psychologist/profile': {
+      id: '/psychologist/profile'
+      path: '/profile'
+      fullPath: '/psychologist/profile'
+      preLoaderRoute: typeof PsychologistProfileRouteImport
+      parentRoute: typeof PsychologistRouteRoute
+    }
+    '/psychologist/patients': {
+      id: '/psychologist/patients'
+      path: '/patients'
+      fullPath: '/psychologist/patients'
+      preLoaderRoute: typeof PsychologistPatientsRouteImport
+      parentRoute: typeof PsychologistRouteRoute
+    }
+    '/psychologist/notifications': {
+      id: '/psychologist/notifications'
+      path: '/notifications'
+      fullPath: '/psychologist/notifications'
+      preLoaderRoute: typeof PsychologistNotificationsRouteImport
+      parentRoute: typeof PsychologistRouteRoute
+    }
+    '/psychologist/meetings': {
+      id: '/psychologist/meetings'
+      path: '/meetings'
+      fullPath: '/psychologist/meetings'
+      preLoaderRoute: typeof PsychologistMeetingsRouteImport
+      parentRoute: typeof PsychologistRouteRoute
+    }
+    '/psychologist/diaries': {
+      id: '/psychologist/diaries'
+      path: '/diaries'
+      fullPath: '/psychologist/diaries'
+      preLoaderRoute: typeof PsychologistDiariesRouteImport
+      parentRoute: typeof PsychologistRouteRoute
+    }
+    '/psychologist/analytics': {
+      id: '/psychologist/analytics'
+      path: '/analytics'
+      fullPath: '/psychologist/analytics'
+      preLoaderRoute: typeof PsychologistAnalyticsRouteImport
+      parentRoute: typeof PsychologistRouteRoute
+    }
   }
 }
 
+interface PsychologistRouteRouteChildren {
+  PsychologistAnalyticsRoute: typeof PsychologistAnalyticsRoute
+  PsychologistDiariesRoute: typeof PsychologistDiariesRoute
+  PsychologistMeetingsRoute: typeof PsychologistMeetingsRoute
+  PsychologistNotificationsRoute: typeof PsychologistNotificationsRoute
+  PsychologistPatientsRoute: typeof PsychologistPatientsRoute
+  PsychologistProfileRoute: typeof PsychologistProfileRoute
+  PsychologistIndexRoute: typeof PsychologistIndexRoute
+}
+
+const PsychologistRouteRouteChildren: PsychologistRouteRouteChildren = {
+  PsychologistAnalyticsRoute: PsychologistAnalyticsRoute,
+  PsychologistDiariesRoute: PsychologistDiariesRoute,
+  PsychologistMeetingsRoute: PsychologistMeetingsRoute,
+  PsychologistNotificationsRoute: PsychologistNotificationsRoute,
+  PsychologistPatientsRoute: PsychologistPatientsRoute,
+  PsychologistProfileRoute: PsychologistProfileRoute,
+  PsychologistIndexRoute: PsychologistIndexRoute,
+}
+
+const PsychologistRouteRouteWithChildren =
+  PsychologistRouteRoute._addFileChildren(PsychologistRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PsychologistRouteRoute: PsychologistRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   BookingRoute: BookingRoute,
   ContactRoute: ContactRoute,
   LoginRoute: LoginRoute,
   PortalManagementAccessRoute: PortalManagementAccessRoute,
-  PsychologistRoute: PsychologistRoute,
   SecureAdminPortalRoute: SecureAdminPortalRoute,
   ServicesRoute: ServicesRoute,
 }
