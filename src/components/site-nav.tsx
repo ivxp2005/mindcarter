@@ -14,6 +14,10 @@ const publicLinks = [
   { to: "/contact", label: "Contact" },
 ] as const;
 
+const patientLinks = [
+  { to: "/", label: "My Wellness", icon: Home },
+] as const;
+
 const doctorLinks = [
   { to: "/psychologist", label: "Dashboard", icon: LayoutDashboard },
   { to: "/psychologist", label: "Schedule",  icon: CalendarClock   },
@@ -55,11 +59,12 @@ export function SiteNav() {
   }, []);
 
   const isDoctor  = role === "psychologist";
-  const portalTo  = "/psychologist";
-  const roleLinks = isDoctor ? doctorLinks : null;
-  const userName  = isDoctor ? "Dr. Aditi Carter" : "";
-  const userRole  = isDoctor ? "Psychologist" : "";
-  const initials  = isDoctor ? "Dr" : "";
+  const isPatient = role === "patient";
+  const portalTo  = isDoctor ? "/psychologist" : "/";
+  const roleLinks = isDoctor ? doctorLinks : isPatient ? patientLinks : null;
+  const userName  = isDoctor ? "Dr. Aditi Carter" : isPatient ? "Alex Morgan" : "";
+  const userRole  = isDoctor ? "Psychologist" : isPatient ? "Patient" : "";
+  const initials  = isDoctor ? "Dr" : isPatient ? "AM" : "";
 
   const handleSignOut = () => {
     localStorage.removeItem("mc_role");
@@ -68,16 +73,31 @@ export function SiteNav() {
     navigate({ to: "/" });
   };
 
+  const isHome = location.pathname === "/";
+  const isDarkNav = isHome && !scrolled;
+
+  const activeClass = isDarkNav ? "text-white font-semibold" : "text-foreground font-semibold";
+  const inactiveClass = isDarkNav ? "text-white/70 hover:text-white" : "text-muted-foreground hover:text-foreground";
+
   return (
     <header
-      className={`sticky top-0 z-50 w-full bg-background/85 backdrop-blur transition-all ${
-        scrolled ? "border-b border-border shadow-[0_1px_0_rgba(0,0,0,0.02)]" : "border-b border-transparent"
+      className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
+        scrolled
+          ? "bg-background/40 backdrop-blur-lg border-b border-border/50 shadow-[0_8px_32px_0_rgba(0,0,0,0.03)]"
+          : isHome
+            ? "bg-black/10 backdrop-blur-sm border-b border-transparent"
+            : "bg-background/10 backdrop-blur-sm border-b border-transparent"
       }`}
     >
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
 
         <Link to="/" className="flex items-center">
-          <img src={logoImg} alt="Mindcarter" className="h-14 w-auto" />
+          <img
+            src={logoImg}
+            alt="Mindcarter"
+            className="h-14 w-auto transition-all"
+            style={{ filter: isDarkNav ? "brightness(0) invert(1)" : "none" }}
+          />
         </Link>
 
         {/* Desktop nav */}
@@ -87,8 +107,8 @@ export function SiteNav() {
               key={l.to}
               to={l.to}
               activeOptions={{ exact: true }}
-              activeProps={{ className: "text-foreground" }}
-              inactiveProps={{ className: "text-muted-foreground hover:text-foreground" }}
+              activeProps={{ className: activeClass }}
+              inactiveProps={{ className: inactiveClass }}
               className="text-sm font-medium transition-colors"
             >
               {l.label}
@@ -98,14 +118,14 @@ export function SiteNav() {
           {/* Role portal links */}
           {roleLinks && (
             <>
-              <span className="h-4 w-px bg-border" aria-hidden />
+              <span className={`h-4 w-px ${isDarkNav ? "bg-white/20" : "bg-border"}`} aria-hidden />
               {roleLinks.map((l) => (
                 <Link
                   key={l.label}
                   to={l.to}
                   activeOptions={{ exact: true }}
-                  activeProps={{ className: "text-foreground" }}
-                  inactiveProps={{ className: "text-muted-foreground hover:text-foreground" }}
+                  activeProps={{ className: activeClass }}
+                  inactiveProps={{ className: inactiveClass }}
                   className="flex items-center gap-1.5 text-sm font-medium transition-colors"
                 >
                   <l.icon className="h-3.5 w-3.5" />
@@ -197,7 +217,9 @@ export function SiteNav() {
             <>
               <Link
                 to="/login"
-                className="text-sm font-medium text-foreground/80 hover:text-foreground"
+                className={`text-sm font-medium transition-colors ${
+                  isDarkNav ? "text-white/80 hover:text-white" : "text-foreground/80 hover:text-foreground"
+                }`}
               >
                 Login
               </Link>
@@ -215,7 +237,11 @@ export function SiteNav() {
         <button
           type="button"
           aria-label="Toggle menu"
-          className="grid h-10 w-10 place-items-center rounded-md border border-border md:hidden"
+          className={`grid h-10 w-10 place-items-center rounded-md border md:hidden transition-colors ${
+            isDarkNav
+              ? "border-white/20 text-white hover:bg-white/10"
+              : "border-border text-foreground hover:bg-muted"
+          }`}
           onClick={() => setMobileOpen((v) => !v)}
         >
           {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}

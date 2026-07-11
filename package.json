@@ -85,6 +85,7 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
     "vercel": "^55.0.0",
+    "vinxi": "^0.5.3",
     "vite": "^8.0.16"
   }
 }

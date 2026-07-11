@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SecureAdminPortalRouteImport } from './routes/secure-admin-portal'
 import { Route as PsychologistRouteImport } from './routes/psychologist'
+import { Route as PortalManagementAccessRouteImport } from './routes/portal-management-access'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BookingRouteImport } from './routes/booking'
@@ -31,6 +32,11 @@ const SecureAdminPortalRoute = SecureAdminPortalRouteImport.update({
 const PsychologistRoute = PsychologistRouteImport.update({
   id: '/psychologist',
   path: '/psychologist',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalManagementAccessRoute = PortalManagementAccessRouteImport.update({
+  id: '/portal-management-access',
+  path: '/portal-management-access',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/booking': typeof BookingRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
+  '/portal-management-access': typeof PortalManagementAccessRoute
   '/psychologist': typeof PsychologistRoute
   '/secure-admin-portal': typeof SecureAdminPortalRoute
   '/services': typeof ServicesRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/booking': typeof BookingRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
+  '/portal-management-access': typeof PortalManagementAccessRoute
   '/psychologist': typeof PsychologistRoute
   '/secure-admin-portal': typeof SecureAdminPortalRoute
   '/services': typeof ServicesRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/booking': typeof BookingRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
+  '/portal-management-access': typeof PortalManagementAccessRoute
   '/psychologist': typeof PsychologistRoute
   '/secure-admin-portal': typeof SecureAdminPortalRoute
   '/services': typeof ServicesRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/booking'
     | '/contact'
     | '/login'
+    | '/portal-management-access'
     | '/psychologist'
     | '/secure-admin-portal'
     | '/services'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/booking'
     | '/contact'
     | '/login'
+    | '/portal-management-access'
     | '/psychologist'
     | '/secure-admin-portal'
     | '/services'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/booking'
     | '/contact'
     | '/login'
+    | '/portal-management-access'
     | '/psychologist'
     | '/secure-admin-portal'
     | '/services'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   BookingRoute: typeof BookingRoute
   ContactRoute: typeof ContactRoute
   LoginRoute: typeof LoginRoute
+  PortalManagementAccessRoute: typeof PortalManagementAccessRoute
   PsychologistRoute: typeof PsychologistRoute
   SecureAdminPortalRoute: typeof SecureAdminPortalRoute
   ServicesRoute: typeof ServicesRoute
@@ -155,6 +168,13 @@ declare module '@tanstack/react-router' {
       path: '/psychologist'
       fullPath: '/psychologist'
       preLoaderRoute: typeof PsychologistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal-management-access': {
+      id: '/portal-management-access'
+      path: '/portal-management-access'
+      fullPath: '/portal-management-access'
+      preLoaderRoute: typeof PortalManagementAccessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookingRoute: BookingRoute,
   ContactRoute: ContactRoute,
   LoginRoute: LoginRoute,
+  PortalManagementAccessRoute: PortalManagementAccessRoute,
   PsychologistRoute: PsychologistRoute,
   SecureAdminPortalRoute: SecureAdminPortalRoute,
   ServicesRoute: ServicesRoute,

@@ -43,11 +43,13 @@ function Index() {
   );
 }
 
-/** Shown above hero when a psychologist is logged in via localStorage role */
+/** Shown above hero when a user is logged in via localStorage role */
 function RoleWelcomeBanner() {
   const [role, setRole] = useState<string | null>(null);
   useEffect(() => { setRole(localStorage.getItem("mc_role")); }, []);
-  if (role !== "psychologist") return null;
+  if (!role || (role !== "psychologist" && role !== "patient")) return null;
+
+  const isDoctor = role === "psychologist";
 
   return (
     <div
@@ -55,15 +57,18 @@ function RoleWelcomeBanner() {
       style={{ backgroundColor: "#111111", color: "#F4C430" }}
     >
       <span>
-        Welcome back, <strong>Dr. Aditi Carter</strong> — signed in as{" "}
-        <span className="capitalize font-semibold">psychologist</span>
+        Welcome back,{" "}
+        <strong>{isDoctor ? "Dr. Aditi Carter" : "Alex Morgan"}</strong> — signed in as{" "}
+        <span className="capitalize font-semibold">{role}</span>
       </span>
-      <Link
-        to="/psychologist"
-        className="inline-flex items-center gap-1.5 rounded-full border border-current px-3 py-1 text-xs font-semibold transition hover:bg-white/10"
-      >
-        <LayoutDashboard className="h-3 w-3" />Doctor Portal
-      </Link>
+      {isDoctor && (
+        <Link
+          to="/psychologist"
+          className="inline-flex items-center gap-1.5 rounded-full border border-current px-3 py-1 text-xs font-semibold transition hover:bg-white/10"
+        >
+          <LayoutDashboard className="h-3 w-3" />Doctor Portal
+        </Link>
+      )}
     </div>
   );
 }
@@ -88,155 +93,142 @@ function LiveClock() {
 
 function Hero() {
   const scrollY = useParallaxScroll();
-
-  const blobBotY = Math.min(scrollY * 0.35, 130);
-  const blobTopY = Math.min(scrollY * 0.22, 90);
-  const imageY = Math.min(scrollY * 0.18, 60);
+  const textY = Math.min(scrollY * 0.25, 80);
 
   return (
-    <section
-      className="relative flex min-h-[100svh] flex-col overflow-hidden lg:h-screen"
-      style={{ backgroundColor: "#F4C430" }}
-    >
-      {/* ── Background blobs — positioned inward so overflow:hidden clips cleanly ── */}
+    <section className="relative h-screen w-full overflow-hidden">
+      {/* ── Full-screen video background ── */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        aria-hidden
+        className="absolute inset-0 h-full w-full object-cover"
+        style={{ willChange: "transform" }}
+      >
+        <source src="/hero-video.mp4" type="video/mp4" />
+      </video>
+
+      {/* ── Dark gradient overlay for text legibility ── */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-16 -left-16 h-72 w-72 rounded-full opacity-30"
+        className="absolute inset-0"
         style={{
-          backgroundColor: "#c89b00",
-          transform: `translateY(${blobBotY}px)`,
-          willChange: "transform",
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-12 -top-16 h-80 w-80 rounded-full opacity-20"
-        style={{
-          backgroundColor: "#c89b00",
-          transform: `translateY(${blobTopY}px)`,
-          willChange: "transform",
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-6 h-32 w-32 -translate-x-1/2 rounded-full opacity-10"
-        style={{
-          backgroundColor: "#8a6600",
-          transform: `translateX(-50%) translateY(${Math.min(scrollY * 0.28, 60)}px)`,
-          willChange: "transform",
+          background:
+            "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.65) 100%)",
         }}
       />
 
-      {/* ── Main content grid — fills the full section height ─── */}
-      <div className="relative mx-auto flex w-full max-w-7xl flex-col items-stretch px-8 sm:px-14 lg:h-full lg:grid lg:grid-cols-[1fr_auto]">
+      {/* ── Gold accent overlay — subtle brand tint ── */}
+      <div
+        aria-hidden
+        className="absolute inset-0 opacity-[0.08]"
+        style={{ background: "radial-gradient(ellipse 80% 60% at 50% 100%, #F4C430 0%, transparent 70%)" }}
+      />
 
-        {/* Left — text column */}
-        <div className="flex flex-col justify-center py-16 lg:py-20">
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: EASE_OUT }}
-            className="mb-4 text-xs font-semibold uppercase tracking-[0.28em]"
-            style={{ color: "#5a4200" }}
-          >
-            <motion.span
-              animate={{ y: [0, -4, 0] }}
-              transition={{
-                delay: 1.2,
-                duration: 3.2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="inline-block"
-            >
-              Begin
-            </motion.span>
-          </motion.p>
-          <h1
-            className="max-w-xl text-4xl font-black leading-[1.04] tracking-tight sm:text-5xl lg:text-7xl"
-            style={{ color: "#111111" }}
-          >
-            {["Discover.", "Enable.", "Evolve."].map((word, i) => (
-              <motion.span
-                key={word}
-                className="block overflow-hidden"
-              >
-                <motion.span
-                  initial={{ y: "100%", opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{
-                    duration: 0.7,
-                    delay: 0.1 + i * 0.1,
-                    ease: EASE_OUT,
-                  }}
-                  className="block"
-                >
-                  {word}
-                </motion.span>
-              </motion.span>
-            ))}
-          </h1>
-          <motion.p
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5, ease: EASE_OUT }}
-            className="mt-5 max-w-sm text-base leading-relaxed sm:text-lg"
-            style={{ color: "#3a2e00" }}
-          >
-            Empowering organizations and employees through evidence-based, and
-            innovative organizational behavior strategies.
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.62, ease: EASE_OUT }}
-            className="mt-7 flex flex-wrap items-center gap-3"
-          >
-            <Link
-              to="/contact"
-              className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-white shadow-md transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg hover:opacity-90 active:translate-y-0 active:scale-95"
-              style={{ backgroundColor: "#111111" }}
-            >
-              Book Consultation <ArrowRight className="h-4 w-4" />
-            </Link>
-            <a
-              href="tel:+14155550139"
-              className="inline-flex items-center gap-2 rounded-full border-2 bg-black/10 px-6 py-3 text-sm font-bold transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-black/20 active:translate-y-0 active:scale-95"
-              style={{ borderColor: "#111111", color: "#111111" }}
-            >
-              <Phone className="h-4 w-4" /> Call Us
-            </a>
-          </motion.div>
-
-          {/* CEO attribution */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.74, ease: EASE_OUT }}
-            className="mt-8 flex items-center gap-3"
-          >
-            <div className="h-px w-10" style={{ backgroundColor: "#7a5e00" }} />
-            <p className="text-xs font-semibold uppercase tracking-[0.2em]" style={{ color: "#5a4200" }}>
-              Amar Rajan — CEO, Mindcarter
-            </p>
-          </motion.div>
-        </div>
-
-        {/* Right — CEO photo, constrained to section height */}
-        <div
-          className="flex items-end justify-center pb-4 lg:self-end lg:justify-end lg:pb-0"
-          style={{
-            transform: `translateY(${imageY}px)`,
-            willChange: "transform",
-          }}
+      {/* ── Content — centered over video ── */}
+      <div
+        className="relative flex h-full flex-col items-center justify-center px-6 text-center"
+        style={{ transform: `translateY(${textY}px)`, willChange: "transform" }}
+      >
+        {/* Eyebrow */}
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease: EASE_OUT }}
+          className="mb-4 text-xs font-bold uppercase tracking-[0.35em]"
+          style={{ color: "#F4C430" }}
         >
-          <img
-            src={amarRajanImg}
-            alt="Amar Rajan — CEO, Mindcarter"
-            className="block w-auto max-h-[38vh] object-contain object-bottom sm:max-h-[46vh] lg:max-h-[78vh]"
-          />
-        </div>
+          <motion.span
+            animate={{ y: [0, -4, 0] }}
+            transition={{ delay: 1.2, duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+            className="inline-block"
+          >
+            Begin
+          </motion.span>
+        </motion.p>
+
+        {/* Headline */}
+        <h1 className="text-5xl font-black leading-[1.04] tracking-tight text-white sm:text-6xl lg:text-8xl">
+          {["Discover.", "Enable.", "Evolve."].map((word, i) => (
+            <motion.span key={word} className="block overflow-hidden">
+              <motion.span
+                initial={{ y: "100%", opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.7, delay: 0.1 + i * 0.12, ease: EASE_OUT }}
+                className="block"
+              >
+                {word}
+              </motion.span>
+            </motion.span>
+          ))}
+        </h1>
+
+        {/* Sub-headline */}
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.52, ease: EASE_OUT }}
+          className="mt-6 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg"
+        >
+          Empowering organizations and employees through evidence-based,
+          innovative organizational behavior strategies.
+        </motion.p>
+
+        {/* CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.64, ease: EASE_OUT }}
+          className="mt-8 flex flex-wrap items-center justify-center gap-3"
+        >
+          <Link
+            to="/contact"
+            className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-bold shadow-lg transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:scale-95"
+            style={{ backgroundColor: "#F4C430", color: "#111111" }}
+          >
+            Book Consultation <ArrowRight className="h-4 w-4" />
+          </Link>
+          <a
+            href="tel:+14155550139"
+            className="inline-flex items-center gap-2 rounded-full border-2 px-7 py-3.5 text-sm font-bold text-white backdrop-blur-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-white/10 active:translate-y-0 active:scale-95"
+            style={{ borderColor: "rgba(255,255,255,0.5)" }}
+          >
+            <Phone className="h-4 w-4" /> Call Us
+          </a>
+        </motion.div>
+
+        {/* CEO attribution */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.78, ease: EASE_OUT }}
+          className="mt-10 flex items-center gap-3"
+        >
+          <div className="h-px w-10" style={{ backgroundColor: "rgba(244,196,48,0.6)" }} />
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
+            Amar Rajan — CEO, Mindcarter
+          </p>
+          <div className="h-px w-10" style={{ backgroundColor: "rgba(244,196,48,0.6)" }} />
+        </motion.div>
       </div>
+
+      {/* ── Scroll indicator ── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5, duration: 0.8 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5"
+      >
+        <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-white/40">Scroll</span>
+        <motion.div
+          animate={{ y: [0, 6, 0] }}
+          transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+          className="h-5 w-px rounded-full"
+          style={{ background: "linear-gradient(to bottom, rgba(244,196,48,0.8), transparent)" }}
+        />
+      </motion.div>
     </section>
   );
 }

@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /portal-management-access
+Disallow: /login
+Disallow: /psychologist
+Disallow: /booking
+
+User-agent: Googlebot
+Disallow: /portal-management-access
+
+Sitemap: https://mindcarter.com/sitemap.xml
