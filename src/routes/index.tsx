@@ -16,6 +16,7 @@ import {
 import amarRajanImg from "../assets/amar-rajan.png";
 import teamImg from "../assets/team.png";
 import { SiteShell } from "../components/site-shell";
+import { AngularCornerBackground } from "../components/angular-background";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "../components/scroll-reveal";
 import { useParallaxScroll } from "../hooks/use-parallax-scroll";
 import { useSession } from "../lib/use-session";
@@ -95,40 +96,31 @@ function Hero() {
   const textY = Math.min(scrollY * 0.25, 80);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden">
-      {/* ── Full-screen video background ── */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        aria-hidden
-        className="absolute inset-0 h-full w-full object-cover"
-        style={{ willChange: "transform" }}
-      >
-        <source src="/hero-video.mp4" type="video/mp4" />
-      </video>
-
-      {/* ── Dark gradient overlay for text legibility ── */}
+    <section className="relative h-screen w-full overflow-hidden bg-foreground">
+      {/* ── Fine grid texture — evokes structured, data-driven analysis ── */}
       <div
         aria-hidden
-        className="absolute inset-0"
+        className="absolute inset-0 opacity-[0.05]"
         style={{
-          background:
-            "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.65) 100%)",
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
+          backgroundSize: "56px 56px",
         }}
       />
 
-      {/* ── Gold accent overlay — subtle brand tint ── */}
+      {/* ── Gold accent glows — brand signature ── */}
       <div
         aria-hidden
-        className="absolute inset-0 opacity-[0.08]"
-        style={{
-          background: "radial-gradient(ellipse 80% 60% at 50% 100%, #F4C430 0%, transparent 70%)",
-        }}
+        className="absolute -left-[10%] -top-[15%] h-[60vh] w-[50vw] rounded-full opacity-[0.16] blur-[130px]"
+        style={{ background: "radial-gradient(circle, #F4C430 0%, transparent 70%)" }}
+      />
+      <div
+        aria-hidden
+        className="absolute -bottom-[20%] -right-[10%] h-[55vh] w-[45vw] rounded-full opacity-[0.12] blur-[140px]"
+        style={{ background: "radial-gradient(circle, #F4C430 0%, transparent 70%)" }}
       />
 
-      {/* ── Content — centered over video ── */}
+      {/* ── Content — centered over the abstract background ── */}
       <div
         className="relative flex h-full flex-col items-center justify-center px-6 text-center"
         style={{ transform: `translateY(${textY}px)`, willChange: "transform" }}
@@ -239,7 +231,10 @@ function Hero() {
 function HomeAbout() {
   return (
     <section className="relative overflow-hidden border-b border-border bg-background py-20 sm:py-28">
-      <div className="mx-auto max-w-7xl px-6">
+      {/* ── Angular black/gold geometric background ── */}
+      <AngularCornerBackground className="opacity-90" />
+
+      <div className="relative mx-auto max-w-7xl px-6">
         <div className="grid items-center gap-16 lg:grid-cols-2 lg:gap-12">
           {/* ── Left — photo mosaic ──────────────────────────────── */}
           <ScrollReveal className="relative">
@@ -359,28 +354,13 @@ const FLAGSHIP_SERVICES = [
   },
 ];
 
-function ServicesBackground() {
-  return (
-    <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden>
-      <div
-        className="absolute -top-[15%] -left-[10%] h-[55vh] w-[45vw] rounded-full opacity-[0.15] blur-[120px] dark:opacity-[0.05]"
-        style={{ background: "radial-gradient(circle, var(--brand) 0%, transparent 70%)" }}
-      />
-      <div
-        className="absolute bottom-[0%] -right-[12%] h-[50vh] w-[40vw] rounded-full opacity-[0.1] blur-[130px] dark:opacity-[0.04]"
-        style={{ background: "radial-gradient(circle, var(--foreground) 0%, transparent 75%)" }}
-      />
-    </div>
-  );
-}
-
 function Services() {
   return (
     <section
       id="services"
       className="relative overflow-hidden border-b border-border bg-background py-24"
     >
-      <ServicesBackground />
+      <AngularCornerBackground />
       <div className="relative mx-auto max-w-7xl px-6">
         <ScrollReveal>
           <div className="mx-auto max-w-2xl text-center">
@@ -651,44 +631,49 @@ const PSYCHOLOGISTS: {
 
 function Psychologists() {
   return (
-    <section className="border-b border-border py-24" style={{ backgroundColor: "#F4C430" }}>
-      <div className="mx-auto max-w-7xl px-6">
+    <section
+      className="relative overflow-hidden border-b border-border py-16 sm:py-20"
+      style={{ backgroundColor: "#F4C430" }}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-foreground/5"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-24 -left-10 h-72 w-72 rounded-full bg-foreground/5"
+      />
+
+      <div className="relative mx-auto max-w-7xl px-6">
         <ScrollReveal>
-          <div className="grid gap-6 md:grid-cols-[1fr_1.4fr] md:items-end">
-            <div>
-              <p
-                className="text-xs font-semibold uppercase tracking-[0.24em]"
-                style={{ color: "#5a4200" }}
-              >
-                <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-foreground align-middle" />
-                Our Team
+          <div className="relative grid gap-6 md:grid-cols-[1fr_1.4fr] md:items-end">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/70">
+                  Our Team
+                </p>
+                <h2 className="font-display mt-3 text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-5xl">
+                  Evidence-based professionals committed to helping people thrive at work.
+                </h2>
+              </div>
+              <p className="max-w-xl text-base leading-relaxed text-foreground/70">
+                At Mindcarter we bring together psychologists with advanced academic training in
+                psychology, including Master's, M.Phil., and Ph.D. qualifications. Drawing on
+                organizational psychology and behavioral science, they help individuals and
+                organizations address workplace challenges, strengthen leadership, improve
+                performance, and foster healthier, more productive work environments.
               </p>
-              <h2 className="font-display mt-3 text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-5xl">
-                Evidence-based professionals committed to helping people thrive at work.
-              </h2>
             </div>
-            <p className="max-w-xl text-base leading-relaxed" style={{ color: "#3a2e00" }}>
-              At Mindcarter we bring together psychologists with advanced academic training in
-              psychology, including Master's, M.Phil., and Ph.D. qualifications. Drawing on
-              organizational psychology and behavioral science, they help individuals and
-              organizations address workplace challenges, strengthen leadership, improve
-              performance, and foster healthier, more productive work environments.
-            </p>
-          </div>
-        </ScrollReveal>
 
-        <ScrollReveal delay={0.1}>
-          <div className="relative mx-auto mt-10 max-w-2xl">
-            <Search className="pointer-events-none absolute left-5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="search"
-              placeholder="Search by name, specialty, language, or tags…"
-              className="w-full rounded-full border border-border bg-background py-3.5 pl-12 pr-5 text-sm shadow-sm outline-none transition focus:border-foreground"
-            />
-          </div>
-        </ScrollReveal>
+            <div className="relative mx-auto mt-6 max-w-2xl">
+              <Search className="pointer-events-none absolute left-5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="search"
+                placeholder="Search by name, specialty, language, or tags…"
+                className="w-full rounded-full border border-border bg-background py-3 pl-12 pr-5 text-sm shadow-sm outline-none transition focus:border-foreground"
+              />
+            </div>
 
-        <StaggerContainer className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+            <StaggerContainer className="relative mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {PSYCHOLOGISTS.map((p) => {
             const initials = p.name
               .replace(/^Dr\.\s*/, "")
@@ -699,7 +684,7 @@ function Psychologists() {
             return (
               <StaggerItem key={p.name}>
                 <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-background transition-all duration-[400ms] ease-out hover:-translate-y-1 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]">
-                  <div className="relative aspect-[16/11] overflow-hidden bg-muted">
+                  <div className="relative aspect-[16/9] overflow-hidden bg-muted">
                     {p.photo ? (
                       <img
                         src={p.photo}
@@ -723,13 +708,13 @@ function Psychologists() {
                     </span>
                   </div>
 
-                  <div className="flex flex-1 flex-col p-6">
+                  <div className="flex flex-1 flex-col p-5">
                     <h3 className="text-lg font-bold leading-tight">{p.name}</h3>
                     <p className="mt-1 text-[11px] uppercase leading-snug tracking-[0.16em] text-muted-foreground">
                       {p.role}
                     </p>
 
-                    <div className="mt-3 flex flex-wrap gap-1.5">
+                    <div className="mt-2.5 flex flex-wrap gap-1.5">
                       {p.tags.map((t) => (
                         <span
                           key={t}
@@ -740,7 +725,7 @@ function Psychologists() {
                       ))}
                     </div>
 
-                    <div className="mt-5 grid grid-cols-3 gap-2 border-y border-border py-4 text-center">
+                    <div className="mt-4 grid grid-cols-3 gap-2 border-y border-border py-3 text-center">
                       <div>
                         <p className="text-base font-bold text-foreground">{p.hours}+</p>
                         <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">
@@ -765,17 +750,17 @@ function Psychologists() {
                       </div>
                     </div>
 
-                    <div className="mt-auto flex flex-col gap-2 pt-5">
+                    <div className="mt-auto flex flex-col gap-2 pt-4">
                       <Link
                         to="/booking"
                         search={{ name: p.name, role: p.role, price: p.price }}
-                        className="w-full rounded-full bg-brand py-3 text-center text-[11px] font-bold uppercase tracking-wide text-brand-foreground transition-transform duration-200 ease-out group-hover:scale-[1.02]"
+                        className="w-full rounded-full bg-brand py-2.5 text-center text-[11px] font-bold uppercase tracking-wide text-brand-foreground transition-transform duration-200 ease-out group-hover:scale-[1.02]"
                       >
                         Book now
                       </Link>
                       <Link
                         to="/contact"
-                        className="w-full rounded-full border border-border py-3 text-center text-[11px] font-bold uppercase tracking-wide text-muted-foreground transition hover:border-foreground hover:text-foreground"
+                        className="w-full rounded-full border border-border py-2.5 text-center text-[11px] font-bold uppercase tracking-wide text-muted-foreground transition hover:border-foreground hover:text-foreground"
                       >
                         View profile
                       </Link>
@@ -787,16 +772,15 @@ function Psychologists() {
           })}
         </StaggerContainer>
 
-        <ScrollReveal delay={0.1}>
-          <div className="mt-12 flex justify-center">
-            <Link
-              to="/contact"
-              className="inline-flex items-center gap-2 rounded-full border border-foreground px-6 py-3 text-xs font-bold uppercase tracking-wide text-foreground transition hover:bg-foreground hover:text-background"
-            >
-              View more
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
+            <div className="relative mt-8 flex justify-center">
+              <Link
+                to="/contact"
+                className="inline-flex items-center gap-2 rounded-full border border-foreground px-6 py-3 text-xs font-bold uppercase tracking-wide text-foreground transition hover:bg-foreground hover:text-background"
+              >
+                View more
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
         </ScrollReveal>
       </div>
     </section>

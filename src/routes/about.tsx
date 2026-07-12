@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Quote } from "lucide-react";
 import { SiteShell } from "../components/site-shell";
+import { AngularCornerBackground } from "../components/angular-background";
 import amarRajanImg from "../assets/amar-rajan.png";
-import teamImg from "../assets/team.png";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "../components/scroll-reveal";
 import { useParallaxScroll } from "../hooks/use-parallax-scroll";
 
@@ -30,19 +30,12 @@ function AboutHero() {
   const textOpacity = Math.max(1 - scrollY / 400, 0);
 
   return (
-    <section
-      className="relative flex h-[50vh] min-h-[380px] items-center justify-center overflow-hidden border-b border-border"
-      style={{
-        backgroundImage: `url(${teamImg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed",
-      }}
-    >
-      <div aria-hidden className="absolute inset-0 bg-black/25" />
+    <section className="relative flex h-[50vh] min-h-[380px] items-center justify-center overflow-hidden border-b border-border bg-white">
+      {/* ── Angular black/gold geometric background ── */}
+      <AngularCornerBackground />
 
       <div
-        className="relative mx-auto max-w-2xl px-6 text-center text-background"
+        className="relative mx-auto max-w-2xl px-6 text-center text-foreground"
         style={{
           transform: `translateY(${-textY}px)`,
           opacity: textOpacity,
@@ -50,13 +43,13 @@ function AboutHero() {
         }}
       >
         <Quote className="mx-auto h-6 w-6 text-brand" strokeWidth={2.5} />
-        <p className="mt-3 text-xs font-semibold uppercase tracking-[0.28em] text-background/70">
+        <p className="mt-3 text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
           About
         </p>
         <h1 className="font-display mt-4 text-3xl font-black italic leading-[1.15] tracking-tight sm:text-5xl">
           &ldquo;Every breakthrough begins with being understood.&rdquo;
         </h1>
-        <p className="mt-5 text-sm font-semibold uppercase tracking-[0.2em] text-background/70">
+        <p className="mt-5 text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           — The Mindcarter Team
         </p>
       </div>
