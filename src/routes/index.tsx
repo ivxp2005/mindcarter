@@ -15,6 +15,11 @@ import {
 } from "lucide-react";
 import amarRajanImg from "../assets/amar-rajan.png";
 import teamImg from "../assets/team.png";
+import imageImg from "../assets/image.png";
+import imageCopy2Img from "../assets/image copy 2.png";
+import imageCopyImg from "../assets/image copy.png";
+import imageCopy3Img from "../assets/image copy 3.png";
+import imageCopy4Img from "../assets/image copy 4.png";
 import { SiteShell } from "../components/site-shell";
 import { AngularCornerBackground } from "../components/angular-background";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "../components/scroll-reveal";
@@ -253,24 +258,31 @@ const FLAGSHIP_SERVICES = [
     title: "Employee Assistance Program (EAP)",
     tag: "High ROI · Cost Effective · AI-Enabled · Human-Supported",
     desc: "MindCarter's Employee Assistance Program (EAP) combines intelligent AI with qualified psychologists to deliver continuous, confidential, and accessible employee wellbeing support. Through 24/7 AI-powered emotional check-ins, evidence-based wellbeing guidance, and seamless access to psychologists by appointment, the program helps employees navigate workplace challenges such as burnout, stress, motivation, interpersonal conflicts, leadership demands, and work-life balance. Designed around prevention and early intervention rather than crisis response, our scalable EAP enables organizations to enhance employee wellbeing, strengthen engagement and resilience, and achieve a measurable return on their wellbeing investment.",
+    image: imageCopy4Img,
+    imageClassName: "h-[340px] w-[340px] sm:h-[430px] sm:w-[430px] -translate-y-8 sm:-translate-y-12 scale-[1.8]",
   },
   {
     icon: ClipboardCheck,
     title: "Psychometric Assessments",
     tag: "Scientific · Objective · Predictive · Actionable",
     desc: "Make critical people decisions with confidence. Our scientifically validated psychometric assessments provide objective insights into personality, leadership potential, behavioural competencies, motivation, cognitive abilities, and team dynamics. Whether for recruitment, leadership development, succession planning, coaching, or team effectiveness, our assessments transform psychological data into practical business decisions.",
+    image: imageCopy2Img,
   },
   {
     icon: Compass,
     title: "Personality-Based Leadership Development",
     tag: "Self-Aware · Evidence Based · Personalised · Transformational",
     desc: "Exceptional leadership begins with understanding oneself. Our personality-based leadership development programmes help leaders recognise how their personality shapes communication, decision-making, motivation, conflict management, and influence. Using behavioural science and psychometric insights, we create personalised development journeys that strengthen leadership effectiveness and build high-performing teams.",
+    image: imageCopy3Img,
+    imageClassName: "h-[340px] w-[340px] sm:h-[430px] sm:w-[430px] -translate-y-8 sm:-translate-y-12 scale-[1.5]",
   },
   {
     icon: MessageSquare,
     title: "Behavioral Interview Program",
     tag: "Structured · Bias Aware · Competency-Based · Evidence Driven",
     desc: "Hiring decisions should be guided by evidence, not intuition. Our Behavioral Interview Program equips organizations with structured interview frameworks, competency-based questioning techniques, and standardized evaluation methods that improve hiring quality, reduce bias, and enhance the prediction of future job performance. We help organizations build fair, consistent, and scientifically informed recruitment processes.",
+    image: imageCopy4Img,
+    imageClassName: "h-[340px] w-[340px] sm:h-[430px] sm:w-[430px] -translate-y-8 sm:-translate-y-12 scale-[1.8]",
   },
 ];
 
@@ -305,19 +317,16 @@ function Services() {
               <ScrollReveal key={s.title}>
                 <div className="grid items-center gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
                   <div className={reversed ? "md:order-2" : ""}>
-                    <div className="relative mx-auto grid h-64 w-64 place-items-center sm:h-72 sm:w-72">
+                    <div className="relative mx-auto grid h-[300px] w-[300px] place-items-center sm:h-[380px] sm:w-[380px]">
                       <div
                         aria-hidden
-                        className="absolute inset-0 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] bg-brand/15"
+                        className="absolute h-[200px] w-[200px] sm:h-[240px] sm:w-[240px] rounded-[60%_40%_30%_70%/60%_30%_70%_40%] bg-brand/15"
                       />
-                      <div className="relative grid h-44 w-44 place-items-center rounded-[2rem] border border-border bg-background shadow-xl sm:h-52 sm:w-52">
-                        <span className="grid h-16 w-16 place-items-center rounded-2xl bg-foreground text-background">
-                          <s.icon className="h-7 w-7" />
-                        </span>
-                      </div>
-                      <div className="absolute -right-2 -top-2 grid h-10 w-10 place-items-center rounded-full border-2 border-background bg-brand text-brand-foreground shadow-md">
-                        <span className="text-xs font-black">{String(i + 1).padStart(2, "0")}</span>
-                      </div>
+                      <img
+                        src={s.image}
+                        alt={s.title}
+                        className={`relative z-10 object-contain ${s.imageClassName || "h-[310px] w-[310px] sm:h-[390px] sm:w-[390px] -translate-y-5 sm:-translate-y-8"}`}
+                      />
                     </div>
                   </div>
                   <div className={reversed ? "md:order-1" : ""}>
