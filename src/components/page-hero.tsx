@@ -18,7 +18,7 @@ export function PageHero({
           <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
           {eyebrow}
         </p>
-        <h1 className="mt-4 max-w-4xl text-5xl font-black leading-[1.02] tracking-tight sm:text-6xl">
+        <h1 className="font-display mt-4 max-w-4xl text-5xl font-black leading-[1.02] tracking-tight sm:text-6xl">
           {title}
         </h1>
         {description && (

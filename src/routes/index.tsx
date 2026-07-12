@@ -151,7 +151,7 @@ function Hero() {
         </motion.p>
 
         {/* Headline */}
-        <h1 className="text-5xl font-black leading-[1.04] tracking-tight text-white sm:text-6xl lg:text-8xl">
+        <h1 className="font-display text-5xl font-black leading-[1.04] tracking-tight text-white sm:text-6xl lg:text-8xl">
           {["Discover.", "Enable.", "Evolve."].map((word, i) => (
             <motion.span key={word} className="block overflow-hidden">
               <motion.span
@@ -272,7 +272,7 @@ function HomeAbout() {
 
         {/* ── Right — headline + copy ──────────────────────────── */}
         <ScrollReveal delay={0.15}>
-          <h2 className="text-5xl font-black leading-[1.0] tracking-tight sm:text-6xl lg:text-7xl">
+          <h2 className="font-display text-5xl font-black leading-[1.0] tracking-tight sm:text-6xl lg:text-7xl">
             <span className="text-foreground">About</span> <span className="text-brand">Us</span>
           </h2>
           <div className="mt-6 max-w-xl space-y-4 text-base leading-relaxed text-muted-foreground">
@@ -358,7 +358,7 @@ function Services() {
               <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
               Services
             </p>
-            <h2 className="mt-3 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl">
+            <h2 className="font-display mt-3 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl">
               How We Help You
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
@@ -440,7 +440,7 @@ function SectionHeading({
           <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
           {eyebrow}
         </p>
-        <h2 className="mt-3 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl">
+        <h2 className="font-display mt-3 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl">
           {title}
         </h2>
       </div>
@@ -501,7 +501,7 @@ function WhyChoose() {
               <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
               Why Mindcarter
             </p>
-            <h2 className="mx-auto mt-3 max-w-2xl text-5xl font-black leading-[1.0] tracking-tight sm:text-6xl">
+            <h2 className="font-display mx-auto mt-3 max-w-2xl text-5xl font-black leading-[1.0] tracking-tight sm:text-6xl">
               Why Choose <span className="text-brand">Mindcarter?</span>
             </h2>
           </div>
@@ -835,7 +835,7 @@ function OurClients() {
               <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
               Our Clients
             </p>
-            <h2 className="mt-3 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl">
+            <h2 className="font-display mt-3 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl">
               Trusted by industry leaders.
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
@@ -872,7 +872,7 @@ function FinalCTA() {
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/70">
                 Begin
               </p>
-              <h2 className="mt-3 max-w-2xl text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-5xl">
+              <h2 className="font-display mt-3 max-w-2xl text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-5xl">
                 Ready to evolve? Book a confidential consultation.
               </h2>
             </div>

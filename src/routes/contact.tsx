@@ -88,7 +88,7 @@ function ContactPage() {
       <section className="bg-muted/40 py-20">
         <ScrollReveal className="mx-auto max-w-4xl px-6">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">FAQ</p>
-          <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Frequently asked</h2>
+          <h2 className="font-display mt-3 text-3xl font-black tracking-tight sm:text-4xl">Frequently asked</h2>
           <StaggerContainer className="mt-10 divide-y divide-border rounded-2xl border border-border bg-background">
             {FAQ.map((f) => (
               <StaggerItem key={f.q}>

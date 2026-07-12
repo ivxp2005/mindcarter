@@ -53,7 +53,7 @@ function AboutHero() {
         <p className="mt-3 text-xs font-semibold uppercase tracking-[0.28em] text-background/70">
           About
         </p>
-        <h1 className="mt-4 text-3xl font-black italic leading-[1.15] tracking-tight sm:text-5xl">
+        <h1 className="font-display mt-4 text-3xl font-black italic leading-[1.15] tracking-tight sm:text-5xl">
           &ldquo;Every breakthrough begins with being understood.&rdquo;
         </h1>
         <p className="mt-5 text-sm font-semibold uppercase tracking-[0.2em] text-background/70">
@@ -72,7 +72,7 @@ function AboutPage() {
       <section className="border-b border-border bg-background py-16">
         <ScrollReveal>
           <div className="mx-auto max-w-3xl px-6 text-center">
-            <h2 className="text-2xl font-black leading-snug tracking-tight sm:text-3xl">
+            <h2 className="font-display text-2xl font-black leading-snug tracking-tight sm:text-3xl">
               A practice built where clinical rigor meets human curiosity.
             </h2>
             <p className="mt-4 leading-relaxed text-muted-foreground">
@@ -95,7 +95,7 @@ function AboutPage() {
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">Our story</p>
-              <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Founded by clinicians, built for scale.</h2>
+              <h2 className="font-display mt-3 text-3xl font-black tracking-tight sm:text-4xl">Founded by clinicians, built for scale.</h2>
               <p className="mt-6 leading-relaxed text-muted-foreground">
                 We started Mindcarter after a decade in academic hospitals and Fortune 500 boardrooms — convinced that the tools of clinical psychology and organizational science deserved a modern, accessible home.
               </p>
@@ -122,7 +122,7 @@ function AboutPage() {
         <div className="mx-auto max-w-7xl px-6">
           <ScrollReveal>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">Leadership</p>
-            <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">The people behind the practice</h2>
+            <h2 className="font-display mt-3 text-3xl font-black tracking-tight sm:text-4xl">The people behind the practice</h2>
           </ScrollReveal>
           <StaggerContainer className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {["Dr. Aditi Carter", "Dr. Marcus Vale", "Dr. Lena Ortiz", "Dr. Rohan Mehra"].map((n) => (
