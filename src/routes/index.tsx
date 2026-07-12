@@ -6,10 +6,10 @@ import { motion, MotionConfig } from "framer-motion";
 import {
   ArrowRight,
   Phone,
-  Brain,
-  Building2,
+  ClipboardCheck,
   Compass,
   HeartPulse,
+  MessageSquare,
   Quote,
   Search,
 } from "lucide-react";
@@ -334,28 +334,28 @@ function HomeAbout() {
 
 const FLAGSHIP_SERVICES = [
   {
-    icon: Brain,
-    title: "Individual Therapy",
-    tag: "One-on-one care, personalised to you",
-    desc: "Evidence-based therapy with licensed psychologists trained in CBT, trauma-informed care and more — matched to your goals, not a generic program.",
+    icon: HeartPulse,
+    title: "Employee Assistance Program (EAP)",
+    tag: "High ROI · Cost Effective · AI-Enabled · Human-Supported",
+    desc: "MindCarter's Employee Assistance Program (EAP) combines intelligent AI with qualified psychologists to deliver continuous, confidential, and accessible employee wellbeing support. Through 24/7 AI-powered emotional check-ins, evidence-based wellbeing guidance, and seamless access to psychologists by appointment, the program helps employees navigate workplace challenges such as burnout, stress, motivation, interpersonal conflicts, leadership demands, and work-life balance. Designed around prevention and early intervention rather than crisis response, our scalable EAP enables organizations to enhance employee wellbeing, strengthen engagement and resilience, and achieve a measurable return on their wellbeing investment.",
   },
   {
-    icon: Building2,
-    title: "Organizational Consulting",
-    tag: "Diagnose culture, design the fix",
-    desc: "We assess structure, culture and change-readiness, then design interventions that measurably shift how your organization works.",
+    icon: ClipboardCheck,
+    title: "Psychometric Assessments",
+    tag: "Scientific · Objective · Predictive · Actionable",
+    desc: "Make critical people decisions with confidence. Our scientifically validated psychometric assessments provide objective insights into personality, leadership potential, behavioural competencies, motivation, cognitive abilities, and team dynamics. Whether for recruitment, leadership development, succession planning, coaching, or team effectiveness, our assessments transform psychological data into practical business decisions.",
   },
   {
     icon: Compass,
-    title: "Executive Coaching",
-    tag: "Board-level coaching, one leader at a time",
-    desc: "One-on-one coaching for founders, executives and rising leaders — grounded in psychology, not generic frameworks.",
+    title: "Personality-Based Leadership Development",
+    tag: "Self-Aware · Evidence Based · Personalised · Transformational",
+    desc: "Exceptional leadership begins with understanding oneself. Our personality-based leadership development programmes help leaders recognise how their personality shapes communication, decision-making, motivation, conflict management, and influence. Using behavioural science and psychometric insights, we create personalised development journeys that strengthen leadership effectiveness and build high-performing teams.",
   },
   {
-    icon: HeartPulse,
-    title: "Corporate Wellness",
-    tag: "Built for high-performing teams",
-    desc: "End-to-end wellness programs — from EAP access to workshops — designed to fit inside a demanding work culture, not compete with it.",
+    icon: MessageSquare,
+    title: "Behavioral Interview Program",
+    tag: "Structured · Bias Aware · Competency-Based · Evidence Driven",
+    desc: "Hiring decisions should be guided by evidence, not intuition. Our Behavioral Interview Program equips organizations with structured interview frameworks, competency-based questioning techniques, and standardized evaluation methods that improve hiring quality, reduce bias, and enhance the prediction of future job performance. We help organizations build fair, consistent, and scientifically informed recruitment processes.",
   },
 ];
 
@@ -389,11 +389,11 @@ function Services() {
               Services
             </p>
             <h2 className="font-display mt-3 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl">
-              How We Help You
+              How We Help Organizations
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              From one-on-one clinical care to enterprise-scale programs, everything we do is
-              measurable, humane and research-backed.
+              Evidence-based organizational psychology solutions that strengthen people,
+              leadership, and organizational performance.
             </p>
           </div>
         </ScrollReveal>
@@ -403,7 +403,7 @@ function Services() {
             const reversed = i % 2 === 1;
             return (
               <ScrollReveal key={s.title}>
-                <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
+                <div className="grid items-center gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
                   <div className={reversed ? "md:order-2" : ""}>
                     <div className="relative mx-auto grid h-64 w-64 place-items-center sm:h-72 sm:w-72">
                       <div
@@ -425,7 +425,7 @@ function Services() {
                     <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-brand">
                       {s.tag}
                     </p>
-                    <p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground">
+                    <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground">
                       {s.desc}
                     </p>
                     <Link
