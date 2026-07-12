@@ -239,63 +239,93 @@ function Hero() {
 function HomeAbout() {
   return (
     <section className="relative overflow-hidden border-b border-border bg-background py-20 sm:py-28">
-      <div className="mx-auto grid max-w-7xl items-center gap-16 px-6 lg:grid-cols-2 lg:gap-12">
-        {/* ── Left — photo mosaic ──────────────────────────────── */}
-        <ScrollReveal className="relative">
-          <div className="grid aspect-square grid-cols-4 grid-rows-4 gap-[3px] bg-border">
-            {Array.from({ length: 16 }).map((_, i) => {
-              const row = Math.floor(i / 4);
-              const col = i % 4;
-              return (
-                <div
-                  key={i}
-                  aria-hidden
-                  style={{
-                    backgroundImage: `url(${teamImg})`,
-                    backgroundSize: "400% 400%",
-                    backgroundPosition: `${(col / 3) * 100}% ${(row / 3) * 100}%`,
-                  }}
-                  className="bg-background"
-                />
-              );
-            })}
-          </div>
-
-          {/* Decorative accent — mirrors the arrow-in-square motif used elsewhere on the site */}
-          <div className="absolute -bottom-6 -left-6 hidden sm:block">
-            <div className="absolute left-2 top-2 h-14 w-14 bg-brand" aria-hidden />
-            <div className="relative grid h-14 w-14 place-items-center border-2 border-foreground bg-background">
-              <ArrowRight className="h-5 w-5 rotate-90 text-foreground" />
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="grid items-center gap-16 lg:grid-cols-2 lg:gap-12">
+          {/* ── Left — photo mosaic ──────────────────────────────── */}
+          <ScrollReveal className="relative">
+            <div className="grid aspect-square grid-cols-4 grid-rows-4 gap-[3px] bg-border">
+              {Array.from({ length: 16 }).map((_, i) => {
+                const row = Math.floor(i / 4);
+                const col = i % 4;
+                return (
+                  <div
+                    key={i}
+                    aria-hidden
+                    style={{
+                      backgroundImage: `url(${teamImg})`,
+                      backgroundSize: "400% 400%",
+                      backgroundPosition: `${(col / 3) * 100}% ${(row / 3) * 100}%`,
+                    }}
+                    className="bg-background"
+                  />
+                );
+              })}
             </div>
-          </div>
-        </ScrollReveal>
 
-        {/* ── Right — headline + copy ──────────────────────────── */}
-        <ScrollReveal delay={0.15}>
-          <h2 className="font-display text-5xl font-black leading-[1.0] tracking-tight sm:text-6xl lg:text-7xl">
-            <span className="text-foreground">About</span> <span className="text-brand">Us</span>
-          </h2>
-          <div className="mt-6 max-w-xl space-y-4 text-base leading-relaxed text-muted-foreground">
+            {/* Decorative accent — mirrors the arrow-in-square motif used elsewhere on the site */}
+            <div className="absolute -bottom-6 -left-6 hidden sm:block">
+              <div className="absolute left-2 top-2 h-14 w-14 bg-brand" aria-hidden />
+              <div className="relative grid h-14 w-14 place-items-center border-2 border-foreground bg-background">
+                <ArrowRight className="h-5 w-5 rotate-90 text-foreground" />
+              </div>
+            </div>
+          </ScrollReveal>
+
+          {/* ── Right — headline + lead line ──────────────────────── */}
+          <ScrollReveal delay={0.15}>
+            <h2 className="font-display text-5xl font-black leading-[1.0] tracking-tight sm:text-6xl lg:text-7xl">
+              <span className="text-foreground">About</span> <span className="text-brand">Us</span>
+            </h2>
+            <p className="mt-6 max-w-lg text-xl font-semibold leading-snug text-foreground">
+              MindCarter is an organizational psychology consulting firm that helps organizations
+              make better people decisions through the science of human behavior.
+            </p>
+            <Link
+              to="/about"
+              className="mt-8 inline-flex items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-bold text-brand-foreground transition-all duration-200 ease-out hover:-translate-y-0.5 hover:opacity-90 active:translate-y-0 active:scale-95"
+            >
+              Read More <ArrowRight className="h-4 w-4" />
+            </Link>
+          </ScrollReveal>
+        </div>
+
+        {/* ── Below — expanded description ────────────────────────── */}
+        <ScrollReveal delay={0.1} className="mt-20 border-t border-border pt-16">
+          <div className="grid gap-x-12 gap-y-6 text-base leading-relaxed text-muted-foreground lg:grid-cols-2">
             <p>
-              Mindcarter stands out as a premier authority in organizational behavior, offering
-              evidence-based solutions that drive results. Our commitment to academic rigor and the
-              seamless integration of published research into our services sets us apart. With a
-              team of global experts and revered industry practitioners, we remain at the forefront
-              of the latest trends. Our specialized offerings encompass internationally recognized
-              psychometric assessments, comprehensive training, tailor-made developmental
-              initiatives, and impactful coaching programs. At Mindcarter, our solutions are not
-              only deeply rooted in research but also informed by a profound understanding of
-              psychology. We consistently deliver practical, long-lasting solutions that enhance
-              organizational effectiveness and nurture employee satisfaction. Choose Mindcarter for
-              excellence in psychometric assessments, coaching, and management development programs
+              We partner with organizations to strengthen leadership, enhance employee wellbeing,
+              improve talent decisions, and build high-performing workplaces using evidence-based
+              organizational psychology. Our work is grounded in rigorous psychological science,
+              informed by contemporary research, and translated into practical solutions that
+              create lasting organizational impact.
+            </p>
+            <p>
+              Our expertise spans psychometric assessment, personality-based leadership
+              development, employee assistance programs, behavioral interviewing, executive
+              coaching, and organizational development. Each solution is designed to help
+              organizations understand the people behind performance — enabling more effective
+              hiring, stronger leadership, healthier teams, and more resilient organizational
+              cultures.
+            </p>
+            <p>
+              At MindCarter, evidence is the foundation of every intervention. We integrate
+              validated psychological frameworks, internationally recognized assessment
+              methodologies, and behavioral science to deliver solutions that are scientifically
+              robust, ethically grounded, and relevant to the realities of today's workplaces.
+              Rather than adopting generic management practices, we tailor our approach to each
+              organization's strategic objectives, culture, and workforce.
+            </p>
+            <p>
+              We believe that sustainable organizational success begins with understanding
+              people. By combining scientific rigor with practical application, we help leaders
+              make informed decisions, unlock individual and team potential, and create
+              workplaces where people and organizations can thrive together.
             </p>
           </div>
-          <Link
-            to="/about"
-            className="mt-8 inline-flex items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-bold text-brand-foreground transition-all duration-200 ease-out hover:-translate-y-0.5 hover:opacity-90 active:translate-y-0 active:scale-95"
-          >
-            Read More <ArrowRight className="h-4 w-4" />
-          </Link>
+          <p className="mt-10 max-w-3xl text-xl font-semibold italic leading-snug text-brand">
+            Our purpose is simple: to advance organizational effectiveness through evidence-based
+            psychology and human-centered solutions.
+          </p>
         </ScrollReveal>
       </div>
     </section>
