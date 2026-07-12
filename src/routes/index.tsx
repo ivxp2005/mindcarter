@@ -661,15 +661,18 @@ function Psychologists() {
                 style={{ color: "#5a4200" }}
               >
                 <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-foreground align-middle" />
-                Featured Psychologists
+                Our Team
               </p>
-              <h2 className="mt-3 text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-5xl">
-                A curated bench of specialists
+              <h2 className="font-display mt-3 text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-5xl">
+                Evidence-based professionals committed to helping people thrive at work.
               </h2>
             </div>
             <p className="max-w-xl text-base leading-relaxed" style={{ color: "#3a2e00" }}>
-              Doctorate-level clinicians and coaches across therapy, organizational psychology and
-              executive practice.
+              At Mindcarter we bring together psychologists with advanced academic training in
+              psychology, including Master's, M.Phil., and Ph.D. qualifications. Drawing on
+              organizational psychology and behavioral science, they help individuals and
+              organizations address workplace challenges, strengthen leadership, improve
+              performance, and foster healthier, more productive work environments.
             </p>
           </div>
         </ScrollReveal>
