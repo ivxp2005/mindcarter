@@ -125,23 +125,6 @@ function Hero() {
         className="relative flex h-full flex-col items-center justify-center px-6 text-center"
         style={{ transform: `translateY(${textY}px)`, willChange: "transform" }}
       >
-        {/* Eyebrow */}
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: EASE_OUT }}
-          className="mb-4 text-xs font-bold uppercase tracking-[0.35em]"
-          style={{ color: "#F4C430" }}
-        >
-          <motion.span
-            animate={{ y: [0, -4, 0] }}
-            transition={{ delay: 1.2, duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-            className="inline-block"
-          >
-            Begin
-          </motion.span>
-        </motion.p>
-
         {/* Headline */}
         <h1 className="font-display text-5xl font-black leading-[1.04] tracking-tight text-white sm:text-6xl lg:text-8xl">
           {["Discover.", "Enable.", "Evolve."].map((word, i) => (
@@ -191,39 +174,7 @@ function Hero() {
             <Phone className="h-4 w-4" /> Call Us
           </a>
         </motion.div>
-
-        {/* CEO attribution */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.78, ease: EASE_OUT }}
-          className="mt-10 flex items-center gap-3"
-        >
-          <div className="h-px w-10" style={{ backgroundColor: "rgba(244,196,48,0.6)" }} />
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
-            Amar Rajan — CEO, Mindcarter
-          </p>
-          <div className="h-px w-10" style={{ backgroundColor: "rgba(244,196,48,0.6)" }} />
-        </motion.div>
       </div>
-
-      {/* ── Scroll indicator ── */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 0.8 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5"
-      >
-        <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-white/40">
-          Scroll
-        </span>
-        <motion.div
-          animate={{ y: [0, 6, 0] }}
-          transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
-          className="h-5 w-px rounded-full"
-          style={{ background: "linear-gradient(to bottom, rgba(244,196,48,0.8), transparent)" }}
-        />
-      </motion.div>
     </section>
   );
 }
@@ -273,55 +224,24 @@ function HomeAbout() {
             </h2>
             <p className="mt-6 max-w-lg text-xl font-semibold leading-snug text-foreground">
               MindCarter is an organizational psychology consulting firm that helps organizations
-              make better people decisions through the science of human behavior.
+              make better people decisions through evidence-based behavioral science.
+            </p>
+            <p className="mt-4 max-w-lg text-base leading-relaxed text-muted-foreground">
+              We partner with organizations to strengthen leadership, enhance employee wellbeing,
+              improve talent decisions, and build high-performing workplaces—drawing on psychometric
+              assessment, leadership development, employee assistance programs, behavioral interviewing,
+              executive coaching, and organizational development, all tailored to each organization's
+              unique culture and goals. By combining scientific rigor with practical application, we
+              help leaders unlock individual and team potential and build resilient, thriving workplaces.
             </p>
             <Link
               to="/about"
-              className="mt-8 inline-flex items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-bold text-brand-foreground transition-all duration-200 ease-out hover:-translate-y-0.5 hover:opacity-90 active:translate-y-0 active:scale-95"
+              className="mt-6 inline-flex items-center gap-2 rounded-full border border-foreground px-6 py-3 text-xs font-bold uppercase tracking-wide text-foreground transition hover:bg-foreground hover:text-background"
             >
-              Read More <ArrowRight className="h-4 w-4" />
+              Read more <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </ScrollReveal>
         </div>
-
-        {/* ── Below — expanded description ────────────────────────── */}
-        <ScrollReveal delay={0.1} className="mt-20 border-t border-border pt-16">
-          <div className="grid gap-x-12 gap-y-6 text-base leading-relaxed text-muted-foreground lg:grid-cols-2">
-            <p>
-              We partner with organizations to strengthen leadership, enhance employee wellbeing,
-              improve talent decisions, and build high-performing workplaces using evidence-based
-              organizational psychology. Our work is grounded in rigorous psychological science,
-              informed by contemporary research, and translated into practical solutions that
-              create lasting organizational impact.
-            </p>
-            <p>
-              Our expertise spans psychometric assessment, personality-based leadership
-              development, employee assistance programs, behavioral interviewing, executive
-              coaching, and organizational development. Each solution is designed to help
-              organizations understand the people behind performance — enabling more effective
-              hiring, stronger leadership, healthier teams, and more resilient organizational
-              cultures.
-            </p>
-            <p>
-              At MindCarter, evidence is the foundation of every intervention. We integrate
-              validated psychological frameworks, internationally recognized assessment
-              methodologies, and behavioral science to deliver solutions that are scientifically
-              robust, ethically grounded, and relevant to the realities of today's workplaces.
-              Rather than adopting generic management practices, we tailor our approach to each
-              organization's strategic objectives, culture, and workforce.
-            </p>
-            <p>
-              We believe that sustainable organizational success begins with understanding
-              people. By combining scientific rigor with practical application, we help leaders
-              make informed decisions, unlock individual and team potential, and create
-              workplaces where people and organizations can thrive together.
-            </p>
-          </div>
-          <p className="mt-10 max-w-3xl text-xl font-semibold italic leading-snug text-brand">
-            Our purpose is simple: to advance organizational effectiveness through evidence-based
-            psychology and human-centered solutions.
-          </p>
-        </ScrollReveal>
       </div>
     </section>
   );

@@ -187,14 +187,19 @@ function WhoWeAre() {
           <h2 className="font-display mt-4 text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-5xl">
             A premier authority in organizational behavior.
           </h2>
-          <p className="mt-6 max-w-lg text-base leading-relaxed text-muted-foreground">
-            Mindcarter stands out as a premier authority in organizational behavior, offering
-            evidence-based solutions that drive results. Our commitment to academic rigor and the
-            seamless integration of published research into our services sets us apart — a team
-            of global experts and revered industry practitioners.
+          <p className="mt-6 max-w-lg text-lg font-semibold leading-snug text-foreground">
+            MindCarter is an organizational psychology consulting firm that helps organizations
+            make better people decisions through the science of human behavior.
+          </p>
+          <p className="mt-4 max-w-lg text-base leading-relaxed text-muted-foreground">
+            We partner with organizations to strengthen leadership, enhance employee wellbeing,
+            improve talent decisions, and build high-performing workplaces using evidence-based
+            organizational psychology. Our work is grounded in rigorous psychological science,
+            informed by contemporary research, and translated into practical solutions that
+            create lasting organizational impact.
           </p>
           <Link
-            to="/about"
+            to="/"
             className="mt-8 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-white transition-all duration-200 ease-out hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
             style={{ backgroundColor: INK }}
           >
