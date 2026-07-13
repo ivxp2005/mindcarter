@@ -281,8 +281,8 @@ const FLAGSHIP_SERVICES = [
     title: "Behavioral Interview Program",
     tag: "Structured · Bias Aware · Competency-Based · Evidence Driven",
     desc: "Hiring decisions should be guided by evidence, not intuition. Our Behavioral Interview Program equips organizations with structured interview frameworks, competency-based questioning techniques, and standardized evaluation methods that improve hiring quality, reduce bias, and enhance the prediction of future job performance. We help organizations build fair, consistent, and scientifically informed recruitment processes.",
-    image: imageCopy4Img,
-    imageClassName: "h-[340px] w-[340px] sm:h-[430px] sm:w-[430px] -translate-y-8 sm:-translate-y-12 scale-[1.8]",
+    image: imageImg,
+    imageClassName: "h-[340px] w-[340px] sm:h-[430px] sm:w-[430px] -translate-y-8 sm:-translate-y-12 scale-[1.4]",
   },
 ];
 
