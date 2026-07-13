@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Quote, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { SiteShell } from "../components/site-shell";
 import heroImg from "../assets/hero.jpg";
-import teamImg from "../assets/team.png";
 import amarRajanImg from "../assets/amar-rajan.png";
+import aboutBannerImg from "../assets/image copy.png";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "../components/scroll-reveal";
 
 export const Route = createFileRoute("/about")({
@@ -34,59 +34,46 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ── 1. Hero — copy left, image right with a floating quote card ─────────── */
+/* ── 1. Hero banner — full-bleed geometric background, centered copy ────── */
 function AboutHero() {
   return (
-    <section className="relative overflow-hidden bg-background pt-28 pb-20 sm:pt-32 sm:pb-28">
-      <div
+    <section className="relative overflow-hidden">
+      <img
+        src={aboutBannerImg}
+        alt=""
         aria-hidden
-        className="pointer-events-none absolute -left-24 top-16 h-72 w-72 rounded-full bg-brand/10 blur-3xl"
+        className="absolute inset-0 h-full w-full object-cover"
       />
+      <div aria-hidden className="absolute inset-0 bg-foreground/15" />
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-16 px-6 lg:grid-cols-2">
-        {/* Left — copy */}
+      <div className="relative mx-auto max-w-3xl px-6 py-14 text-center sm:py-20">
         <ScrollReveal>
-          <Eyebrow>About Mindcarter</Eyebrow>
-          <h1 className="font-display mt-5 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-            A practice built where clinical rigor meets human curiosity.
+          <p
+            className="inline-flex items-center gap-2 text-sm font-semibold italic text-white"
+            style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
+          >
+            <span aria-hidden className="inline-block h-2 w-2 rounded-full bg-brand" />
+            About Us
+          </p>
+          <h1
+            className="font-display mt-4 text-3xl font-black leading-[1.15] tracking-tight text-white sm:text-4xl lg:text-5xl"
+            style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}
+          >
+            A practice built where clinical rigor meets{" "}
+            <span className="italic text-brand">human curiosity.</span>
           </h1>
-          <p className="mt-6 max-w-lg text-base leading-relaxed text-muted-foreground">
-            Mindcarter was founded to close the gap between the science of psychology and the
-            everyday realities of individuals, leaders and organizations.
+          <p
+            className="mt-5 text-sm font-medium italic text-white"
+            style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
+          >
+            &ldquo;Every breakthrough begins with being understood.&rdquo; — The Mindcarter Team
           </p>
           <Link
             to="/contact"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground shadow-[0_1px_0_rgba(0,0,0,0.08)] transition hover:-translate-y-0.5 hover:shadow-md"
+            className="mt-7 inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground shadow-[0_1px_0_rgba(0,0,0,0.08)] transition hover:-translate-y-0.5 hover:shadow-md"
           >
             Work with us <ArrowRight className="h-4 w-4" />
           </Link>
-        </ScrollReveal>
-
-        {/* Right — image + geometric accents + floating quote card */}
-        <ScrollReveal delay={0.15} className="relative">
-          <div aria-hidden className="absolute -right-5 -top-5 h-28 w-28 rounded-3xl bg-brand" />
-          <div
-            aria-hidden
-            className="absolute -bottom-6 -left-6 h-24 w-24 rounded-2xl border-2 border-foreground/10 bg-muted"
-          />
-          <div className="relative overflow-hidden rounded-[2rem] shadow-2xl">
-            <img
-              src={teamImg}
-              alt="The Mindcarter team"
-              className="aspect-[4/5] h-full w-full object-cover"
-            />
-          </div>
-
-          {/* floating quote card */}
-          <div className="absolute -bottom-6 left-6 max-w-[250px] rounded-2xl border border-border bg-background p-4 shadow-xl">
-            <Quote className="h-4 w-4 text-brand" strokeWidth={2.5} />
-            <p className="mt-2 text-sm font-semibold italic leading-snug">
-              &ldquo;Every breakthrough begins with being understood.&rdquo;
-            </p>
-            <p className="mt-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              — The Mindcarter Team
-            </p>
-          </div>
         </ScrollReveal>
       </div>
     </section>
