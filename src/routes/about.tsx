@@ -1,10 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Quote } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Quote, ArrowRight } from "lucide-react";
 import { SiteShell } from "../components/site-shell";
-import { AngularCornerBackground } from "../components/angular-background";
+import heroImg from "../assets/hero.jpg";
+import teamImg from "../assets/team.png";
 import amarRajanImg from "../assets/amar-rajan.png";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "../components/scroll-reveal";
-import { useParallaxScroll } from "../hooks/use-parallax-scroll";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -24,34 +24,217 @@ export const Route = createFileRoute("/about")({
   component: AboutPage,
 });
 
-function AboutHero() {
-  const scrollY = useParallaxScroll();
-  const textY = Math.min(scrollY * 0.5, 120);
-  const textOpacity = Math.max(1 - scrollY / 400, 0);
-
+/* ── Small eyebrow label reused across sections ─────────────────────────── */
+function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <section className="relative flex h-[50vh] min-h-[380px] items-center justify-center overflow-hidden border-b border-border bg-white">
-      {/* ── Angular black/gold geometric background ── */}
-      <AngularCornerBackground />
+    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+      <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
+      {children}
+    </p>
+  );
+}
 
+/* ── 1. Hero — copy left, image right with a floating quote card ─────────── */
+function AboutHero() {
+  return (
+    <section className="relative overflow-hidden bg-background pt-28 pb-20 sm:pt-32 sm:pb-28">
       <div
-        className="relative mx-auto max-w-2xl px-6 text-center text-foreground"
-        style={{
-          transform: `translateY(${-textY}px)`,
-          opacity: textOpacity,
-          willChange: "transform, opacity",
-        }}
-      >
-        <Quote className="mx-auto h-6 w-6 text-brand" strokeWidth={2.5} />
-        <p className="mt-3 text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
-          About
-        </p>
-        <h1 className="font-display mt-4 text-3xl font-black italic leading-[1.15] tracking-tight sm:text-5xl">
-          &ldquo;Every breakthrough begins with being understood.&rdquo;
-        </h1>
-        <p className="mt-5 text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          — The Mindcarter Team
-        </p>
+        aria-hidden
+        className="pointer-events-none absolute -left-24 top-16 h-72 w-72 rounded-full bg-brand/10 blur-3xl"
+      />
+
+      <div className="relative mx-auto grid max-w-7xl items-center gap-16 px-6 lg:grid-cols-2">
+        {/* Left — copy */}
+        <ScrollReveal>
+          <Eyebrow>About Mindcarter</Eyebrow>
+          <h1 className="font-display mt-5 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
+            A practice built where clinical rigor meets human curiosity.
+          </h1>
+          <p className="mt-6 max-w-lg text-base leading-relaxed text-muted-foreground">
+            Mindcarter was founded to close the gap between the science of psychology and the
+            everyday realities of individuals, leaders and organizations.
+          </p>
+          <Link
+            to="/contact"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground shadow-[0_1px_0_rgba(0,0,0,0.08)] transition hover:-translate-y-0.5 hover:shadow-md"
+          >
+            Work with us <ArrowRight className="h-4 w-4" />
+          </Link>
+        </ScrollReveal>
+
+        {/* Right — image + geometric accents + floating quote card */}
+        <ScrollReveal delay={0.15} className="relative">
+          <div aria-hidden className="absolute -right-5 -top-5 h-28 w-28 rounded-3xl bg-brand" />
+          <div
+            aria-hidden
+            className="absolute -bottom-6 -left-6 h-24 w-24 rounded-2xl border-2 border-foreground/10 bg-muted"
+          />
+          <div className="relative overflow-hidden rounded-[2rem] shadow-2xl">
+            <img
+              src={teamImg}
+              alt="The Mindcarter team"
+              className="aspect-[4/5] h-full w-full object-cover"
+            />
+          </div>
+
+          {/* floating quote card */}
+          <div className="absolute -bottom-6 left-6 max-w-[250px] rounded-2xl border border-border bg-background p-4 shadow-xl">
+            <Quote className="h-4 w-4 text-brand" strokeWidth={2.5} />
+            <p className="mt-2 text-sm font-semibold italic leading-snug">
+              &ldquo;Every breakthrough begins with being understood.&rdquo;
+            </p>
+            <p className="mt-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              — The Mindcarter Team
+            </p>
+          </div>
+        </ScrollReveal>
+      </div>
+    </section>
+  );
+}
+
+/* ── 2. Our story — image left with floating stat card, copy right ──────── */
+function OurStory() {
+  return (
+    <section className="relative overflow-hidden border-t border-border bg-background py-20 sm:py-28">
+      <div className="mx-auto grid max-w-7xl items-center gap-16 px-6 lg:grid-cols-2">
+        {/* Left — portrait with accent + floating stat card */}
+        <ScrollReveal className="relative">
+          <div
+            aria-hidden
+            className="absolute -left-5 -top-5 h-28 w-28 rounded-3xl bg-brand/20"
+          />
+          <div className="relative flex items-end justify-center overflow-hidden rounded-[2rem] bg-brand/10">
+            <img
+              src={amarRajanImg}
+              alt="Amar Rajan — CEO, Mindcarter"
+              className="max-h-[480px] w-auto object-contain object-bottom"
+              loading="lazy"
+            />
+          </div>
+
+          {/* floating stat card */}
+          <div className="absolute -right-4 top-10 rounded-2xl border border-border bg-background px-5 py-4 shadow-xl">
+            <p className="font-display text-3xl font-black leading-none text-foreground">32</p>
+            <p className="mt-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              Countries served
+            </p>
+          </div>
+        </ScrollReveal>
+
+        {/* Right — copy */}
+        <ScrollReveal delay={0.15}>
+          <Eyebrow>Our story</Eyebrow>
+          <h2 className="font-display mt-4 text-3xl font-black tracking-tight sm:text-4xl">
+            Founded by clinicians, built for scale.
+          </h2>
+          <p className="mt-6 leading-relaxed text-muted-foreground">
+            We started Mindcarter after a decade in academic hospitals and Fortune 500 boardrooms —
+            convinced that the tools of clinical psychology and organizational science deserved a
+            modern, accessible home.
+          </p>
+          <p className="mt-4 leading-relaxed text-muted-foreground">
+            Today we serve individuals in 32 countries and partner with enterprises across finance,
+            technology and healthcare — always with the same evidence-first standard.
+          </p>
+        </ScrollReveal>
+      </div>
+    </section>
+  );
+}
+
+/* ── 3. Mission & Vision — copy left, stacked cards right ────────────────── */
+function MissionVision() {
+  return (
+    <section className="relative overflow-hidden border-t border-border bg-muted/30 py-20 sm:py-28">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute right-0 top-16 h-44 w-44 rounded-l-[2.5rem] bg-brand/15"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-10 left-12 h-40 w-40 rounded-full bg-foreground/[0.03]"
+      />
+
+      <div className="relative mx-auto grid max-w-7xl items-center gap-16 px-6 lg:grid-cols-2">
+        <ScrollReveal>
+          <Eyebrow>What drives us</Eyebrow>
+          <h2 className="font-display mt-4 text-3xl font-black tracking-tight sm:text-4xl">
+            The principles that guide every engagement.
+          </h2>
+          <p className="mt-6 max-w-md leading-relaxed text-muted-foreground">
+            Two commitments shape how we show up for the people and organizations we serve — one for
+            today, one for the world we&rsquo;re working toward.
+          </p>
+        </ScrollReveal>
+
+        <StaggerContainer className="grid gap-5">
+          <StaggerItem>
+            <Panel
+              eyebrow="Mission"
+              title="Make research-backed psychological care the default — for people and organizations."
+            />
+          </StaggerItem>
+          <StaggerItem>
+            <Panel
+              eyebrow="Vision"
+              title="A world where every leader, team and individual has a licensed guide for the inner work."
+            />
+          </StaggerItem>
+        </StaggerContainer>
+      </div>
+    </section>
+  );
+}
+
+/* ── 4. Team — photo left, copy right, then the leadership grid ──────────── */
+const LEADERSHIP = ["Dr. Aditi Carter", "Dr. Marcus Vale", "Dr. Lena Ortiz", "Dr. Rohan Mehra"];
+
+function Team() {
+  return (
+    <section className="relative overflow-hidden border-t border-border bg-background py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="grid items-center gap-16 lg:grid-cols-2">
+          {/* Left — team photo with accent block */}
+          <ScrollReveal className="relative">
+            <div
+              aria-hidden
+              className="absolute -bottom-5 -right-5 h-32 w-32 rounded-3xl bg-brand"
+            />
+            <div className="relative overflow-hidden rounded-[2rem] shadow-2xl">
+              <img
+                src={heroImg}
+                alt="The Mindcarter team"
+                className="aspect-[4/3] h-full w-full object-cover"
+              />
+            </div>
+          </ScrollReveal>
+
+          {/* Right — copy */}
+          <ScrollReveal delay={0.15}>
+            <Eyebrow>Leadership</Eyebrow>
+            <h2 className="font-display mt-4 text-3xl font-black tracking-tight sm:text-4xl">
+              The people behind the practice.
+            </h2>
+            <p className="mt-6 max-w-md leading-relaxed text-muted-foreground">
+              Doctorate-level clinicians and organizational scientists who bring both rigor and
+              warmth to every engagement — and a team that keeps growing.
+            </p>
+          </ScrollReveal>
+        </div>
+
+        {/* Leadership grid */}
+        <StaggerContainer className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {LEADERSHIP.map((n) => (
+            <StaggerItem key={n}>
+              <div className="h-full rounded-2xl border border-border bg-background p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+                <div className="aspect-square rounded-xl bg-gradient-to-br from-neutral-300 to-neutral-500 transition-transform duration-500 hover:scale-105" />
+                <h3 className="mt-4 text-base font-semibold">{n}</h3>
+                <p className="text-xs text-muted-foreground">Doctorate-level clinician</p>
+              </div>
+            </StaggerItem>
+          ))}
+        </StaggerContainer>
       </div>
     </section>
   );
@@ -61,87 +244,21 @@ function AboutPage() {
   return (
     <SiteShell>
       <AboutHero />
-
-      <section className="border-b border-border bg-background py-16">
-        <ScrollReveal>
-          <div className="mx-auto max-w-3xl px-6 text-center">
-            <h2 className="font-display text-2xl font-black leading-snug tracking-tight sm:text-3xl">
-              A practice built where clinical rigor meets human curiosity.
-            </h2>
-            <p className="mt-4 leading-relaxed text-muted-foreground">
-              Mindcarter was founded to close the gap between the science of psychology and the everyday realities of individuals, leaders and organizations.
-            </p>
-          </div>
-        </ScrollReveal>
-      </section>
-
-      <section className="border-b border-border bg-background py-20">
-        <ScrollReveal>
-          <div className="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-2 lg:items-center">
-            <div className="flex items-end justify-center overflow-hidden rounded-3xl bg-brand/20">
-              <img
-                src={amarRajanImg}
-                alt="Amar Rajan — CEO, Mindcarter"
-                className="max-h-[480px] w-auto object-contain object-bottom"
-                loading="lazy"
-              />
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">Our story</p>
-              <h2 className="font-display mt-3 text-3xl font-black tracking-tight sm:text-4xl">Founded by clinicians, built for scale.</h2>
-              <p className="mt-6 leading-relaxed text-muted-foreground">
-                We started Mindcarter after a decade in academic hospitals and Fortune 500 boardrooms — convinced that the tools of clinical psychology and organizational science deserved a modern, accessible home.
-              </p>
-              <p className="mt-4 leading-relaxed text-muted-foreground">
-                Today we serve individuals in 32 countries and partner with enterprises across finance, technology and healthcare — always with the same evidence-first standard.
-              </p>
-            </div>
-          </div>
-        </ScrollReveal>
-      </section>
-
-      <section className="border-b border-border bg-muted/40 py-20">
-        <StaggerContainer className="mx-auto grid max-w-7xl gap-6 px-6 md:grid-cols-2">
-          <StaggerItem>
-            <Panel eyebrow="Mission" title="Make research-backed psychological care the default — for people and organizations." />
-          </StaggerItem>
-          <StaggerItem>
-            <Panel eyebrow="Vision" title="A world where every leader, team and individual has a licensed guide for the inner work." />
-          </StaggerItem>
-        </StaggerContainer>
-      </section>
-
-      <section className="border-b border-border bg-background py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <ScrollReveal>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">Leadership</p>
-            <h2 className="font-display mt-3 text-3xl font-black tracking-tight sm:text-4xl">The people behind the practice</h2>
-          </ScrollReveal>
-          <StaggerContainer className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {["Dr. Aditi Carter", "Dr. Marcus Vale", "Dr. Lena Ortiz", "Dr. Rohan Mehra"].map((n) => (
-              <StaggerItem key={n}>
-                <div className="rounded-2xl border border-border bg-background p-6 h-full transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-                  <div className="aspect-square rounded-xl bg-gradient-to-br from-neutral-300 to-neutral-500 transition-transform duration-500 hover:scale-105" />
-                  <h3 className="mt-4 text-base font-semibold">{n}</h3>
-                  <p className="text-xs text-muted-foreground">Doctorate-level clinician</p>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </section>
+      <OurStory />
+      <MissionVision />
+      <Team />
     </SiteShell>
   );
 }
 
 function Panel({ eyebrow, title }: { eyebrow: string; title: string }) {
   return (
-    <div className="rounded-3xl border border-border bg-background p-10">
+    <div className="rounded-3xl border border-border bg-background p-8 shadow-sm sm:p-10">
       <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
         <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
         {eyebrow}
       </p>
-      <p className="mt-4 text-2xl font-semibold leading-snug tracking-tight sm:text-3xl">{title}</p>
+      <p className="mt-4 text-xl font-semibold leading-snug tracking-tight sm:text-2xl">{title}</p>
     </div>
   );
 }

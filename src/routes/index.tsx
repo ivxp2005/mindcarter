@@ -193,7 +193,7 @@ function HomeAbout() {
       <div className="relative mx-auto max-w-7xl px-6">
         <div className="grid items-center gap-16 lg:grid-cols-2 lg:gap-12">
           {/* ── Left — photo mosaic ──────────────────────────────── */}
-          <ScrollReveal className="relative">
+          <ScrollReveal className="relative hidden lg:block">
             <div className="grid aspect-square grid-cols-4 grid-rows-4 gap-[3px] bg-border">
               {Array.from({ length: 16 }).map((_, i) => {
                 const row = Math.floor(i / 4);
@@ -559,6 +559,21 @@ const PSYCHOLOGISTS: {
 ];
 
 function Psychologists() {
+  const [query, setQuery] = useState("");
+
+  const matchesQuery = (p: (typeof PSYCHOLOGISTS)[number]) => {
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      p.name.toLowerCase().includes(q) ||
+      p.role.toLowerCase().includes(q) ||
+      p.languages.some((l) => l.toLowerCase().includes(q)) ||
+      p.tags.some((t) => t.toLowerCase().includes(q))
+    );
+  };
+
+  const hasMatches = PSYCHOLOGISTS.some(matchesQuery);
+
   return (
     <section
       className="relative overflow-hidden border-b border-border py-16 sm:py-20"
@@ -597,12 +612,19 @@ function Psychologists() {
               <Search className="pointer-events-none absolute left-5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search by name, specialty, language, or tags…"
                 className="w-full rounded-full border border-border bg-background py-3 pl-12 pr-5 text-sm shadow-sm outline-none transition focus:border-foreground"
               />
             </div>
 
             <StaggerContainer className="relative mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {!hasMatches && (
+            <p className="col-span-full py-10 text-center text-sm text-foreground/70">
+              No psychologists match your search.
+            </p>
+          )}
           {PSYCHOLOGISTS.map((p) => {
             const initials = p.name
               .replace(/^Dr\.\s*/, "")
@@ -611,7 +633,7 @@ function Psychologists() {
               .join("")
               .slice(0, 2);
             return (
-              <StaggerItem key={p.name}>
+              <StaggerItem key={p.name} className={matchesQuery(p) ? "" : "hidden"}>
                 <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-background transition-all duration-[400ms] ease-out hover:-translate-y-1 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]">
                   <div className="relative aspect-[16/9] overflow-hidden bg-muted">
                     {p.photo ? (

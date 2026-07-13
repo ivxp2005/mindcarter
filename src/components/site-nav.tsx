@@ -106,8 +106,8 @@ export function SiteNav() {
             : "bg-background/10 backdrop-blur-sm border-b border-transparent"
       }`}
     >
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
-        <Link to="/" className="flex items-center">
+      <div className="mx-auto grid h-20 max-w-7xl grid-cols-3 items-center px-6 md:flex md:justify-between">
+        <Link to="/" className="col-start-2 row-start-1 flex items-center justify-self-center md:col-start-auto md:justify-self-auto">
           <img
             src={logoImg}
             alt="Mindcarter"
@@ -257,7 +257,7 @@ export function SiteNav() {
         <button
           type="button"
           aria-label="Toggle menu"
-          className={`grid h-10 w-10 place-items-center rounded-md border md:hidden transition-colors ${
+          className={`col-start-1 row-start-1 grid h-10 w-10 place-items-center justify-self-start rounded-md border md:hidden transition-colors ${
             isDarkNav
               ? "border-white/20 text-white hover:bg-white/10"
               : "border-border text-foreground hover:bg-muted"
@@ -266,6 +266,29 @@ export function SiteNav() {
         >
           {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
         </button>
+
+        {/* Mobile right — Login (logged out) or avatar (logged in), opens the drawer */}
+        {role ? (
+          <button
+            type="button"
+            aria-label="Open account menu"
+            onClick={() => setMobileOpen((v) => !v)}
+            className={`col-start-3 row-start-1 grid h-10 w-10 place-items-center justify-self-end rounded-md border text-xs font-bold transition-colors md:hidden ${
+              isDarkNav
+                ? "border-white/20 bg-white/10 text-white"
+                : "border-border bg-muted text-foreground"
+            }`}
+          >
+            {initials}
+          </button>
+        ) : (
+          <Link
+            to="/login"
+            className="col-start-3 row-start-1 grid h-10 items-center justify-self-end rounded-md bg-brand px-3 text-sm font-semibold text-brand-foreground transition hover:opacity-90 md:hidden"
+          >
+            Login
+          </Link>
+        )}
       </div>
 
       {/* Mobile drawer */}
