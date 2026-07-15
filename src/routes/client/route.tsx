@@ -9,12 +9,12 @@ export const Route = createFileRoute("/client")({
   head: () => ({
     meta: [{ title: "My Wellness — Mindcarter" }, { name: "robots", content: "noindex" }],
   }),
+  staleTime: 60_000,
   beforeLoad: async ({ location }) => {
-    const user = await meFn();
+    const [user, { onboardingComplete }] = await Promise.all([meFn(), getOnboardingStatusFn()]);
     if (!user || user.role !== "patient") {
       throw redirect({ to: "/login" });
     }
-    const { onboardingComplete } = await getOnboardingStatusFn();
     if (!onboardingComplete && location.pathname !== "/client/profile") {
       throw redirect({ to: "/client/profile" });
     }

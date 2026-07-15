@@ -6,6 +6,7 @@ export const Route = createFileRoute("/psychologist")({
   head: () => ({
     meta: [{ title: "Psychologist Portal — Mindcarter" }, { name: "robots", content: "noindex" }],
   }),
+  staleTime: 60_000,
   beforeLoad: async () => {
     const user = await meFn();
     if (!user || user.role !== "psychologist") {
