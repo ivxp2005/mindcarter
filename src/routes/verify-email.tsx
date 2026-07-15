@@ -59,7 +59,7 @@ function VerifyEmailPage() {
       setError(result.error);
       return;
     }
-    navigate({ to: "/patient" });
+    navigate({ to: "/client" });
   };
 
   const handleResend = async () => {

@@ -22,6 +22,20 @@
       "when": 1783793583732,
       "tag": "0002_tearful_reptil",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1784114020265,
+      "tag": "0003_modern_exiles",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1784117040252,
+      "tag": "0004_cheerful_wendigo",
+      "breakpoints": true
     }
   ]
 }

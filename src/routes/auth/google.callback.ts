@@ -75,7 +75,7 @@ export const Route = createFileRoute("/auth/google/callback")({
             `${COOKIE_NAME}=${sessionToken}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${COOKIE_MAX_AGE_SECONDS}${secure}`,
           );
 
-          return redirectTo("/patient", headers);
+          return redirectTo("/client", headers);
         } catch (err) {
           if (err instanceof OAuth2RequestError) {
             return redirectTo("/login?error=oauth_denied", headers);

@@ -1,0 +1,1 @@
+ALTER TABLE "patient_profiles" ADD COLUMN "onboarding_complete" boolean DEFAULT false NOT NULL;

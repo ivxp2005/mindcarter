@@ -1,6 +1,7 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   date,
   integer,
   jsonb,
@@ -10,6 +11,7 @@ import {
   text,
   time,
   timestamp,
+  unique,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -39,6 +41,7 @@ export const sessionKindEnum = pgEnum("session_kind", [
   "assessment_review",
   "executive_coaching",
   "intake",
+  "follow_up",
 ]);
 
 export const bookingModeEnum = pgEnum("booking_mode", ["video", "in_person", "phone"]);
@@ -135,6 +138,16 @@ export const patientProfiles = pgTable("patient_profiles", {
   primaryConcern: text("primary_concern"),
   tags: text("tags").array(),
   totalSessions: integer("total_sessions").notNull().default(0),
+  // Profile-page fields (client portal /client/profile).
+  dateOfBirth: date("date_of_birth"),
+  address: text("address"),
+  emergencyContactName: varchar("emergency_contact_name", { length: 255 }),
+  emergencyContactPhone: varchar("emergency_contact_phone", { length: 32 }),
+  preferredLanguage: varchar("preferred_language", { length: 64 }),
+  notificationPrefs: jsonb("notification_prefs"),
+  // Gates access to the rest of the client portal — false until the patient
+  // fills in and saves the required profile fields at least once.
+  onboardingComplete: boolean("onboarding_complete").notNull().default(false),
 });
 
 // ─── psychologist_profiles ──────────────────────────────────────────────────
@@ -152,6 +165,9 @@ export const psychologistProfiles = pgTable("psychologist_profiles", {
   specialties: text("specialties").array(),
   bio: text("bio"),
   yearsExperience: integer("years_experience"),
+  // Care-Team card fields (client portal /client/care-team) + booking price.
+  rating: numeric("rating", { precision: 2, scale: 1 }),
+  price: numeric("price", { precision: 10, scale: 2 }),
 });
 
 // ─── availability_slots ─────────────────────────────────────────────────────
@@ -192,20 +208,31 @@ export const bookings = pgTable("bookings", {
 
 // ─── diary_entries ──────────────────────────────────────────────────────────
 
-export const diaryEntries = pgTable("diary_entries", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  patientId: uuid("patient_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  authorId: uuid("author_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  title: varchar("title", { length: 255 }).notNull(),
-  status: diaryStatusEnum("status").notNull().default("pending_review"),
-  submittedAt: timestamp("submitted_at", { withTimezone: true }).notNull().defaultNow(),
-  content: text("content").notNull(),
-  clinicianNote: text("clinician_note"),
-});
+export const diaryEntries = pgTable(
+  "diary_entries",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    patientId: uuid("patient_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    authorId: uuid("author_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    title: varchar("title", { length: 255 }).notNull(),
+    status: diaryStatusEnum("status").notNull().default("pending_review"),
+    submittedAt: timestamp("submitted_at", { withTimezone: true }).notNull().defaultNow(),
+    content: text("content").notNull(),
+    clinicianNote: text("clinician_note"),
+    // Client-portal wellness journal: 1–5 mood, freeform tags, and the
+    // calendar-day the entry belongs to (streak / per-day upsert / grouping).
+    mood: integer("mood"),
+    tags: text("tags").array(),
+    entryDate: date("entry_date")
+      .notNull()
+      .default(sql`CURRENT_DATE`),
+  },
+  (table) => [check("diary_entries_mood_range", sql`${table.mood} BETWEEN 1 AND 5`)],
+);
 
 // ─── notifications ──────────────────────────────────────────────────────────
 
@@ -222,6 +249,31 @@ export const notifications = pgTable("notifications", {
   actionUrl: text("action_url"),
   actionParams: jsonb("action_params"),
 });
+
+// ─── care_team_members ──────────────────────────────────────────────────────
+// The patient↔clinician link the client portal's Care Team reads from. A
+// patient can have several clinicians; exactly one is flagged `is_primary`.
+
+export const careTeamMembers = pgTable(
+  "care_team_members",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    patientId: uuid("patient_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    psychologistId: uuid("psychologist_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    isPrimary: boolean("is_primary").notNull().default(false),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    unique("care_team_members_patient_psychologist_unique").on(
+      table.patientId,
+      table.psychologistId,
+    ),
+  ],
+);
 
 // ─── Relations ──────────────────────────────────────────────────────────────
 
@@ -242,6 +294,8 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   diaryEntriesAsPatient: many(diaryEntries, { relationName: "patientDiaryEntries" }),
   diaryEntriesAsAuthor: many(diaryEntries, { relationName: "authoredDiaryEntries" }),
   notifications: many(notifications),
+  careTeamAsPatient: many(careTeamMembers, { relationName: "patientCareTeam" }),
+  careTeamAsPsychologist: many(careTeamMembers, { relationName: "psychologistCareTeam" }),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -317,5 +371,18 @@ export const notificationsRelations = relations(notifications, ({ one }) => ({
   user: one(users, {
     fields: [notifications.userId],
     references: [users.id],
+  }),
+}));
+
+export const careTeamMembersRelations = relations(careTeamMembers, ({ one }) => ({
+  patient: one(users, {
+    fields: [careTeamMembers.patientId],
+    references: [users.id],
+    relationName: "patientCareTeam",
+  }),
+  psychologist: one(users, {
+    fields: [careTeamMembers.psychologistId],
+    references: [users.id],
+    relationName: "psychologistCareTeam",
   }),
 }));

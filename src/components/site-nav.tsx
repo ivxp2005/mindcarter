@@ -22,7 +22,7 @@ const publicLinks = [
   { to: "/contact", label: "Contact" },
 ] as const;
 
-const patientLinks = [{ to: "/patient", label: "My Wellness", icon: Home }] as const;
+const patientLinks = [{ to: "/client", label: "My Wellness", icon: Home }] as const;
 
 const doctorLinks = [
   { to: "/psychologist", label: "Dashboard", icon: LayoutDashboard },
@@ -67,10 +67,10 @@ export function SiteNav() {
 
   const isDoctor = role === "psychologist";
   const isPatient = role === "patient";
-  const portalTo = isDoctor ? "/psychologist" : "/patient";
+  const portalTo = isDoctor ? "/psychologist" : "/client";
   const roleLinks = isDoctor ? doctorLinks : isPatient ? patientLinks : null;
   const userName = session?.name ?? "";
-  const userRole = isDoctor ? "Psychologist" : isPatient ? "Patient" : "";
+  const userRole = isDoctor ? "Psychologist" : isPatient ? "Client" : "";
   const initials = session
     ? session.name
         .split(" ")
@@ -107,7 +107,10 @@ export function SiteNav() {
       }`}
     >
       <div className="mx-auto grid h-20 max-w-7xl grid-cols-3 items-center px-6 md:flex md:justify-between">
-        <Link to="/" className="col-start-2 row-start-1 flex items-center justify-self-center md:col-start-auto md:justify-self-auto">
+        <Link
+          to="/"
+          className="col-start-2 row-start-1 flex items-center justify-self-center md:col-start-auto md:justify-self-auto"
+        >
           <img
             src={logoImg}
             alt="Mindcarter"

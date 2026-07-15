@@ -67,7 +67,7 @@ const ROLE_CONFIG: Record<
 };
 
 const ROLE_REDIRECT: Record<UserRole, string> = {
-  patient: "/patient",
+  patient: "/client",
   psychologist: "/psychologist",
   admin: "/",
 };

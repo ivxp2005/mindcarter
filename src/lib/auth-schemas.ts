@@ -11,7 +11,42 @@ export const passwordSchema = z
   .regex(/[0-9]/, "At least one number")
   .regex(/[^A-Za-z0-9]/, "At least one special character");
 
-export const emailSchema = z.string().trim().toLowerCase().email("Enter a valid email address");
+// Common free-mail providers, keyed by the label before the first dot in the
+// domain — catches typo'd TLDs like "gmail.ghshg" that a generic email regex
+// (which only requires *some* dot-separated TLD) would otherwise accept.
+const KNOWN_EMAIL_DOMAINS: Record<string, string> = {
+  gmail: "gmail.com",
+  googlemail: "googlemail.com",
+  yahoo: "yahoo.com",
+  ymail: "ymail.com",
+  hotmail: "hotmail.com",
+  outlook: "outlook.com",
+  live: "live.com",
+  icloud: "icloud.com",
+  aol: "aol.com",
+  msn: "msn.com",
+  proton: "proton.me",
+  protonmail: "protonmail.com",
+};
+
+export const emailSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .email("Enter a valid email address")
+  .refine((value) => {
+    const domain = value.split("@")[1] ?? "";
+    const provider = domain.split(".")[0];
+    const expected = KNOWN_EMAIL_DOMAINS[provider];
+    return !expected || domain === expected;
+  }, "Check the email domain for typos (e.g. gmail.com)");
+
+// Used for profile contact fields (patient phone, emergency contact phone) —
+// digits-only, exactly 10, but empty is allowed since these fields are optional.
+export const phoneSchema = z
+  .string()
+  .trim()
+  .refine((v) => v === "" || /^\d{10}$/.test(v), "Enter a 10-digit phone number");
 
 export const signupSchema = z.object({
   name: z.string().trim().min(1, "Name is required"),

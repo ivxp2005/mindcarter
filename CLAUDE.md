@@ -9,6 +9,11 @@ consulting business (public pages, patient/psychologist login, and a hidden admi
 Built from a Lovable-generated TanStack Start template; this project stays connected to
 [Lovable](https://lovable.dev) for sync.
 
+This repo is connected to Lovable: avoid rewriting published git history (force-pushing,
+rebasing/amending/squashing already-pushed commits) since it rewrites history on Lovable's side
+too, and keep the connected branch in a working state since every push syncs back into the
+Lovable editor (see `AGENTS.md`).
+
 ## Commands
 
 Package manager is **bun** (see `bun.lock`, `bunfig.toml`); `package-lock.json` also exists but bun is primary.
@@ -19,6 +24,10 @@ Package manager is **bun** (see `bun.lock`, `bunfig.toml`); `package-lock.json` 
 - `bun run preview` — preview a production build
 - `bun run lint` — eslint over the repo
 - `bun run format` — prettier --write .
+- `bun run db:generate` — generate a Drizzle migration from `src/db/schema.ts` changes
+- `bun run db:migrate` — apply pending migrations (needs `DATABASE_URL`)
+- `bun run db:studio` — open Drizzle Studio against `DATABASE_URL`
+- `bun run db:seed` — bootstrap the first admin account (`tsx --env-file=.env src/db/seed.ts`)
 
 There is no test suite configured in this repo.
 
@@ -27,6 +36,14 @@ There is no test suite configured in this repo.
 `bunfig.toml` enforces a 24h supply-chain guard (`minimumReleaseAge`) blocking newly-published
 package versions. Only `@lovable.dev/*` packages are excluded. Do not add new excludes without
 confirming with the user first.
+
+### Environment variables
+
+See `.env.example` for the full list with explanations: `DATABASE_URL` (Postgres, e.g.
+Supabase), `SESSION_SECRET` (HMAC-signs session cookies), `SEED_ADMIN_*` (used only by
+`db:seed`), `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` (patient Google sign-in),
+`RESEND_API_KEY`/`EMAIL_FROM` (transactional email), `APP_ORIGIN` (fallback base URL for
+password-reset links).
 
 ## Architecture
 
@@ -81,28 +98,50 @@ SSR errors are caught at two layers so users never see a raw stack trace or blan
 When touching server entry/middleware code, preserve both layers — they cover different
 failure modes (thrown-but-caught vs. swallowed-by-h3).
 
-### Auth / portals (prototype-stage, not production auth)
+### Database
 
-There are two unrelated, parallel "auth" mechanisms in this codebase — know which one a file
-uses before changing it:
+Postgres via Drizzle ORM. Schema lives entirely in `src/db/schema.ts`; `src/db/client.server.ts`
+exports the `db` handle (server-only — never import it from client code). Core tables: `users`
+(shared by all three roles, discriminated by `role` enum), `sessions`, `email_otps`,
+`password_reset_tokens`, `patient_profiles` / `psychologist_profiles` (1:1 extensions of
+`users`, deliberately separate so clinical data can carry stricter access control), a single
+`bookings` table (unifies what were previously separate admin "Booking" and psychologist
+"Meeting" concepts — see the `db-audit.md` decision comments inline in `schema.ts`),
+`diary_entries`, and `notifications`. After editing `schema.ts`, run `bun run db:generate` to
+emit a migration into `src/db/migrations/` — never hand-write migration SQL.
 
-- **Patient / Psychologist** (`/login`, `PortalShell` in `src/components/portal-shell.tsx`):
-  no real authentication. `/login` just writes a role string to `localStorage` (`mc_role`) and
-  redirects; there's no credential check. Treat any "signed in" state here as UI-only.
-- **Admin** (`/portal-management-access`): a hidden, unlinked route (no nav/footer links,
-  blocked in `public/robots.txt`) with its own client-side login gate using a hardcoded
-  email/password and a `sessionStorage`-backed session token (`__mc_adm_session`). Mock data
-  (bookings, verifications, users, tickets) is inlined in the route file — there is no backend.
-  `src/lib/auth.ts` defines a **separate**, unused-by-the-route HMAC session-token scheme
-  (Web Crypto, no deps) intended for a real server-verified admin session — it is not currently
-  wired into `/portal-management-access`, which does its own thing client-side instead.
+### Auth / portals
+
+All three roles (patient, psychologist, admin) share **one real, DB-backed auth system** in
+`src/lib/auth.server.ts` — there is no separate/weaker admin scheme and no mock/localStorage
+auth left in the app.
+
+- Session scheme: an HMAC-SHA256-signed, self-verifying cookie token (`userId|role|expiresAt` +
+  signature, cookie name `__mc_session`) — the signature lets `getSessionUser()` reject
+  tampered/expired tokens without a DB hit, but verification still re-checks the `sessions`
+  table (for revocability — sign-out, admin-suspends-user) and the user's current `status`, so a
+  suspended account is locked out immediately.
+- Passwords are bcrypt-hashed (`hashPassword`/`verifyPassword`, cost 12). Google-OAuth-only
+  accounts have `passwordHash: null`.
+- Route guarding is per-layout-route `beforeLoad`, e.g. `src/routes/patient/route.tsx` and
+  `src/routes/psychologist/route.tsx` both call `meFn()` and `redirect({ to: "/login" })` if the
+  session is missing or the role doesn't match. `portal-management-access.tsx` does the same but
+  only accepts `role === "admin"` — patient/psychologist sessions are valid logins but rejected
+  there.
+- Signup/login/password-reset/OTP-email are `createServerFn` handlers in `auth.server.ts`;
+  Google sign-in (`src/routes/auth/google.ts` + `google.callback.ts`) is patient-only by product
+  decision and reuses `createSessionToken`/`COOKIE_NAME` directly since the callback returns a
+  raw `Response` rather than going through h3 cookie helpers. Email sending goes through
+  `src/lib/email.server.ts` (Resend).
+- Email-verification-OTP is fully built (`createAndSendOtp`, `verifyOtpFn`, `resendOtpFn`,
+  `/verify-email`) but not currently wired into `signupFn` — see the `TODO` comment in
+  `signupFn` for how to re-enable it.
 - `/secure-admin-portal` is an intentionally dead route that always 404s — a decoy. Never link
-  to it or to `/portal-management-access` from public UI (nav, footer, sitemap).
-- `src/lib/auth.ts` explicitly documents that `ADMIN_EMAIL`/`ADMIN_PASSWORD`/`SESSION_SECRET`
-  are placeholders to be replaced with a real DB lookup + env vars before production.
-
-Given the above, do not assume any portal route is actually access-controlled server-side —
-none of them are today.
+  to it or to `/portal-management-access` from public UI (nav, footer, sitemap); `robots.txt`
+  also blocks crawlers from the real admin path.
+- Admin (`/portal-management-access`) still has UI sections backed by inline mock data where the
+  corresponding DB-backed server functions haven't been built yet — check the route file before
+  assuming a given admin panel is live-wired to Postgres.
 
 ### UI components
 
@@ -112,11 +151,40 @@ Treat these as generated/vendored; prefer composing them from `src/components/` 
 hand-editing internals unless fixing a real bug.
 
 Hand-written layout components: `site-shell.tsx` / `site-nav.tsx` / `site-footer.tsx` (public
-marketing pages), `portal-shell.tsx` (patient/psychologist portal chrome — sidebar + profile
-dropdown), `page-hero.tsx`, `scroll-reveal.tsx`.
+marketing pages), `portal-shell.tsx` (psychologist portal chrome — sidebar + profile dropdown,
+used only by `src/routes/psychologist/route.tsx`), `wellness-shell.tsx` (patient portal chrome,
+used only by `src/routes/patient/route.tsx`), `page-hero.tsx`, `scroll-reveal.tsx`. The admin
+console (`portal-management-access.tsx`) builds its own layout inline rather than reusing either
+shell.
 
 ### Linting
 
 `eslint.config.js` bans importing the `server-only` package (Next.js convention) — TanStack
 Start instead uses `*.server.ts` filename suffixes or the
 `@tanstack/react-start/server-only` marker for server-only modules.
+
+## UI/UX Redesign Rules
+When doing UI/UX redesign work on this project:
+- Keep the existing black + yellow brand identity used across the marketing/home/
+  hero pages — the patient portal must feel visually consistent with the rest of 
+  the site, not switch to a different palette
+- Before redesigning the patient portal, inspect the home/hero pages for the 
+  existing typography scale, spacing rhythm, and any motion/transition patterns 
+  already in use — extend that language into the portal rather than inventing 
+  a disconnected new one
+- "Redesign" means elevating structure AND interaction quality — not just 
+  rearranging static boxes. Every interactive element needs deliberate hover/
+  active/focus states, and transitions should use eased easing curves 
+  (150-300ms), never instant snaps
+- Add real motion: hover lift/scale on cards and buttons, smooth scroll-reveal 
+  for content entering the viewport, animated number counters for stats, 
+  smooth page/section transitions. Use whatever animation approach fits the 
+  existing stack (check package.json — Framer Motion if React, GSAP, or CSS 
+  transitions/Intersection Observer if vanilla)
+- Avoid the "obviously AI-generated" look: no static lifeless card dumps, no 
+  default unstyled browser hover states, no uniform symmetric grids with zero 
+  visual hierarchy
+- Before touching any page, list every existing data field, label, and piece 
+  of content so nothing gets dropped
+- Propose 2-3 different structural/interaction directions per page before 
+  implementing the chosen one
