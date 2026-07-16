@@ -95,7 +95,7 @@ function LoginPage() {
     setLoading(true);
     setError(null);
     setPendingEmail(null);
-    const result = await loginFn({ data: { email, password } });
+    const result = await loginFn({ data: { email, password, role } });
     setLoading(false);
     if (!result.ok) {
       setError(result.error);

@@ -351,18 +351,25 @@ export const adminMeFn = createServerFn({ method: "GET" }).handler(async () => {
 });
 
 export const loginFn = createServerFn({ method: "POST" })
-  .validator((data: unknown) => data as { email: string; password: string })
+  .validator(
+    (data: unknown) => data as { email: string; password: string; role: "patient" | "psychologist" },
+  )
   .handler(async ({ data }) => {
     const parsed = loginSchema.safeParse(data);
     if (!parsed.success) {
       return { ok: false as const, error: parsed.error.issues[0].message };
     }
+    if (data.role !== "patient" && data.role !== "psychologist") {
+      return { ok: false as const, error: "Invalid email or password." };
+    }
 
     const result = await authenticate(parsed.data.email, parsed.data.password);
     if (!result.ok) return result;
     // Admin credentials never work on the public login form — admins sign in
-    // at the hidden /portal-management-access console only.
-    if (result.user.role === "admin") {
+    // at the hidden /portal-management-access console only. Likewise, a
+    // patient signing in through the psychologist tab (or vice versa) must
+    // be rejected — each role only logs in through its own tab.
+    if (result.user.role !== data.role) {
       return { ok: false as const, error: "Invalid email or password." };
     }
 
