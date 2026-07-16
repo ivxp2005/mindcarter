@@ -20,7 +20,7 @@ import {
   type ChartConfig,
 } from "../../components/ui/chart";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "../../components/scroll-reveal";
-import { PATIENT_GROWTH, SESSION_TYPE_BREAKDOWN, WEEKLY_SESSIONS } from "../../lib/psychologist";
+import { usePsychologistData } from "../../lib/psychologist-store";
 
 export const Route = createFileRoute("/psychologist/analytics")({
   component: AnalyticsPage,
@@ -40,20 +40,30 @@ const growthConfig: ChartConfig = {
   patients: { label: "Patients", color: "var(--brand)" },
 };
 
-const typeData = SESSION_TYPE_BREAKDOWN.map((s) => ({ ...s, key: slug(s.type) }));
-const typeConfig: ChartConfig = Object.fromEntries(
-  typeData.map((s, i) => [s.key, { label: s.type, color: TYPE_PALETTE[i % TYPE_PALETTE.length] }]),
-);
-
 function AnalyticsPage() {
-  const avgSessions = Math.round(
-    WEEKLY_SESSIONS.reduce((sum, w) => sum + w.sessions, 0) / WEEKLY_SESSIONS.length,
+  const { meetings, weeklySessions, sessionTypeBreakdown, patientGrowth } = usePsychologistData();
+
+  const typeData = sessionTypeBreakdown.map((s) => ({ ...s, key: slug(s.type) }));
+  const typeConfig: ChartConfig = Object.fromEntries(
+    typeData.map((s, i) => [
+      s.key,
+      { label: s.type, color: TYPE_PALETTE[i % TYPE_PALETTE.length] },
+    ]),
   );
+
+  const avgSessions = weeklySessions.length
+    ? Math.round(weeklySessions.reduce((sum, w) => sum + w.sessions, 0) / weeklySessions.length)
+    : 0;
+  const completedCount = meetings.filter((m) => m.status === "completed").length;
+  const nonCanceledCount = meetings.filter((m) => m.status !== "canceled").length;
+  const completionRate = nonCanceledCount
+    ? Math.round((completedCount / nonCanceledCount) * 100)
+    : 0;
 
   const kpis = [
     { icon: CalendarCheck2, value: String(avgSessions), label: "Avg sessions / week" },
-    { icon: TrendingUp, value: "94%", label: "Completion rate" },
-    { icon: Users2, value: "88%", label: "Patient retention" },
+    { icon: TrendingUp, value: `${completionRate}%`, label: "Completion rate" },
+    { icon: Users2, value: String(patientGrowth.at(-1)?.patients ?? 0), label: "Active patients" },
   ];
 
   return (
@@ -86,7 +96,7 @@ function AnalyticsPage() {
             <h2 className="text-lg font-semibold">Sessions per week</h2>
             <p className="text-sm text-muted-foreground">Last 8 weeks</p>
             <ChartContainer config={weeklyConfig} className="mt-4 aspect-auto h-64 w-full">
-              <BarChart data={WEEKLY_SESSIONS}>
+              <BarChart data={weeklySessions}>
                 <CartesianGrid vertical={false} />
                 <XAxis dataKey="week" tickLine={false} axisLine={false} tickMargin={8} />
                 <ChartTooltip content={<ChartTooltipContent />} />
@@ -127,7 +137,7 @@ function AnalyticsPage() {
           <h2 className="text-lg font-semibold">Patient growth</h2>
           <p className="text-sm text-muted-foreground">Active patients over the last 9 months</p>
           <ChartContainer config={growthConfig} className="mt-4 aspect-auto h-64 w-full">
-            <AreaChart data={PATIENT_GROWTH}>
+            <AreaChart data={patientGrowth}>
               <defs>
                 <linearGradient id="patientsFill" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="var(--color-patients)" stopOpacity={0.35} />

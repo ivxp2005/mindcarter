@@ -14,6 +14,7 @@
 
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import {
   Users,
   CalendarDays,
@@ -54,9 +55,19 @@ import {
   Tag,
   CheckCheck,
   ArrowUpRight,
+  UserPlus,
+  Trash2,
+  RotateCcw,
+  X,
 } from "lucide-react";
-import { loginFn, logoutFn, meFn } from "../lib/auth.server";
+import { adminLoginFn, adminLogoutFn, adminMeFn } from "../lib/auth.server";
 import type { SessionUser } from "../lib/auth-types";
+import {
+  AdminDataProvider,
+  useAdminData,
+  type AdminUserDTO,
+  type CreatePsychologistInput,
+} from "../lib/admin-store";
 
 // ─── Route ────────────────────────────────────────────────────────────────────
 export const Route = createFileRoute("/portal-management-access")({
@@ -75,20 +86,24 @@ function AdminPortal() {
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    meFn().then((user) => {
+    adminMeFn().then((user) => {
       setAdmin(user && user.role === "admin" ? user : null);
       setChecked(true);
     });
   }, []);
 
   const handleLogout = async () => {
-    await logoutFn();
+    await adminLogoutFn();
     setAdmin(null);
   };
 
   if (!checked) return null;
   if (!admin) return <AdminLoginPage onSuccess={(a) => setAdmin(a)} />;
-  return <AdminDashboard admin={admin} onLogout={handleLogout} />;
+  return (
+    <AdminDataProvider>
+      <AdminDashboard admin={admin} onLogout={handleLogout} />
+    </AdminDataProvider>
+  );
 }
 
 // ─── Login Page ───────────────────────────────────────────────────────────────
@@ -109,23 +124,14 @@ function AdminLoginPage({ onSuccess }: { onSuccess: (a: SessionUser) => void }) 
     if (loading || attempts >= 5) return;
     setLoading(true);
     setError(null);
-    const result = await loginFn({ data: { email, password } });
-    if (result.ok && result.role !== "admin") {
-      // Valid credentials, but not an admin account — don't leave a
-      // non-admin session established on this console.
-      await logoutFn();
-      setLoading(false);
-      setAttempts((n) => n + 1);
-      setError("Access denied.");
-      return;
-    }
+    const result = await adminLoginFn({ data: { email, password } });
     setLoading(false);
     if (!result.ok) {
       setAttempts((n) => n + 1);
       setError(result.error);
       return;
     }
-    const me = await meFn();
+    const me = await adminMeFn();
     if (me) onSuccess(me);
   };
   const locked = attempts >= 5;
@@ -307,370 +313,8 @@ type NavId = (typeof NAV_ITEMS)[number]["id"];
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 type BookingStatus = "Scheduled" | "Completed" | "Canceled" | "Refunded";
-interface Booking {
-  id: string;
-  patient: string;
-  psychologist: string;
-  dateTime: string;
-  status: BookingStatus;
-  type: string;
-  amount: string;
-}
-const BOOKINGS: Booking[] = [
-  {
-    id: "BK-001",
-    patient: "Alex Morgan",
-    psychologist: "Dr. Aditi Carter",
-    dateTime: "2024-07-12 10:00 AM",
-    status: "Scheduled",
-    type: "Video Session",
-    amount: "$120",
-  },
-  {
-    id: "BK-002",
-    patient: "Priya Shah",
-    psychologist: "Dr. Marcus Vale",
-    dateTime: "2024-07-11 02:30 PM",
-    status: "Completed",
-    type: "In-Person",
-    amount: "$150",
-  },
-  {
-    id: "BK-003",
-    patient: "Daniel Reyes",
-    psychologist: "Dr. Li Wei",
-    dateTime: "2024-07-10 11:00 AM",
-    status: "Canceled",
-    type: "Video Session",
-    amount: "$120",
-  },
-  {
-    id: "BK-004",
-    patient: "Fatima Al-Hassan",
-    psychologist: "Dr. Aditi Carter",
-    dateTime: "2024-07-13 09:00 AM",
-    status: "Scheduled",
-    type: "Chat Session",
-    amount: "$80",
-  },
-  {
-    id: "BK-005",
-    patient: "James Okafor",
-    psychologist: "Dr. Sofia Mendes",
-    dateTime: "2024-07-09 03:00 PM",
-    status: "Completed",
-    type: "Video Session",
-    amount: "$120",
-  },
-  {
-    id: "BK-006",
-    patient: "Emily Clarke",
-    psychologist: "Dr. Marcus Vale",
-    dateTime: "2024-07-14 01:00 PM",
-    status: "Scheduled",
-    type: "In-Person",
-    amount: "$150",
-  },
-  {
-    id: "BK-007",
-    patient: "Raj Patel",
-    psychologist: "Dr. Li Wei",
-    dateTime: "2024-07-08 10:30 AM",
-    status: "Refunded",
-    type: "Video Session",
-    amount: "$120",
-  },
-  {
-    id: "BK-008",
-    patient: "Sarah Kim",
-    psychologist: "Dr. Sofia Mendes",
-    dateTime: "2024-07-15 04:00 PM",
-    status: "Scheduled",
-    type: "Chat Session",
-    amount: "$80",
-  },
-];
-
 type VerifStatus = "pending" | "approved" | "rejected";
-interface PsychVerification {
-  id: string;
-  name: string;
-  email: string;
-  specialty: string;
-  submitted: string;
-  docs: { name: string; type: string }[];
-  status: VerifStatus;
-  experience: string;
-  license: string;
-}
-const VERIFICATIONS: PsychVerification[] = [
-  {
-    id: "V-001",
-    name: "Dr. Sofia Mendes",
-    email: "sofia@psych.com",
-    specialty: "Cognitive Behavioral Therapy",
-    submitted: "2 days ago",
-    experience: "8 years",
-    license: "PSY-2024-001",
-    docs: [
-      { name: "Medical License", type: "PDF" },
-      { name: "Degree Certificate", type: "PDF" },
-      { name: "ID Proof", type: "IMG" },
-    ],
-    status: "pending",
-  },
-  {
-    id: "V-002",
-    name: "Dr. James Okafor",
-    email: "james@psych.com",
-    specialty: "Trauma & PTSD",
-    submitted: "5 days ago",
-    experience: "12 years",
-    license: "PSY-2024-002",
-    docs: [
-      { name: "Medical License", type: "PDF" },
-      { name: "Degree Certificate", type: "PDF" },
-      { name: "Experience Letter", type: "PDF" },
-      { name: "ID Proof", type: "IMG" },
-    ],
-    status: "pending",
-  },
-  {
-    id: "V-003",
-    name: "Dr. Li Wei",
-    email: "liwei@psych.com",
-    specialty: "Child & Adolescent",
-    submitted: "1 week ago",
-    experience: "6 years",
-    license: "PSY-2024-003",
-    docs: [
-      { name: "Medical License", type: "PDF" },
-      { name: "ID Proof", type: "IMG" },
-    ],
-    status: "pending",
-  },
-  {
-    id: "V-004",
-    name: "Dr. Ana Ruiz",
-    email: "ana@psych.com",
-    specialty: "Couples & Family Therapy",
-    submitted: "2 weeks ago",
-    experience: "9 years",
-    license: "PSY-2024-004",
-    docs: [
-      { name: "Medical License", type: "PDF" },
-      { name: "Degree Certificate", type: "PDF" },
-      { name: "ID Proof", type: "IMG" },
-    ],
-    status: "approved",
-  },
-];
-
-interface UserRecord {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  role: "Patient" | "Psychologist";
-  status: "Active" | "Suspended" | "Pending";
-  joined: string;
-  sessions: number;
-}
-const USERS: UserRecord[] = [
-  {
-    id: "U-001",
-    name: "Alex Morgan",
-    email: "alex@email.com",
-    phone: "+1 555-0101",
-    role: "Patient",
-    status: "Active",
-    joined: "Jun 2024",
-    sessions: 12,
-  },
-  {
-    id: "U-002",
-    name: "Dr. Aditi Carter",
-    email: "aditi@psych.com",
-    phone: "+1 555-0102",
-    role: "Psychologist",
-    status: "Active",
-    joined: "May 2024",
-    sessions: 84,
-  },
-  {
-    id: "U-003",
-    name: "Priya Shah",
-    email: "priya@email.com",
-    phone: "+1 555-0103",
-    role: "Patient",
-    status: "Pending",
-    joined: "Jul 2024",
-    sessions: 2,
-  },
-  {
-    id: "U-004",
-    name: "Dr. Marcus Vale",
-    email: "marcus@psych.com",
-    phone: "+1 555-0104",
-    role: "Psychologist",
-    status: "Active",
-    joined: "Mar 2024",
-    sessions: 120,
-  },
-  {
-    id: "U-005",
-    name: "Daniel Reyes",
-    email: "daniel@email.com",
-    phone: "+1 555-0105",
-    role: "Patient",
-    status: "Suspended",
-    joined: "Jan 2024",
-    sessions: 5,
-  },
-  {
-    id: "U-006",
-    name: "Fatima Al-Hassan",
-    email: "fatima@email.com",
-    phone: "+1 555-0106",
-    role: "Patient",
-    status: "Active",
-    joined: "Apr 2024",
-    sessions: 8,
-  },
-  {
-    id: "U-007",
-    name: "Emily Clarke",
-    email: "emily@email.com",
-    phone: "+1 555-0107",
-    role: "Patient",
-    status: "Active",
-    joined: "Jun 2024",
-    sessions: 3,
-  },
-  {
-    id: "U-008",
-    name: "Dr. Sofia Mendes",
-    email: "sofia@psych.com",
-    phone: "+1 555-0108",
-    role: "Psychologist",
-    status: "Pending",
-    joined: "Jul 2024",
-    sessions: 0,
-  },
-];
-
 type TicketStatus = "Open" | "In Progress" | "Resolved";
-type TicketPriority = "Low" | "Medium" | "High";
-interface TicketMessage {
-  sender: "user" | "admin";
-  text: string;
-  time: string;
-}
-interface SupportTicket {
-  id: string;
-  user: string;
-  email: string;
-  subject: string;
-  status: TicketStatus;
-  priority: TicketPriority;
-  created: string;
-  messages: TicketMessage[];
-}
-const TICKETS_INIT: SupportTicket[] = [
-  {
-    id: "TKT-001",
-    user: "Alex Morgan",
-    email: "alex@email.com",
-    subject: "Unable to join video session",
-    status: "Open",
-    priority: "High",
-    created: "10 min ago",
-    messages: [
-      {
-        sender: "user",
-        text: "I keep getting a connection error when I try to join my video call. It says 'Session expired' but I just logged in.",
-        time: "10 min ago",
-      },
-    ],
-  },
-  {
-    id: "TKT-002",
-    user: "Priya Shah",
-    email: "priya@email.com",
-    subject: "Payment not reflecting after 3 days",
-    status: "In Progress",
-    priority: "High",
-    created: "1 hr ago",
-    messages: [
-      {
-        sender: "user",
-        text: "I paid for a session 3 days ago but it still shows as unpaid. Please help.",
-        time: "1 hr ago",
-      },
-      {
-        sender: "admin",
-        text: "Hi Priya, we are looking into this. Can you share your transaction ID?",
-        time: "45 min ago",
-      },
-      { sender: "user", text: "Transaction ID: TXN-84920. Paid via UPI.", time: "30 min ago" },
-    ],
-  },
-  {
-    id: "TKT-003",
-    user: "Daniel Reyes",
-    email: "daniel@email.com",
-    subject: "Account suspended without notice",
-    status: "Open",
-    priority: "Medium",
-    created: "3 hrs ago",
-    messages: [
-      {
-        sender: "user",
-        text: "My account was suddenly suspended. I didn't violate any terms. Please review.",
-        time: "3 hrs ago",
-      },
-    ],
-  },
-  {
-    id: "TKT-004",
-    user: "Emily Clarke",
-    email: "emily@email.com",
-    subject: "Can't reset my password",
-    status: "Resolved",
-    priority: "Low",
-    created: "Yesterday",
-    messages: [
-      { sender: "user", text: "The reset email never arrives in my inbox.", time: "Yesterday" },
-      {
-        sender: "admin",
-        text: "Please check your spam folder. We've also manually triggered a reset link for you.",
-        time: "Yesterday",
-      },
-      { sender: "user", text: "Found it! Thank you!", time: "Yesterday" },
-    ],
-  },
-  {
-    id: "TKT-005",
-    user: "Raj Patel",
-    email: "raj@email.com",
-    subject: "Refund not processed after cancellation",
-    status: "In Progress",
-    priority: "Medium",
-    created: "2 days ago",
-    messages: [
-      {
-        sender: "user",
-        text: "I cancelled my appointment 48 hours ago and was promised a refund within 5 business days. It's been 7 days.",
-        time: "2 days ago",
-      },
-      {
-        sender: "admin",
-        text: "Apologies for the delay, Raj. We've escalated this to our payments team.",
-        time: "1 day ago",
-      },
-    ],
-  },
-];
 
 const SYSTEM_HEALTH = [
   { name: "API Gateway", status: "Operational", color: "#22c55e", icon: CheckCircle },
@@ -679,40 +323,6 @@ const SYSTEM_HEALTH = [
   { name: "Email Delivery", status: "Operational", color: "#22c55e", icon: CheckCircle },
   { name: "Database (Primary)", status: "Operational", color: "#22c55e", icon: CheckCircle },
   { name: "Backup Service", status: "Completed 02:14", color: "#22c55e", icon: CheckCircle },
-] as const;
-
-const AUDIT_LOG = [
-  {
-    action: "User suspended",
-    actor: "admin@mindcarter.com",
-    target: "daniel@email.com",
-    time: "12 min ago",
-  },
-  {
-    action: "Psychologist approved",
-    actor: "admin@mindcarter.com",
-    target: "aditi@psych.com",
-    time: "1 hr ago",
-  },
-  {
-    action: "Booking canceled & refunded",
-    actor: "admin@mindcarter.com",
-    target: "BK-007",
-    time: "2 hr ago",
-  },
-  { action: "Admin sign-in", actor: "admin@mindcarter.com", target: "—", time: "2 hr ago" },
-  {
-    action: "Support ticket resolved",
-    actor: "admin@mindcarter.com",
-    target: "TKT-004",
-    time: "Yesterday",
-  },
-  {
-    action: "Revenue report exported",
-    actor: "admin@mindcarter.com",
-    target: "June 2024.pdf",
-    time: "Yesterday",
-  },
 ] as const;
 
 // ─── Shared UI helpers ─────────────────────────────────────────────────────────
@@ -741,6 +351,7 @@ function statusBadge(status: string) {
     Canceled: { bg: "rgba(239,68,68,0.12)", color: "#ef4444" },
     Refunded: { bg: "rgba(168,85,247,0.12)", color: "#a855f7" },
     Suspended: { bg: "rgba(239,68,68,0.12)", color: "#ef4444" },
+    Removed: { bg: "rgba(100,116,139,0.15)", color: "#94a3b8" },
     Rejected: { bg: "rgba(239,68,68,0.12)", color: "#ef4444" },
     Open: { bg: "rgba(239,68,68,0.12)", color: "#ef4444" },
     High: { bg: "rgba(239,68,68,0.12)", color: "#ef4444" },
@@ -985,7 +596,7 @@ function AdminDashboard({ admin, onLogout }: { admin: SessionUser; onLogout: () 
           {activeNav === "revenue" && <PlaceholderSection id="revenue" label="Revenue" />}
           {activeNav === "health" && <SystemHealthSection />}
           {activeNav === "audit" && <AuditLogSection />}
-          {activeNav === "settings" && <PlaceholderSection id="settings" label="Settings" />}
+          {activeNav === "settings" && <AdminSettingsSection admin={admin} />}
         </main>
       </div>
     </div>
@@ -994,28 +605,35 @@ function AdminDashboard({ admin, onLogout }: { admin: SessionUser; onLogout: () 
 
 // ─── Overview ─────────────────────────────────────────────────────────────────
 function OverviewSection() {
+  const { stats: real, pendingPsychologists, auditLog } = useAdminData();
   const stats = [
-    { icon: Users, label: "Total Patients", value: "18,540", delta: "+124 this week", up: true },
+    {
+      icon: Users,
+      label: "Total Patients",
+      value: real.totalPatients.toLocaleString(),
+      delta: "Live count",
+      up: null,
+    },
     {
       icon: Stethoscope,
       label: "Psychologists",
-      value: "241",
-      delta: "+3 pending review",
+      value: real.totalPsychologists.toLocaleString(),
+      delta: `${pendingPsychologists.length} pending review`,
       up: null,
     },
     {
       icon: CalendarDays,
       label: "Appts (30d)",
-      value: "9,214",
-      delta: "+8.2% vs last month",
-      up: true,
+      value: real.appts30d.toLocaleString(),
+      delta: "Live count",
+      up: null,
     },
     {
       icon: DollarSign,
       label: "Revenue (30d)",
-      value: "$1.24M",
-      delta: "+12.4% vs last month",
-      up: true,
+      value: real.revenue30d,
+      delta: "From completed bookings",
+      up: null,
     },
   ];
   return (
@@ -1051,7 +669,7 @@ function OverviewSection() {
         <div className="rounded-2xl p-6" style={C.card}>
           <h2 className="text-sm font-bold text-white">Recent Activity</h2>
           <ul className="mt-4 space-y-3">
-            {AUDIT_LOG.slice(0, 5).map((entry, i) => (
+            {auditLog.slice(0, 5).map((entry, i) => (
               <li key={i} className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-sm font-medium text-white">{entry.action}</p>
@@ -1064,6 +682,11 @@ function OverviewSection() {
                 </span>
               </li>
             ))}
+            {auditLog.length === 0 && (
+              <li className="text-sm" style={{ color: C.mutedLow }}>
+                No recent activity.
+              </li>
+            )}
           </ul>
         </div>
         <div className="rounded-2xl p-6" style={C.card}>
@@ -1092,7 +715,7 @@ function OverviewSection() {
 
 // ─── Booking Master Log ───────────────────────────────────────────────────────
 function BookingMasterLog() {
-  const [bookings, setBookings] = useState<Booking[]>(BOOKINGS);
+  const { bookings, cancelBooking, refundBooking } = useAdminData();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"All" | BookingStatus>("All");
   const [page, setPage] = useState(1);
@@ -1111,16 +734,8 @@ function BookingMasterLog() {
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
   const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
-  const handleCancel = (id: string) => {
-    setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, status: "Canceled" as BookingStatus } : b)),
-    );
-  };
-  const handleRefund = (id: string) => {
-    setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, status: "Refunded" as BookingStatus } : b)),
-    );
-  };
+  const handleCancel = (id: string) => cancelBooking(id);
+  const handleRefund = (id: string) => refundBooking(id);
 
   return (
     <section>
@@ -1340,15 +955,16 @@ function BookingMasterLog() {
 
 // ─── Verification Queue ───────────────────────────────────────────────────────
 function VerificationQueue() {
-  const [items, setItems] = useState<PsychVerification[]>(VERIFICATIONS);
-  const [selected, setSelected] = useState<string | null>(VERIFICATIONS[0].id);
+  const { pendingPsychologists: items, approvePsychologist, rejectPsychologist } = useAdminData();
+  const [selected, setSelected] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("pending");
 
   const filtered = items.filter((v) => filter === "all" || v.status === filter);
-  const detail = items.find((v) => v.id === selected);
+  const detail = items.find((v) => v.id === selected) ?? filtered[0];
 
   const act = (id: string, status: VerifStatus) => {
-    setItems((prev) => prev.map((v) => (v.id === id ? { ...v, status } : v)));
+    if (status === "approved") approvePsychologist(id);
+    if (status === "rejected") rejectPsychologist(id);
   };
 
   return (
@@ -1591,18 +1207,373 @@ function VerificationQueue() {
 }
 
 // ─── User Management ──────────────────────────────────────────────────────────
+
+const FORM_INPUT_CLASS = "w-full rounded-xl px-4 py-2.5 text-sm text-white outline-none";
+const FORM_INPUT_STYLE: React.CSSProperties = {
+  background: "rgba(255,255,255,0.05)",
+  border: "1px solid rgba(255,255,255,0.1)",
+};
+
+function RowActionsMenu({
+  user,
+  open,
+  onToggle,
+  onSuspendToggle,
+  onResetPassword,
+  onReactivate,
+  onRequestRemove,
+}: {
+  user: AdminUserDTO;
+  open: boolean;
+  onToggle: () => void;
+  onSuspendToggle: () => void;
+  onResetPassword: () => void;
+  onReactivate: () => void;
+  onRequestRemove: () => void;
+}) {
+  const menuItemClass =
+    "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-[13px] font-medium transition";
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [coords, setCoords] = useState<{ top: number; right: number } | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const rect = buttonRef.current?.getBoundingClientRect();
+    if (rect) setCoords({ top: rect.bottom + 6, right: window.innerWidth - rect.right });
+
+    // Positions are computed once on open; close on scroll instead of
+    // re-tracking, since the trigger row can scroll out of view too.
+    const close = () => onToggle();
+    window.addEventListener("scroll", close, true);
+    window.addEventListener("resize", close);
+    return () => {
+      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("resize", close);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  return (
+    <>
+      <button
+        ref={buttonRef}
+        onClick={onToggle}
+        className="grid h-8 w-8 place-items-center rounded-lg transition"
+        style={{ background: "rgba(255,255,255,0.06)", color: C.muted }}
+        aria-label={`Actions for ${user.name}`}
+      >
+        <MoreHorizontal className="h-4 w-4" />
+      </button>
+      {open &&
+        coords &&
+        createPortal(
+          <>
+            <div className="fixed inset-0 z-[60]" onClick={onToggle} />
+            <div
+              className="fixed z-[61] w-52 overflow-hidden rounded-xl shadow-2xl"
+              style={{
+                top: coords.top,
+                right: coords.right,
+                background: "#16161f",
+                border: "1px solid rgba(255,255,255,0.08)",
+              }}
+            >
+              <div className="p-1.5">
+                {user.role === "Psychologist" ? (
+                  user.status === "Removed" ? (
+                    <button
+                      onClick={onReactivate}
+                      className={menuItemClass}
+                      style={{ color: "#22c55e" }}
+                    >
+                      <RotateCcw className="h-3.5 w-3.5" />
+                      Reactivate
+                    </button>
+                  ) : (
+                    <button
+                      onClick={onRequestRemove}
+                      className={menuItemClass}
+                      style={{ color: "#ef4444" }}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      Remove Psychologist
+                    </button>
+                  )
+                ) : (
+                  <button
+                    onClick={onSuspendToggle}
+                    className={menuItemClass}
+                    style={{ color: user.status === "Active" ? "#ef4444" : "#22c55e" }}
+                  >
+                    {user.status === "Active" ? (
+                      <Ban className="h-3.5 w-3.5" />
+                    ) : (
+                      <CheckCircle className="h-3.5 w-3.5" />
+                    )}
+                    {user.status === "Active" ? "Suspend" : "Activate"}
+                  </button>
+                )}
+                <button
+                  onClick={onResetPassword}
+                  className={menuItemClass}
+                  style={{ color: C.muted }}
+                >
+                  <KeyRound className="h-3.5 w-3.5" />
+                  Reset Password
+                </button>
+              </div>
+            </div>
+          </>,
+          document.body,
+        )}
+    </>
+  );
+}
+
+function AddPsychologistModal({
+  onClose,
+  onSubmit,
+}: {
+  onClose: () => void;
+  onSubmit: (input: CreatePsychologistInput) => Promise<{ ok: boolean; error?: string }>;
+}) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [title, setTitle] = useState("");
+  const [licenseNumber, setLicenseNumber] = useState("");
+  const [yearsExperience, setYearsExperience] = useState("");
+  const [specialties, setSpecialties] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !email.trim() || password.length < 8) {
+      setError("Name, email, and an 8+ character password are required.");
+      return;
+    }
+    setSubmitting(true);
+    setError(null);
+    const result = await onSubmit({
+      name: name.trim(),
+      email: email.trim(),
+      password,
+      phone: phone.trim() || undefined,
+      title: title.trim() || undefined,
+      licenseNumber: licenseNumber.trim() || undefined,
+      yearsExperience: yearsExperience ? Number(yearsExperience) : undefined,
+      specialties: specialties.trim()
+        ? specialties
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : undefined,
+    });
+    setSubmitting(false);
+    if (!result.ok) setError(result.error ?? "Could not create account.");
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-6"
+      style={{ background: "rgba(0,0,0,0.6)" }}
+    >
+      <div className="fixed inset-0" onClick={onClose} />
+      <div
+        className="relative w-full max-w-lg rounded-3xl p-8"
+        style={{
+          background: "#12121e",
+          border: "1px solid rgba(255,255,255,0.08)",
+          boxShadow: "0 32px 64px rgba(0,0,0,0.6)",
+        }}
+      >
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-black text-white">Add Psychologist</h2>
+          <button onClick={onClose} style={{ color: C.muted }} aria-label="Close">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+        <p className="mt-1 text-xs" style={{ color: C.mutedLow }}>
+          Creates a live account — they can sign in immediately with these credentials.
+        </p>
+        <form onSubmit={handleSubmit} className="mt-5 space-y-3">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <input
+              placeholder="Full name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className={FORM_INPUT_CLASS}
+              style={FORM_INPUT_STYLE}
+            />
+            <input
+              placeholder="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={FORM_INPUT_CLASS}
+              style={FORM_INPUT_STYLE}
+            />
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <input
+              placeholder="Password (min 8 characters)"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={FORM_INPUT_CLASS}
+              style={FORM_INPUT_STYLE}
+            />
+            <input
+              placeholder="Phone (optional)"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className={FORM_INPUT_CLASS}
+              style={FORM_INPUT_STYLE}
+            />
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <input
+              placeholder="Title (optional)"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className={FORM_INPUT_CLASS}
+              style={FORM_INPUT_STYLE}
+            />
+            <input
+              placeholder="License number (optional)"
+              value={licenseNumber}
+              onChange={(e) => setLicenseNumber(e.target.value)}
+              className={FORM_INPUT_CLASS}
+              style={FORM_INPUT_STYLE}
+            />
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <input
+              placeholder="Years of experience (optional)"
+              type="number"
+              min={0}
+              value={yearsExperience}
+              onChange={(e) => setYearsExperience(e.target.value)}
+              className={FORM_INPUT_CLASS}
+              style={FORM_INPUT_STYLE}
+            />
+            <input
+              placeholder="Specialties, comma separated (optional)"
+              value={specialties}
+              onChange={(e) => setSpecialties(e.target.value)}
+              className={FORM_INPUT_CLASS}
+              style={FORM_INPUT_STYLE}
+            />
+          </div>
+          {error && (
+            <p className="text-xs font-semibold" style={{ color: "#ef4444" }}>
+              {error}
+            </p>
+          )}
+          <div className="mt-2 flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-full px-4 py-2 text-sm font-semibold transition"
+              style={{ background: "rgba(255,255,255,0.06)", color: C.muted }}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="rounded-full px-5 py-2 text-sm font-bold transition disabled:opacity-50"
+              style={{ background: "#f4c430", color: "#0a0a0f" }}
+            >
+              {submitting ? "Creating…" : "Create Account"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function ConfirmRemoveModal({
+  name,
+  onCancel,
+  onConfirm,
+}: {
+  name: string;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-6"
+      style={{ background: "rgba(0,0,0,0.6)" }}
+    >
+      <div className="fixed inset-0" onClick={onCancel} />
+      <div
+        className="relative w-full max-w-sm rounded-3xl p-8 text-center"
+        style={{
+          background: "#12121e",
+          border: "1px solid rgba(239,68,68,0.2)",
+          boxShadow: "0 32px 64px rgba(0,0,0,0.6)",
+        }}
+      >
+        <div
+          className="mx-auto grid h-12 w-12 place-items-center rounded-2xl"
+          style={{ background: "rgba(239,68,68,0.12)" }}
+        >
+          <Trash2 className="h-5 w-5" style={{ color: "#ef4444" }} />
+        </div>
+        <h2 className="mt-4 text-base font-black text-white">Remove {name}?</h2>
+        <p className="mt-2 text-xs" style={{ color: C.muted }}>
+          They'll be blocked from signing in and hidden from the active directory. Their booking and
+          diary history is kept — you can reactivate them later.
+        </p>
+        <div className="mt-6 flex justify-center gap-2">
+          <button
+            onClick={onCancel}
+            className="rounded-full px-4 py-2 text-sm font-semibold transition"
+            style={{ background: "rgba(255,255,255,0.06)", color: C.muted }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="rounded-full px-5 py-2 text-sm font-bold transition"
+            style={{ background: "#ef4444", color: "#fff" }}
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function UserManagement() {
-  const [users, setUsers] = useState<UserRecord[]>(USERS);
+  const {
+    users,
+    setUserStatus,
+    resetUserPassword,
+    addPsychologist,
+    removePsychologist,
+    reactivatePsychologist,
+  } = useAdminData();
   const [tab, setTab] = useState<"Patient" | "Psychologist">("Patient");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [resetMsg, setResetMsg] = useState<string | null>(null);
+  const [showRemoved, setShowRemoved] = useState(false);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
+  const [removeTarget, setRemoveTarget] = useState<AdminUserDTO | null>(null);
   const PER_PAGE = 5;
 
   const filtered = users.filter((u) => {
     const q = search.toLowerCase();
     return (
       u.role === tab &&
+      (showRemoved || u.status !== "Removed") &&
       (!q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q))
     );
   });
@@ -1610,15 +1581,34 @@ function UserManagement() {
   const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   const toggleStatus = (id: string) => {
-    setUsers((prev) =>
-      prev.map((u) =>
-        u.id === id ? { ...u, status: u.status === "Active" ? "Suspended" : "Active" } : u,
-      ),
-    );
+    const target = users.find((u) => u.id === id);
+    if (!target) return;
+    setUserStatus(id, target.status === "Active" ? "suspended" : "active");
+    setOpenMenuId(null);
   };
-  const resetPassword = (name: string) => {
+  const resetPassword = (email: string, name: string) => {
+    resetUserPassword(email);
     setResetMsg(`Password reset email sent to ${name}.`);
     setTimeout(() => setResetMsg(null), 3000);
+    setOpenMenuId(null);
+  };
+  const handleReactivate = (id: string) => {
+    reactivatePsychologist(id);
+    setOpenMenuId(null);
+  };
+  const handleConfirmRemove = () => {
+    if (!removeTarget) return;
+    removePsychologist(removeTarget.id);
+    setRemoveTarget(null);
+  };
+  const handleAddPsychologist = async (input: CreatePsychologistInput) => {
+    const result = await addPsychologist(input);
+    if (result.ok) {
+      setAddOpen(false);
+      setResetMsg(`${input.name} added as a psychologist.`);
+      setTimeout(() => setResetMsg(null), 3000);
+    }
+    return result;
   };
 
   return (
@@ -1643,65 +1633,98 @@ function UserManagement() {
         </div>
       )}
 
-      {/* Tabs */}
-      <div
-        className="mb-5 flex gap-1 rounded-2xl p-1"
-        style={{
-          background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(255,255,255,0.06)",
-          width: "fit-content",
-        }}
-      >
-        {(["Patient", "Psychologist"] as const).map((t) => {
-          const count = users.filter((u) => u.role === t).length;
-          const Icon = t === "Patient" ? User : Stethoscope;
-          return (
-            <button
-              key={t}
-              onClick={() => {
-                setTab(t);
-                setPage(1);
-                setSearch("");
-              }}
-              className="flex items-center gap-2 rounded-xl px-5 py-2 text-sm font-semibold transition"
-              style={{
-                background: tab === t ? "#f4c430" : "transparent",
-                color: tab === t ? "#0a0a0f" : C.muted,
-              }}
-            >
-              <Icon className="h-4 w-4" />
-              {t}s{" "}
-              <span
-                className="rounded-full px-1.5 py-0.5 text-[10px] font-black"
-                style={{ background: tab === t ? "rgba(0,0,0,0.15)" : "rgba(255,255,255,0.08)" }}
+      {/* Tabs + Add Psychologist */}
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <div
+          className="flex gap-1 rounded-2xl p-1"
+          style={{
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(255,255,255,0.06)",
+            width: "fit-content",
+          }}
+        >
+          {(["Patient", "Psychologist"] as const).map((t) => {
+            const count = users.filter(
+              (u) => u.role === t && (showRemoved || u.status !== "Removed"),
+            ).length;
+            const Icon = t === "Patient" ? User : Stethoscope;
+            return (
+              <button
+                key={t}
+                onClick={() => {
+                  setTab(t);
+                  setPage(1);
+                  setSearch("");
+                  setOpenMenuId(null);
+                }}
+                className="flex items-center gap-2 rounded-xl px-5 py-2 text-sm font-semibold transition"
+                style={{
+                  background: tab === t ? "#f4c430" : "transparent",
+                  color: tab === t ? "#0a0a0f" : C.muted,
+                }}
               >
-                {count}
-              </span>
-            </button>
-          );
-        })}
+                <Icon className="h-4 w-4" />
+                {t}s{" "}
+                <span
+                  className="rounded-full px-1.5 py-0.5 text-[10px] font-black"
+                  style={{ background: tab === t ? "rgba(0,0,0,0.15)" : "rgba(255,255,255,0.08)" }}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        {tab === "Psychologist" && (
+          <button
+            onClick={() => setAddOpen(true)}
+            className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold transition"
+            style={{ background: "#f4c430", color: "#0a0a0f" }}
+          >
+            <UserPlus className="h-4 w-4" />
+            Add Psychologist
+          </button>
+        )}
       </div>
 
       <div className="rounded-2xl p-6" style={C.card}>
-        {/* Search */}
-        <div
-          className="mb-5 flex items-center gap-2 rounded-xl px-3 py-2"
-          style={{
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            width: 280,
-          }}
-        >
-          <Search className="h-3.5 w-3.5 shrink-0" style={{ color: C.muted }} />
-          <input
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
+        {/* Toolbar */}
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <div
+            className="flex items-center gap-2 rounded-xl px-3 py-2"
+            style={{
+              background: "rgba(255,255,255,0.05)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              width: 280,
             }}
-            placeholder={`Search ${tab.toLowerCase()}s…`}
-            className="w-full bg-transparent text-xs text-white outline-none"
-          />
+          >
+            <Search className="h-3.5 w-3.5 shrink-0" style={{ color: C.muted }} />
+            <input
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              placeholder={`Search ${tab.toLowerCase()}s…`}
+              className="w-full bg-transparent text-xs text-white outline-none"
+            />
+          </div>
+          {tab === "Psychologist" && (
+            <label
+              className="flex items-center gap-2 text-xs font-semibold"
+              style={{ color: C.muted }}
+            >
+              <input
+                type="checkbox"
+                checked={showRemoved}
+                onChange={(e) => {
+                  setShowRemoved(e.target.checked);
+                  setPage(1);
+                }}
+              />
+              Show removed
+            </label>
+          )}
         </div>
 
         <div className="overflow-x-auto">
@@ -1751,37 +1774,18 @@ function UserManagement() {
                   </td>
                   <td className="py-3 pr-4">{statusBadge(u.status)}</td>
                   <td className="py-3">
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        onClick={() => toggleStatus(u.id)}
-                        className="flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-semibold transition"
-                        style={{
-                          background:
-                            u.status === "Active" ? "rgba(239,68,68,0.1)" : "rgba(34,197,94,0.1)",
-                          color: u.status === "Active" ? "#ef4444" : "#22c55e",
-                        }}
-                      >
-                        {u.status === "Active" ? (
-                          <>
-                            <Ban className="h-3 w-3" />
-                            Suspend
-                          </>
-                        ) : (
-                          <>
-                            <CheckCircle className="h-3 w-3" />
-                            Activate
-                          </>
-                        )}
-                      </button>
-                      <button
-                        onClick={() => resetPassword(u.name)}
-                        className="flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-semibold transition"
-                        style={{ background: "rgba(255,255,255,0.06)", color: C.muted }}
-                      >
-                        <KeyRound className="h-3 w-3" />
-                        Reset PW
-                      </button>
-                    </div>
+                    <RowActionsMenu
+                      user={u}
+                      open={openMenuId === u.id}
+                      onToggle={() => setOpenMenuId(openMenuId === u.id ? null : u.id)}
+                      onSuspendToggle={() => toggleStatus(u.id)}
+                      onResetPassword={() => resetPassword(u.email, u.name)}
+                      onReactivate={() => handleReactivate(u.id)}
+                      onRequestRemove={() => {
+                        setRemoveTarget(u);
+                        setOpenMenuId(null);
+                      }}
+                    />
                   </td>
                 </tr>
               ))}
@@ -1845,45 +1849,44 @@ function UserManagement() {
           </div>
         </div>
       </div>
+
+      {addOpen && (
+        <AddPsychologistModal onClose={() => setAddOpen(false)} onSubmit={handleAddPsychologist} />
+      )}
+      {removeTarget && (
+        <ConfirmRemoveModal
+          name={removeTarget.name}
+          onCancel={() => setRemoveTarget(null)}
+          onConfirm={handleConfirmRemove}
+        />
+      )}
     </section>
   );
 }
 
 // ─── Support Tickets ──────────────────────────────────────────────────────────
 function SupportTickets() {
-  const [tickets, setTickets] = useState<SupportTicket[]>(TICKETS_INIT);
-  const [selectedId, setSelectedId] = useState<string>(TICKETS_INIT[0].id);
+  const { tickets, replyToTicket, resolveTicket } = useAdminData();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<"All" | TicketStatus>("All");
   const [reply, setReply] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const filtered = tickets.filter((t) => filter === "All" || t.status === filter);
-  const ticket = tickets.find((t) => t.id === selectedId);
+  const ticket = tickets.find((t) => t.id === selectedId) ?? filtered[0];
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [ticket?.messages]);
 
   const sendReply = () => {
-    if (!reply.trim() || !selectedId) return;
-    setTickets((prev) =>
-      prev.map((t) =>
-        t.id === selectedId
-          ? {
-              ...t,
-              messages: [...t.messages, { sender: "admin", text: reply.trim(), time: "Just now" }],
-              status: "In Progress" as TicketStatus,
-            }
-          : t,
-      ),
-    );
+    if (!reply.trim() || !ticket) return;
+    replyToTicket(ticket.id, reply.trim());
     setReply("");
   };
 
   const resolve = (id: string) => {
-    setTickets((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, status: "Resolved" as TicketStatus } : t)),
-    );
+    resolveTicket(id);
   };
 
   const counts = {
@@ -2130,6 +2133,7 @@ function SystemHealthSection() {
 
 // ─── Audit Log ────────────────────────────────────────────────────────────────
 function AuditLogSection() {
+  const { auditLog } = useAdminData();
   return (
     <section>
       <SectionHeader
@@ -2153,7 +2157,7 @@ function AuditLogSection() {
             </tr>
           </thead>
           <tbody>
-            {AUDIT_LOG.map((entry, i) => (
+            {auditLog.map((entry, i) => (
               <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
                 <td className="py-3 pr-4 font-medium text-white">{entry.action}</td>
                 <td className="py-3 pr-4 text-xs" style={{ color: C.muted }}>
@@ -2167,8 +2171,142 @@ function AuditLogSection() {
                 </td>
               </tr>
             ))}
+            {auditLog.length === 0 && (
+              <tr>
+                <td colSpan={4} className="py-12 text-center text-sm" style={{ color: C.mutedLow }}>
+                  No destructive admin actions recorded yet.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
+      </div>
+    </section>
+  );
+}
+
+// ─── Settings ─────────────────────────────────────────────────────────────────
+function AdminSettingsSection({ admin }: { admin: SessionUser }) {
+  const { updateAdminProfile, changeAdminPassword } = useAdminData();
+  const [name, setName] = useState(admin.name);
+  const [nameMsg, setNameMsg] = useState<string | null>(null);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [pwMsg, setPwMsg] = useState<string | null>(null);
+  const [pwError, setPwError] = useState<string | null>(null);
+  const [pwSubmitting, setPwSubmitting] = useState(false);
+
+  const saveName = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateAdminProfile(name.trim() || admin.name);
+    setNameMsg("Name updated.");
+    setTimeout(() => setNameMsg(null), 3000);
+  };
+
+  const submitPasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPwError(null);
+    setPwMsg(null);
+    setPwSubmitting(true);
+    const result = await changeAdminPassword(currentPassword, newPassword);
+    setPwSubmitting(false);
+    if (result.ok) {
+      setPwMsg("Password changed.");
+      setCurrentPassword("");
+      setNewPassword("");
+      setTimeout(() => setPwMsg(null), 3000);
+    } else {
+      setPwError(result.error ?? "Could not change password.");
+    }
+  };
+
+  return (
+    <section>
+      <SectionHeader
+        eyebrow="Account"
+        title="Settings"
+        sub="Manage your admin account's name and password."
+      />
+      <div className="grid gap-4 lg:grid-cols-2">
+        <form onSubmit={saveName} className="rounded-2xl p-6" style={C.card}>
+          <h2 className="text-sm font-bold text-white">Profile</h2>
+          <label className="mt-4 block text-xs font-semibold" style={{ color: C.muted }}>
+            Name
+          </label>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="mt-1.5 w-full rounded-xl px-4 py-2.5 text-sm text-white outline-none"
+            style={{
+              background: "rgba(255,255,255,0.05)",
+              border: "1px solid rgba(255,255,255,0.1)",
+            }}
+          />
+          <p className="mt-4 text-xs" style={{ color: C.mutedLow }}>
+            Email: {admin.email}
+          </p>
+          <button
+            type="submit"
+            className="mt-5 rounded-full px-5 py-2.5 text-sm font-bold transition"
+            style={{ background: "#f4c430", color: "#0a0a0f" }}
+          >
+            Save Name
+          </button>
+          {nameMsg && (
+            <p className="mt-3 text-xs font-semibold" style={{ color: "#22c55e" }}>
+              {nameMsg}
+            </p>
+          )}
+        </form>
+
+        <form onSubmit={submitPasswordChange} className="rounded-2xl p-6" style={C.card}>
+          <h2 className="text-sm font-bold text-white">Change Password</h2>
+          <label className="mt-4 block text-xs font-semibold" style={{ color: C.muted }}>
+            Current Password
+          </label>
+          <input
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            className="mt-1.5 w-full rounded-xl px-4 py-2.5 text-sm text-white outline-none"
+            style={{
+              background: "rgba(255,255,255,0.05)",
+              border: "1px solid rgba(255,255,255,0.1)",
+            }}
+          />
+          <label className="mt-4 block text-xs font-semibold" style={{ color: C.muted }}>
+            New Password
+          </label>
+          <input
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            minLength={8}
+            className="mt-1.5 w-full rounded-xl px-4 py-2.5 text-sm text-white outline-none"
+            style={{
+              background: "rgba(255,255,255,0.05)",
+              border: "1px solid rgba(255,255,255,0.1)",
+            }}
+          />
+          <button
+            type="submit"
+            disabled={pwSubmitting || !currentPassword || newPassword.length < 8}
+            className="mt-5 rounded-full px-5 py-2.5 text-sm font-bold transition disabled:opacity-50"
+            style={{ background: "#f4c430", color: "#0a0a0f" }}
+          >
+            {pwSubmitting ? "Changing…" : "Change Password"}
+          </button>
+          {pwMsg && (
+            <p className="mt-3 text-xs font-semibold" style={{ color: "#22c55e" }}>
+              {pwMsg}
+            </p>
+          )}
+          {pwError && (
+            <p className="mt-3 text-xs font-semibold" style={{ color: "#ef4444" }}>
+              {pwError}
+            </p>
+          )}
+        </form>
       </div>
     </section>
   );

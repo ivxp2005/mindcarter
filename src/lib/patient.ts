@@ -3,7 +3,12 @@
 // — this file holds only non-mock constants (today's date + mood emoji/labels)
 // and the TS shapes those layers map DB rows into.
 
-export const TODAY = new Date().toISOString().slice(0, 10);
+/** Always computed fresh — a module-level constant would freeze at whatever
+ *  date the server process (or client bundle) first loaded, which drifts
+ *  stale in a long-running dev/prod process. Call this at the point of use. */
+export function todayISO(): string {
+  return new Date().toISOString().slice(0, 10);
+}
 
 export type Mood = 1 | 2 | 3 | 4 | 5;
 export type SessionStatus = "upcoming" | "completed" | "canceled";

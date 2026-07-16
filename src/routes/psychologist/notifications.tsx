@@ -1,13 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
 import { CalendarDays, Notebook, MessageSquare, Bell, CheckCheck } from "lucide-react";
 import { toast } from "sonner";
 import { StaggerContainer, StaggerItem } from "../../components/scroll-reveal";
-import {
-  NOTIFICATIONS,
-  type NotificationKind,
-  type PortalNotification,
-} from "../../lib/psychologist";
+import type { NotificationKind, PortalNotification } from "../../lib/psychologist";
+import { usePsychologistData } from "../../lib/psychologist-store";
 
 export const Route = createFileRoute("/psychologist/notifications")({
   component: NotificationsPage,
@@ -22,16 +18,20 @@ const KIND_ICON: Record<NotificationKind, typeof CalendarDays> = {
 
 function NotificationsPage() {
   const navigate = useNavigate();
-  const [items, setItems] = useState<PortalNotification[]>(NOTIFICATIONS);
+  const {
+    notifications: items,
+    markNotificationRead,
+    markAllRead: markAll,
+  } = usePsychologistData();
   const unreadCount = items.filter((n) => !n.read).length;
 
   const markAllRead = () => {
-    setItems((prev) => prev.map((n) => ({ ...n, read: true })));
+    markAll();
     toast.success("All notifications marked as read.");
   };
 
   const handleClick = (n: PortalNotification) => {
-    setItems((prev) => prev.map((item) => (item.id === n.id ? { ...item, read: true } : item)));
+    markNotificationRead(n.id);
     if (n.actionTo) {
       navigate({ to: n.actionTo, search: n.actionSearch ?? {} });
     }

@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X, KeyRound, Clock, Mail, Phone, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Switch } from "../../components/ui/switch";
 import { GradientAvatar } from "../../components/gradient-avatar";
 import { ScrollReveal } from "../../components/scroll-reveal";
-import { PROFILE } from "../../lib/psychologist";
+import { usePsychologistData } from "../../lib/psychologist-store";
+import { requestPasswordResetFn } from "../../lib/auth.server";
 
 export const Route = createFileRoute("/psychologist/profile")({
   component: ProfilePage,
@@ -37,14 +38,32 @@ function Field({
   );
 }
 
+const DEFAULT_PREFS = {
+  emailDigests: true,
+  sessionReminders: true,
+  diaryAlerts: true,
+  marketing: false,
+};
+
 function ProfilePage() {
-  const [name, setName] = useState(PROFILE.name);
-  const [title, setTitle] = useState(PROFILE.title);
-  const [email, setEmail] = useState(PROFILE.email);
-  const [phone, setPhone] = useState(PROFILE.phone);
-  const [specialties, setSpecialties] = useState<string[]>(PROFILE.specialties);
+  const { profile, saveProfile } = usePsychologistData();
+  const [name, setName] = useState("");
+  const [title, setTitle] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [specialties, setSpecialties] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
-  const [prefs, setPrefs] = useState(PROFILE.notificationPrefs);
+  const [prefs, setPrefs] = useState(DEFAULT_PREFS);
+
+  useEffect(() => {
+    if (!profile) return;
+    setName(profile.name);
+    setTitle(profile.title);
+    setEmail(profile.email);
+    setPhone(profile.phone);
+    setSpecialties(profile.specialties);
+    setPrefs(profile.notificationPrefs);
+  }, [profile]);
 
   const addTag = () => {
     const tag = newTag.trim();
@@ -67,7 +86,8 @@ function ProfilePage() {
             <p className="text-sm text-background/60">{title}</p>
           </div>
           <span className="flex items-center gap-1.5 rounded-full border border-background/20 bg-background/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest">
-            <ShieldCheck className="h-3.5 w-3.5 text-brand" /> License {PROFILE.license}
+            <ShieldCheck className="h-3.5 w-3.5 text-brand" /> License{" "}
+            {profile?.license || "Not on file"}
           </span>
         </div>
       </section>
@@ -91,7 +111,7 @@ function ProfilePage() {
             <section className="rounded-2xl border border-border bg-background p-6">
               <h2 className="text-sm font-semibold">Working hours</h2>
               <div className="mt-4 divide-y divide-border">
-                {PROFILE.hours.map((h) => (
+                {(profile?.hours ?? []).map((h) => (
                   <div key={h.day} className="flex items-center justify-between py-2.5 text-sm">
                     <span className="flex items-center gap-2 text-muted-foreground">
                       <Clock className="h-3.5 w-3.5" /> {h.day}
@@ -99,6 +119,9 @@ function ProfilePage() {
                     <span className="font-medium">{h.range}</span>
                   </div>
                 ))}
+                {profile && profile.hours.length === 0 && (
+                  <p className="py-2.5 text-sm text-muted-foreground">No hours set yet.</p>
+                )}
               </div>
             </section>
 
@@ -109,7 +132,11 @@ function ProfilePage() {
               </p>
               <button
                 type="button"
-                onClick={() => toast.success("Password reset link sent to your email (mock).")}
+                onClick={async () => {
+                  if (!profile) return;
+                  await requestPasswordResetFn({ data: { email: profile.email } });
+                  toast.success("Password reset link sent to your email.");
+                }}
                 className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-semibold transition hover:bg-muted"
               >
                 <KeyRound className="h-4 w-4" /> Change password
@@ -121,6 +148,7 @@ function ProfilePage() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
+              saveProfile({ name, title, phone, specialties, notificationPrefs: prefs });
               toast.success("Profile updated.");
             }}
             className="space-y-4"

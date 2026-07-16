@@ -20,7 +20,15 @@ import {
 
 export const roleEnum = pgEnum("role", ["patient", "psychologist", "admin"]);
 
-export const userStatusEnum = pgEnum("user_status", ["active", "suspended", "pending"]);
+export const userStatusEnum = pgEnum("user_status", [
+  "active",
+  "suspended",
+  "pending",
+  // Soft-removed psychologist: blocked from login (same as suspended) but
+  // distinct so the admin console can hide them from the active directory
+  // while keeping their bookings/diary/care-team history intact.
+  "removed",
+]);
 
 export const weekdayEnum = pgEnum("weekday", [
   "monday",
@@ -63,6 +71,10 @@ export const notificationKindEnum = pgEnum("notification_kind", [
   "message",
   "system",
 ]);
+
+export const ticketStatusEnum = pgEnum("ticket_status", ["open", "in_progress", "resolved"]);
+
+export const ticketPriorityEnum = pgEnum("ticket_priority", ["low", "medium", "high"]);
 
 // ─── users ──────────────────────────────────────────────────────────────────
 
@@ -168,6 +180,9 @@ export const psychologistProfiles = pgTable("psychologist_profiles", {
   // Care-Team card fields (client portal /client/care-team) + booking price.
   rating: numeric("rating", { precision: 2, scale: 1 }),
   price: numeric("price", { precision: 10, scale: 2 }),
+  // Psychologist portal profile page notification toggles — mirrors
+  // patient_profiles.notificationPrefs.
+  notificationPrefs: jsonb("notification_prefs"),
 });
 
 // ─── availability_slots ─────────────────────────────────────────────────────
@@ -275,6 +290,49 @@ export const careTeamMembers = pgTable(
   ],
 );
 
+// ─── support_tickets / support_ticket_messages ─────────────────────────────
+// Patients and psychologists can both file tickets; admin reviews them in the
+// admin console. Threaded replies live in a separate table (one ticket, many
+// messages) rather than a jsonb blob, mirroring diary_entries' one-row-per-
+// clinician-note shape but generalized to multiple senders.
+
+export const supportTickets = pgTable("support_tickets", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  authorId: uuid("author_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  subject: varchar("subject", { length: 255 }).notNull(),
+  priority: ticketPriorityEnum("priority").notNull().default("medium"),
+  status: ticketStatusEnum("status").notNull().default("open"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const supportTicketMessages = pgTable("support_ticket_messages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  ticketId: uuid("ticket_id")
+    .notNull()
+    .references(() => supportTickets.id, { onDelete: "cascade" }),
+  senderId: uuid("sender_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  body: text("body").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ─── audit_log ──────────────────────────────────────────────────────────────
+// Records destructive admin actions only (cancel/refund booking, suspend
+// user, reject psychologist) — not every read/approve/login event.
+
+export const auditLog = pgTable("audit_log", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  actorId: uuid("actor_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  action: varchar("action", { length: 255 }).notNull(),
+  target: varchar("target", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 // ─── Relations ──────────────────────────────────────────────────────────────
 
 export const usersRelations = relations(users, ({ one, many }) => ({
@@ -296,6 +354,9 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   notifications: many(notifications),
   careTeamAsPatient: many(careTeamMembers, { relationName: "patientCareTeam" }),
   careTeamAsPsychologist: many(careTeamMembers, { relationName: "psychologistCareTeam" }),
+  supportTickets: many(supportTickets),
+  supportTicketMessages: many(supportTicketMessages),
+  auditLogEntries: many(auditLog),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -384,5 +445,31 @@ export const careTeamMembersRelations = relations(careTeamMembers, ({ one }) => 
     fields: [careTeamMembers.psychologistId],
     references: [users.id],
     relationName: "psychologistCareTeam",
+  }),
+}));
+
+export const supportTicketsRelations = relations(supportTickets, ({ one, many }) => ({
+  author: one(users, {
+    fields: [supportTickets.authorId],
+    references: [users.id],
+  }),
+  messages: many(supportTicketMessages),
+}));
+
+export const supportTicketMessagesRelations = relations(supportTicketMessages, ({ one }) => ({
+  ticket: one(supportTickets, {
+    fields: [supportTicketMessages.ticketId],
+    references: [supportTickets.id],
+  }),
+  sender: one(users, {
+    fields: [supportTicketMessages.senderId],
+    references: [users.id],
+  }),
+}));
+
+export const auditLogRelations = relations(auditLog, ({ one }) => ({
+  actor: one(users, {
+    fields: [auditLog.actorId],
+    references: [users.id],
   }),
 }));

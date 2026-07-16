@@ -3,7 +3,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Clock, PenLine, Quote, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
   ChartContainer,
   ChartTooltip,
@@ -13,7 +13,7 @@ import {
 import { StaggerContainer, StaggerItem, ScrollReveal } from "../../components/scroll-reveal";
 import { CountUp } from "../../components/count-up";
 import { usePatientData } from "../../lib/patient-store";
-import { MOOD_EMOJI, MOOD_LABEL, TODAY, type Mood } from "../../lib/patient";
+import { MOOD_EMOJI, MOOD_LABEL, todayISO, type Mood } from "../../lib/patient";
 
 export const Route = createFileRoute("/client/journal")({
   validateSearch: (search: Record<string, unknown>): { open?: string } => ({
@@ -30,7 +30,7 @@ const moodConfig: ChartConfig = {
 };
 
 function formatDate(dateStr: string) {
-  if (dateStr === TODAY) return "Today";
+  if (dateStr === todayISO()) return "Today";
   const [y, m, d] = dateStr.split("-").map(Number);
   return new Date(y, m - 1, d).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
@@ -183,7 +183,7 @@ function JournalPage() {
       <ScrollReveal>
         <section className="rounded-2xl border border-border bg-background p-6">
           <h2 className="text-lg font-semibold">Mood trend</h2>
-          <p className="text-sm text-muted-foreground">Weekly average over the last 8 weeks</p>
+          <p className="text-sm text-muted-foreground">Daily check-ins over the last 8 weeks</p>
           <ChartContainer config={moodConfig} className="mt-4 aspect-auto h-56 w-full">
             <AreaChart data={moodTrend}>
               <defs>
@@ -193,7 +193,8 @@ function JournalPage() {
                 </linearGradient>
               </defs>
               <CartesianGrid vertical={false} />
-              <XAxis dataKey="week" tickLine={false} axisLine={false} tickMargin={8} />
+              <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={8} />
+              <YAxis domain={[1, 5]} hide />
               <ChartTooltip content={<ChartTooltipContent />} />
               <Area
                 dataKey="mood"
@@ -201,6 +202,7 @@ function JournalPage() {
                 stroke="var(--color-mood)"
                 fill="url(#moodFill)"
                 strokeWidth={2}
+                dot={{ r: 3 }}
               />
             </AreaChart>
           </ChartContainer>

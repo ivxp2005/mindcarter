@@ -11,13 +11,13 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { Area, AreaChart, ResponsiveContainer } from "recharts";
+import { Area, AreaChart, ResponsiveContainer, YAxis } from "recharts";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "../../components/scroll-reveal";
 import { GradientAvatar } from "../../components/gradient-avatar";
 import { CountUp } from "../../components/count-up";
 import { useSession } from "../../lib/use-session";
 import { usePatientData } from "../../lib/patient-store";
-import { MOOD_EMOJI, MOOD_LABEL, TODAY, type Mood } from "../../lib/patient";
+import { MOOD_EMOJI, MOOD_LABEL, todayISO, type Mood } from "../../lib/patient";
 
 export const Route = createFileRoute("/client/")({
   component: ClientDashboard,
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/client/")({
 const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 
 function formatDate(dateStr: string) {
-  if (dateStr === TODAY) return "Today";
+  if (dateStr === todayISO()) return "Today";
   const [y, m, d] = dateStr.split("-").map(Number);
   return new Date(y, m - 1, d).toLocaleDateString(undefined, {
     month: "short",
@@ -253,6 +253,7 @@ function ClientDashboard() {
                         <stop offset="95%" stopColor="var(--brand)" stopOpacity={0} />
                       </linearGradient>
                     </defs>
+                    <YAxis domain={[1, 5]} hide />
                     <Area
                       dataKey="mood"
                       type="monotone"
@@ -352,7 +353,7 @@ function ClientDashboard() {
             )}
             <StaggerContainer className="space-y-6" staggerDelay={0.08}>
               {upcomingSessions.map((s) => {
-                const isToday = s.date === TODAY;
+                const isToday = s.date === todayISO();
                 return (
                   <StaggerItem key={s.id}>
                     <div className="relative flex items-start gap-4">

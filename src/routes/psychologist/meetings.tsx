@@ -22,7 +22,23 @@ import {
 } from "../../components/ui/dialog";
 import { Badge } from "../../components/ui/badge";
 import { GradientAvatar } from "../../components/gradient-avatar";
-import { MEETINGS, TODAY, type Meeting, type MeetingStatus } from "../../lib/psychologist";
+import type { Meeting, MeetingStatus } from "../../lib/psychologist";
+import { usePsychologistData } from "../../lib/psychologist-store";
+
+function todayISO(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+/** "09:00 AM" -> "09:00" for seeding a native <input type="time">. */
+function to24hInput(slot: string): string {
+  const m = slot.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!m) return slot;
+  let hour = parseInt(m[1], 10);
+  const ampm = m[3].toUpperCase();
+  if (ampm === "PM" && hour !== 12) hour += 12;
+  if (ampm === "AM" && hour === 12) hour = 0;
+  return `${String(hour).padStart(2, "0")}:${m[2]}`;
+}
 
 export const Route = createFileRoute("/psychologist/meetings")({
   validateSearch: (search: Record<string, unknown>): { open?: string } => ({
@@ -47,44 +63,58 @@ function statusBadge(status: MeetingStatus) {
 function MeetingsPage() {
   const { open } = Route.useSearch();
   const navigate = useNavigate();
+  const { meetings, rescheduleMeeting, completeMeeting } = usePsychologistData();
+  const today = todayISO();
   const [activeTab, setActiveTab] = useState<"today" | "upcoming" | "past">("today");
   const [selected, setSelected] = useState<string | null>(open ?? null);
-  const [calendarDate, setCalendarDate] = useState<Date | undefined>(parseISODate(TODAY));
+  const [calendarDate, setCalendarDate] = useState<Date | undefined>(parseISODate(today));
+  const [rescheduling, setRescheduling] = useState(false);
+  const [rDate, setRDate] = useState("");
+  const [rTime, setRTime] = useState("");
 
   useEffect(() => {
     if (open) setSelected(open);
   }, [open]);
 
-  const todayMeetings = MEETINGS.filter((m) => m.date === TODAY);
-  const upcomingMeetings = MEETINGS.filter((m) => m.date > TODAY);
-  const pastMeetings = MEETINGS.filter((m) => m.date < TODAY);
+  const todayMeetings = meetings.filter((m) => m.date === today);
+  const upcomingMeetings = meetings.filter((m) => m.date > today);
+  const pastMeetings = meetings.filter((m) => m.date < today);
   const rowsByTab = { today: todayMeetings, upcoming: upcomingMeetings, past: pastMeetings };
 
-  const meetingsThisWeek = MEETINGS.length;
-  const avgDuration = Math.round(
-    MEETINGS.reduce((sum, m) => sum + m.durationMin, 0) / MEETINGS.length,
-  );
-  const noShows = MEETINGS.filter((m) => m.status === "canceled").length;
+  const meetingsThisWeek = meetings.length;
+  const avgDuration = meetings.length
+    ? Math.round(meetings.reduce((sum, m) => sum + m.durationMin, 0) / meetings.length)
+    : 0;
+  const noShows = meetings.filter((m) => m.status === "canceled").length;
 
   const nextUp = todayMeetings.find((m) => m.status === "upcoming");
 
-  const detail = MEETINGS.find((m) => m.id === selected) ?? null;
+  const detail = meetings.find((m) => m.id === selected) ?? null;
   const closeDialog = () => {
     setSelected(null);
+    setRescheduling(false);
     navigate({ to: "/psychologist/meetings", search: {} });
   };
 
   const handleStart = (m: Meeting) => {
-    toast.success(`Starting session with ${m.patientName}…`, {
-      description: "Connecting to video room (mock).",
-    });
+    completeMeeting(m.id);
+    toast.success(`Session with ${m.patientName} marked complete.`);
+    closeDialog();
   };
-  const handleReschedule = (m: Meeting) => {
-    toast(`Reschedule request sent for ${m.patientName} (mock).`);
+  const openReschedule = (m: Meeting) => {
+    setRDate(m.date);
+    setRTime(to24hInput(m.time));
+    setRescheduling(true);
+  };
+  const confirmReschedule = (m: Meeting) => {
+    if (!rDate || !rTime) return;
+    rescheduleMeeting(m.id, { date: rDate, time: rTime, mode: m.mode });
+    toast.success(`Session with ${m.patientName} rescheduled.`);
+    setRescheduling(false);
     closeDialog();
   };
 
-  const meetingDates = MEETINGS.map((m) => parseISODate(m.date));
+  const meetingDates = meetings.map((m) => parseISODate(m.date));
 
   return (
     <div className="space-y-6">
@@ -157,7 +187,7 @@ function MeetingsPage() {
                             </div>
                           </TableCell>
                           <TableCell className="whitespace-nowrap font-mono text-xs text-muted-foreground">
-                            {m.date === TODAY ? m.time : `${m.date} · ${m.time}`}
+                            {m.date === today ? m.time : `${m.date} · ${m.time}`}
                           </TableCell>
                           <TableCell className="text-muted-foreground">{m.kind}</TableCell>
                           <TableCell>
@@ -245,7 +275,7 @@ function MeetingsPage() {
                     <DialogTitle>{detail.patientName}</DialogTitle>
                     <DialogDescription>
                       {detail.kind} · {detail.mode} ·{" "}
-                      {detail.date === TODAY ? "Today" : detail.date} at {detail.time} (
+                      {detail.date === today ? "Today" : detail.date} at {detail.time} (
                       {detail.durationMin} min)
                     </DialogDescription>
                   </div>
@@ -262,19 +292,52 @@ function MeetingsPage() {
                   View patient record →
                 </Link>
               )}
+              {rescheduling && (
+                <div className="flex flex-wrap items-end gap-2 rounded-xl border border-border p-3">
+                  <label className="text-xs">
+                    Date
+                    <input
+                      type="date"
+                      value={rDate}
+                      min={today}
+                      onChange={(e) => setRDate(e.target.value)}
+                      className="mt-1 block rounded-lg border border-border bg-background px-2 py-1.5 text-sm outline-none focus:border-foreground"
+                    />
+                  </label>
+                  <label className="text-xs">
+                    Time
+                    <input
+                      type="time"
+                      value={rTime}
+                      onChange={(e) => setRTime(e.target.value)}
+                      className="mt-1 block rounded-lg border border-border bg-background px-2 py-1.5 text-sm outline-none focus:border-foreground"
+                    />
+                  </label>
+                  <button
+                    onClick={() => confirmReschedule(detail)}
+                    className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:opacity-90"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              )}
               <DialogFooter>
-                <button
-                  onClick={() => handleReschedule(detail)}
-                  className="rounded-full border border-border px-4 py-2 text-sm font-semibold transition hover:bg-muted"
-                >
-                  Reschedule
-                </button>
-                <button
-                  onClick={() => handleStart(detail)}
-                  className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:opacity-90"
-                >
-                  Start session
-                </button>
+                {!rescheduling && (
+                  <button
+                    onClick={() => openReschedule(detail)}
+                    className="rounded-full border border-border px-4 py-2 text-sm font-semibold transition hover:bg-muted"
+                  >
+                    Reschedule
+                  </button>
+                )}
+                {detail.status === "upcoming" && (
+                  <button
+                    onClick={() => handleStart(detail)}
+                    className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:opacity-90"
+                  >
+                    Start session
+                  </button>
+                )}
               </DialogFooter>
             </>
           )}

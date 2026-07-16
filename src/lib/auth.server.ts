@@ -38,6 +38,10 @@ import { sendOtpEmail, sendPasswordResetEmail } from "./email.server";
 
 const SESSION_SECRET = process.env.SESSION_SECRET ?? "mc-dev-secret-CHANGE-BEFORE-PRODUCTION";
 export const COOKIE_NAME = "__mc_session";
+// Separate cookie for the admin console (src/routes/portal-management-access.tsx)
+// so an admin session and a patient/psychologist session can coexist in the
+// same browser instead of overwriting each other.
+export const ADMIN_COOKIE_NAME = "__mc_admin_session";
 export const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 8; // 8 hours
 const BCRYPT_COST = 12;
 
@@ -162,19 +166,31 @@ export const createSessionToken = createServerOnlyFn(
   },
 );
 
-const issueSession = createServerOnlyFn(async (userId: string, role: UserRole): Promise<void> => {
+async function issueSessionCookie(
+  userId: string,
+  role: UserRole,
+  cookieName: string,
+): Promise<void> {
   const token = await createSessionToken(userId, role);
-  setCookie(COOKIE_NAME, token, {
+  setCookie(cookieName, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
     maxAge: COOKIE_MAX_AGE_SECONDS,
   });
-});
+}
 
-export const getSessionUser = createServerOnlyFn(async (): Promise<SessionUser | null> => {
-  const token = getCookie(COOKIE_NAME);
+const issueSession = createServerOnlyFn(async (userId: string, role: UserRole): Promise<void> =>
+  issueSessionCookie(userId, role, COOKIE_NAME),
+);
+
+const issueAdminSession = createServerOnlyFn(
+  async (userId: string, role: UserRole): Promise<void> =>
+    issueSessionCookie(userId, role, ADMIN_COOKIE_NAME),
+);
+
+async function resolveSessionUser(token: string | undefined): Promise<SessionUser | null> {
   if (!token) return null;
 
   const payload = await verifyTokenSignature(token);
@@ -198,16 +214,32 @@ export const getSessionUser = createServerOnlyFn(async (): Promise<SessionUser |
   if (!row || row.status !== "active") return null;
 
   return { id: row.id, email: row.email, name: row.name, role: row.role };
-});
+}
 
-const destroySession = createServerOnlyFn(async (): Promise<void> => {
-  const token = getCookie(COOKIE_NAME);
+export const getSessionUser = createServerOnlyFn(async (): Promise<SessionUser | null> =>
+  resolveSessionUser(getCookie(COOKIE_NAME)),
+);
+
+export const getAdminSessionUser = createServerOnlyFn(async (): Promise<SessionUser | null> =>
+  resolveSessionUser(getCookie(ADMIN_COOKIE_NAME)),
+);
+
+async function destroySessionCookie(cookieName: string): Promise<void> {
+  const token = getCookie(cookieName);
   if (token) {
     const tokenHash = await sha256Hex(token);
     await db.delete(sessions).where(eq(sessions.tokenHash, tokenHash));
   }
-  deleteCookie(COOKIE_NAME, { path: "/" });
-});
+  deleteCookie(cookieName, { path: "/" });
+}
+
+const destroySession = createServerOnlyFn(async (): Promise<void> =>
+  destroySessionCookie(COOKIE_NAME),
+);
+
+const destroyAdminSession = createServerOnlyFn(async (): Promise<void> =>
+  destroySessionCookie(ADMIN_COOKIE_NAME),
+);
 
 // ─── Google OAuth account lookup/creation ──────────────────────────────────
 // Used by src/routes/auth/google.callback.ts. Google sign-in is patient-only
@@ -270,10 +302,52 @@ export const findOrCreateGoogleUser = createServerOnlyFn(
   },
 );
 
+/** Shared credential check used by both `loginFn` and `adminLoginFn` — looks
+ * up the user, checks status/password, but does not issue any session. */
+async function authenticate(
+  email: string,
+  password: string,
+): Promise<
+  | { ok: true; user: typeof users.$inferSelect }
+  | { ok: false; error: string; reason: "pending_verification"; email: string }
+  | { ok: false; error: string; reason?: undefined }
+> {
+  const rows = await db.select().from(users).where(eq(users.email, email)).limit(1);
+  const user = rows[0];
+
+  if (!user) return { ok: false, error: "Invalid email or password." };
+  if (user.status === "pending") {
+    return {
+      ok: false,
+      reason: "pending_verification",
+      email: user.email,
+      error: "Please verify your email to sign in.",
+    };
+  }
+  if (user.status !== "active") {
+    return { ok: false, error: "This account is not active. Contact support." };
+  }
+  if (!user.passwordHash) {
+    return {
+      ok: false,
+      error: "This account uses Google sign-in. Continue with Google instead.",
+    };
+  }
+
+  const valid = await verifyPassword(password, user.passwordHash);
+  if (!valid) return { ok: false, error: "Invalid email or password." };
+
+  return { ok: true, user };
+}
+
 // ─── Server functions (callable from client components/routes) ────────────
 
 export const meFn = createServerFn({ method: "GET" }).handler(async () => {
   return getSessionUser();
+});
+
+export const adminMeFn = createServerFn({ method: "GET" }).handler(async () => {
+  return getAdminSessionUser();
 });
 
 export const loginFn = createServerFn({ method: "POST" })
@@ -284,33 +358,36 @@ export const loginFn = createServerFn({ method: "POST" })
       return { ok: false as const, error: parsed.error.issues[0].message };
     }
 
-    const rows = await db.select().from(users).where(eq(users.email, parsed.data.email)).limit(1);
-    const user = rows[0];
-
-    if (!user) return { ok: false as const, error: "Invalid email or password." };
-    if (user.status === "pending") {
-      return {
-        ok: false as const,
-        reason: "pending_verification" as const,
-        email: user.email,
-        error: "Please verify your email to sign in.",
-      };
-    }
-    if (user.status !== "active") {
-      return { ok: false as const, error: "This account is not active. Contact support." };
-    }
-    if (!user.passwordHash) {
-      return {
-        ok: false as const,
-        error: "This account uses Google sign-in. Continue with Google instead.",
-      };
+    const result = await authenticate(parsed.data.email, parsed.data.password);
+    if (!result.ok) return result;
+    // Admin credentials never work on the public login form — admins sign in
+    // at the hidden /portal-management-access console only.
+    if (result.user.role === "admin") {
+      return { ok: false as const, error: "Invalid email or password." };
     }
 
-    const valid = await verifyPassword(parsed.data.password, user.passwordHash);
-    if (!valid) return { ok: false as const, error: "Invalid email or password." };
+    await issueSession(result.user.id, result.user.role);
+    return { ok: true as const, role: result.user.role, name: result.user.name };
+  });
 
-    await issueSession(user.id, user.role);
-    return { ok: true as const, role: user.role, name: user.name };
+export const adminLoginFn = createServerFn({ method: "POST" })
+  .validator((data: unknown) => data as { email: string; password: string })
+  .handler(async ({ data }) => {
+    const parsed = loginSchema.safeParse(data);
+    if (!parsed.success) {
+      return { ok: false as const, error: parsed.error.issues[0].message };
+    }
+
+    const result = await authenticate(parsed.data.email, parsed.data.password);
+    if (!result.ok) return result;
+    // Only admin accounts can sign in here — patient/psychologist credentials
+    // get the same generic rejection as a wrong password.
+    if (result.user.role !== "admin") {
+      return { ok: false as const, error: "Invalid email or password." };
+    }
+
+    await issueAdminSession(result.user.id, result.user.role);
+    return { ok: true as const, role: result.user.role, name: result.user.name };
   });
 
 // Patient-only: psychologist accounts are provisioned separately (seed
@@ -354,6 +431,11 @@ export const signupFn = createServerFn({ method: "POST" })
 
 export const logoutFn = createServerFn({ method: "POST" }).handler(async () => {
   await destroySession();
+  return { ok: true as const };
+});
+
+export const adminLogoutFn = createServerFn({ method: "POST" }).handler(async () => {
+  await destroyAdminSession();
   return { ok: true as const };
 });
 

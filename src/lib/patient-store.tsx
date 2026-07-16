@@ -2,7 +2,7 @@ import { createContext, useContext, useMemo, useState, type ReactNode } from "re
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   MOOD_LABEL,
-  TODAY,
+  todayISO,
   type JournalEntry,
   type Mood,
   type PatientSession,
@@ -24,6 +24,12 @@ import {
   type PatientProfileDTO,
   type PortalData,
 } from "./patient-data.server";
+import {
+  getMyTicketsFn,
+  replyToTicketFn,
+  submitTicketFn,
+  type TicketDTO,
+} from "./support-data.server";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Single reactive source of truth for the client portal — now DB-backed.
@@ -37,8 +43,9 @@ import {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const QUERY_KEY = ["patient-portal"] as const;
+const TICKETS_QUERY_KEY = ["patient-support-tickets"] as const;
 
-export type { CareTeamMemberDTO, PatientProfileDTO };
+export type { CareTeamMemberDTO, PatientProfileDTO, TicketDTO };
 export type EnrichedCareMember = CareTeamMemberDTO & {
   sessionCount: number;
   nextSession: string | null;
@@ -89,7 +96,7 @@ function bySchedule(a: PatientSession, b: PatientSession): number {
 /** Consecutive days ending today (or yesterday, if today isn't logged yet). */
 function computeStreak(journal: JournalEntry[]): number {
   const days = new Set(journal.map((e) => e.date));
-  const cursor = parseISODate(TODAY);
+  const cursor = parseISODate(todayISO());
   if (!days.has(toISO(cursor))) cursor.setDate(cursor.getDate() - 1);
   let streak = 0;
   while (days.has(toISO(cursor))) {
@@ -99,23 +106,27 @@ function computeStreak(journal: JournalEntry[]): number {
   return streak;
 }
 
-/** Weekly (Mon-start) mood averages, oldest→newest, derived from real entries. */
-function computeMoodTrend(journal: JournalEntry[]): { week: string; mood: number }[] {
-  const byWeek = new Map<string, { sum: number; n: number; start: number }>();
+/** Per-day mood average, oldest→newest, over the last 8 weeks of real entries.
+ *  Grouping by calendar day (not by week) so a check-in shows up as its own
+ *  point immediately instead of being folded into a once-a-week bucket that
+ *  hides everything logged since the last Monday. */
+function computeMoodTrend(journal: JournalEntry[]): { day: string; mood: number }[] {
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 56);
+  const cutoffISO = toISO(cutoff);
+
+  const byDay = new Map<string, { sum: number; n: number }>();
   for (const e of journal) {
-    const d = parseISODate(e.date);
-    const monday = new Date(d);
-    monday.setDate(d.getDate() - ((d.getDay() + 6) % 7));
-    const key = toISO(monday);
-    const cur = byWeek.get(key) ?? { sum: 0, n: 0, start: monday.getTime() };
+    if (e.date < cutoffISO) continue;
+    const cur = byDay.get(e.date) ?? { sum: 0, n: 0 };
     cur.sum += e.mood;
     cur.n += 1;
-    byWeek.set(key, cur);
+    byDay.set(e.date, cur);
   }
-  return [...byWeek.entries()]
-    .sort((a, b) => a[1].start - b[1].start)
-    .map(([key, v]) => ({
-      week: parseISODate(key).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
+  return [...byDay.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([date, v]) => ({
+      day: parseISODate(date).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
       mood: Math.round((v.sum / v.n) * 10) / 10,
     }));
 }
@@ -141,7 +152,7 @@ interface PatientDataValue {
     entriesThisMonth: number;
     unreadCount: number;
   };
-  moodTrend: { week: string; mood: number }[];
+  moodTrend: { day: string; mood: number }[];
   // Booking dialog state
   bookingOpen: boolean;
   bookingPresetId: string | null;
@@ -172,6 +183,14 @@ interface PatientDataValue {
     notificationPrefs: Record<string, boolean>;
   }) => void;
   isSlotTaken: (psychologistId: string, date: string, time: string) => boolean;
+  // Support tickets
+  tickets: TicketDTO[];
+  submitTicket: (input: {
+    subject: string;
+    priority: "low" | "medium" | "high";
+    message: string;
+  }) => void;
+  replyToTicket: (ticketId: string, body: string) => void;
 }
 
 const PatientDataContext = createContext<PatientDataValue | null>(null);
@@ -188,6 +207,11 @@ export function PatientDataProvider({ children }: { children: ReactNode }) {
     queryFn: () => getAllCliniciansFn(),
     staleTime: 5 * 60_000,
   });
+  const { data: ticketsData } = useQuery({
+    queryKey: TICKETS_QUERY_KEY,
+    queryFn: () => getMyTicketsFn(),
+    staleTime: 30_000,
+  });
 
   const [bookingOpen, setBookingOpen] = useState(false);
   const [bookingPresetId, setBookingPresetId] = useState<string | null>(null);
@@ -198,11 +222,13 @@ export function PatientDataProvider({ children }: { children: ReactNode }) {
   const notifications = useMemo(() => data?.notifications ?? [], [data]);
   const careTeamBase = useMemo(() => data?.careTeam ?? [], [data]);
   const clinicians = useMemo(() => cliniciansData ?? [], [cliniciansData]);
+  const tickets = useMemo(() => ticketsData ?? [], [ticketsData]);
   const profile = data?.profile ?? null;
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: QUERY_KEY });
   const patchData = (fn: (prev: PortalData) => PortalData) =>
     queryClient.setQueryData<PortalData>(QUERY_KEY, (prev) => (prev ? fn(prev) : prev));
+  const invalidateTickets = () => queryClient.invalidateQueries({ queryKey: TICKETS_QUERY_KEY });
 
   // Mutations. Read/write actions optimistically patch the cache where it keeps
   // the UI instant (mood, notifications); the rest invalidate to refetch.
@@ -215,6 +241,8 @@ export function PatientDataProvider({ children }: { children: ReactNode }) {
   const markReadMut = useMutation({ mutationFn: markNotificationReadFn, onSuccess: invalidate });
   const markAllMut = useMutation({ mutationFn: () => markAllReadFn(), onSuccess: invalidate });
   const profileMut = useMutation({ mutationFn: updateProfileFn, onSuccess: invalidate });
+  const submitTicketMut = useMutation({ mutationFn: submitTicketFn, onSuccess: invalidateTickets });
+  const replyTicketMut = useMutation({ mutationFn: replyToTicketFn, onSuccess: invalidateTickets });
 
   const derived = useMemo(() => {
     const upcoming = sessions.filter((s) => s.status === "upcoming").sort(bySchedule);
@@ -237,7 +265,9 @@ export function PatientDataProvider({ children }: { children: ReactNode }) {
       moods.length === 0
         ? 0
         : Math.round((moods.reduce((sum, m) => sum + m, 0) / moods.length) * 10) / 10;
-    const entriesThisMonth = journal.filter((e) => e.date.startsWith(TODAY.slice(0, 7))).length;
+    const entriesThisMonth = journal.filter((e) =>
+      e.date.startsWith(todayISO().slice(0, 7)),
+    ).length;
     const unreadCount = notifications.filter((n) => !n.read).length;
 
     return {
@@ -284,7 +314,7 @@ export function PatientDataProvider({ children }: { children: ReactNode }) {
       },
       bookSession: (input) => {
         // Client-side guard for instant feedback; the server re-validates.
-        if (input.date < TODAY) return false;
+        if (input.date < todayISO()) return false;
         if (slotTaken(sessions, input.psychologistId, input.date, input.time)) return false;
         bookMut.mutate({ data: input });
         return true;
@@ -297,14 +327,15 @@ export function PatientDataProvider({ children }: { children: ReactNode }) {
       completeSession: (id) => completeMut.mutate({ data: { id } }),
       checkInMood: (mood) => {
         // Optimistic: upsert today's entry so streak/avg/graph move instantly.
+        const today = todayISO();
         patchData((prev) => {
-          const has = prev.journal.some((e) => e.date === TODAY);
+          const has = prev.journal.some((e) => e.date === today);
           const journalNext = has
-            ? prev.journal.map((e) => (e.date === TODAY ? { ...e, mood } : e))
+            ? prev.journal.map((e) => (e.date === today ? { ...e, mood } : e))
             : [
                 {
                   id: `optimistic-${Date.now()}`,
-                  date: TODAY,
+                  date: today,
                   mood,
                   title: "Daily check-in",
                   content: "Logged today's mood.",
@@ -333,6 +364,9 @@ export function PatientDataProvider({ children }: { children: ReactNode }) {
       },
       saveProfile: (input) => profileMut.mutate({ data: input }),
       isSlotTaken: (psychologistId, date, time) => slotTaken(sessions, psychologistId, date, time),
+      tickets,
+      submitTicket: (input) => submitTicketMut.mutate({ data: input }),
+      replyToTicket: (ticketId, body) => replyTicketMut.mutate({ data: { ticketId, body } }),
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -346,6 +380,7 @@ export function PatientDataProvider({ children }: { children: ReactNode }) {
     bookingOpen,
     bookingPresetId,
     rescheduleSessionId,
+    tickets,
   ]);
 
   return <PatientDataContext.Provider value={value}>{children}</PatientDataContext.Provider>;

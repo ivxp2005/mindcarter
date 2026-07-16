@@ -6,7 +6,7 @@ import { Tabs, TabsList, TabsTrigger } from "../../components/ui/tabs";
 import { Badge } from "../../components/ui/badge";
 import { GradientAvatar } from "../../components/gradient-avatar";
 import { StaggerContainer, StaggerItem } from "../../components/scroll-reveal";
-import { DIARIES, type DiaryEntry } from "../../lib/psychologist";
+import { usePsychologistData } from "../../lib/psychologist-store";
 
 export const Route = createFileRoute("/psychologist/diaries")({
   validateSearch: (search: Record<string, unknown>): { open?: string } => ({
@@ -19,14 +19,18 @@ type Filter = "all" | "pending_review" | "reviewed";
 
 function DiariesPage() {
   const { open } = Route.useSearch();
-  const [entries, setEntries] = useState<DiaryEntry[]>(DIARIES);
+  const { diaries: entries, saveDiaryNote, markDiaryReviewed } = usePsychologistData();
   const [filter, setFilter] = useState<Filter>("pending_review");
-  const [selected, setSelected] = useState<string | null>(open ?? DIARIES[0]?.id ?? null);
+  const [selected, setSelected] = useState<string | null>(open ?? null);
   const [noteDraft, setNoteDraft] = useState("");
 
   useEffect(() => {
     if (open) setSelected(open);
   }, [open]);
+
+  useEffect(() => {
+    if (!selected && entries.length > 0) setSelected(entries[0].id);
+  }, [selected, entries]);
 
   const detail = entries.find((d) => d.id === selected) ?? null;
 
@@ -38,15 +42,13 @@ function DiariesPage() {
   const filtered = entries.filter((d) => filter === "all" || d.status === filter);
 
   const markReviewed = (id: string) => {
-    setEntries((prev) => prev.map((d) => (d.id === id ? { ...d, status: "reviewed" } : d)));
+    markDiaryReviewed(id);
     toast.success("Diary marked as reviewed.");
   };
 
   const saveNote = () => {
     if (!detail) return;
-    setEntries((prev) =>
-      prev.map((d) => (d.id === detail.id ? { ...d, clinicianNote: noteDraft } : d)),
-    );
+    saveDiaryNote(detail.id, noteDraft);
     toast.success("Note saved.");
   };
 

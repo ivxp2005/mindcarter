@@ -11,7 +11,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Calendar } from "./ui/calendar";
 import { usePatientData, parseISODate } from "../lib/patient-store";
-import { TODAY, type PatientSession } from "../lib/patient";
+import { todayISO, type PatientSession } from "../lib/patient";
 
 const TIME_SLOTS = [
   "09:00 AM",
@@ -160,7 +160,7 @@ export function BookSessionDialog() {
                   setDate(d);
                   setTime("");
                 }}
-                disabled={{ before: parseISODate(TODAY) }}
+                disabled={{ before: parseISODate(todayISO()) }}
               />
             </div>
           </div>

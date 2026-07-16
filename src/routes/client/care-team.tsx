@@ -7,7 +7,7 @@ import { CountUp } from "../../components/count-up";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "../../components/scroll-reveal";
 import { Badge } from "../../components/ui/badge";
 import { usePatientData } from "../../lib/patient-store";
-import { TODAY } from "../../lib/patient";
+import { todayISO } from "../../lib/patient";
 
 export const Route = createFileRoute("/client/care-team")({
   component: CareTeamPage,
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/client/care-team")({
 const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 
 function formatDate(dateStr: string) {
-  if (dateStr === TODAY) return "Today";
+  if (dateStr === todayISO()) return "Today";
   const [y, m, d] = dateStr.split("-").map(Number);
   return new Date(y, m - 1, d).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }

@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Area, AreaChart, ResponsiveContainer } from "recharts";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "../../components/scroll-reveal";
 import { GradientAvatar } from "../../components/gradient-avatar";
-import { DIARIES, MEETINGS, PRACTICE_STATS, TODAY, WEEKLY_SESSIONS } from "../../lib/psychologist";
+import { usePsychologistData } from "../../lib/psychologist-store";
 
 export const Route = createFileRoute("/psychologist/")({
   component: PsychologistDashboard,
@@ -12,41 +12,42 @@ export const Route = createFileRoute("/psychologist/")({
 
 function PsychologistDashboard() {
   const navigate = useNavigate();
-  const todaysMeetings = MEETINGS.filter((m) => m.date === TODAY);
-  const nextMeeting = todaysMeetings.find((m) => m.status === "upcoming");
-  const recentDiaries = DIARIES.slice(0, 4);
+  const { todayMeetings, diaries, stats, weeklySessions, profile } = usePsychologistData();
+  const nextMeeting = todayMeetings.find((m) => m.status === "upcoming");
+  const recentDiaries = diaries.slice(0, 4);
+  const firstName = profile?.name.split(" ").pop() ?? "there";
 
   const handleStartNext = () => {
     if (!nextMeeting) return;
     toast.success(`Starting session with ${nextMeeting.patientName}…`, {
-      description: "Connecting to video room (mock).",
+      description: "Connecting to video room.",
     });
     navigate({ to: "/psychologist/meetings", search: { open: nextMeeting.id } });
   };
 
-  const stats = [
+  const kpis = [
     {
       icon: CalendarDays,
       l: "Today's meetings",
-      v: String(PRACTICE_STATS.todaysMeetings),
+      v: String(stats.todaysMeetings),
       to: "/psychologist/meetings",
     },
     {
       icon: Users,
       l: "Active patients",
-      v: String(PRACTICE_STATS.activePatients),
+      v: String(stats.activePatients),
       to: "/psychologist/patients",
     },
     {
       icon: Notebook,
       l: "Diaries pending",
-      v: String(PRACTICE_STATS.diariesPending),
+      v: String(stats.diariesPending),
       to: "/psychologist/diaries",
     },
     {
       icon: Bell,
       l: "Notifications",
-      v: String(PRACTICE_STATS.notificationsTotal),
+      v: String(stats.notificationsTotal),
       to: "/psychologist/notifications",
     },
   ] as const;
@@ -71,10 +72,10 @@ function PsychologistDashboard() {
               Practice overview
             </p>
             <h1 className="mt-3 max-w-lg text-3xl font-black leading-[1.05] tracking-tight sm:text-4xl lg:text-5xl">
-              Good to see you, Dr. Carter.
+              Good to see you, {firstName}.
             </h1>
             <p className="mt-3 max-w-md text-sm text-background/60">
-              It's Wednesday — you have {todaysMeetings.length} sessions on the calendar today.
+              You have {todayMeetings.length} sessions on the calendar today.
             </p>
             <div className="mt-6 flex gap-2">
               <Link
@@ -120,7 +121,7 @@ function PsychologistDashboard() {
         {/* Bento KPI row */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Link
-            to={stats[0].to}
+            to={kpis[0].to}
             className="group relative overflow-hidden rounded-2xl border border-border bg-background p-6 transition hover:-translate-y-0.5 hover:border-brand/40 lg:col-span-2"
           >
             <div className="flex items-start justify-between">
@@ -131,12 +132,12 @@ function PsychologistDashboard() {
             </div>
             <div className="mt-6 flex items-end justify-between gap-4">
               <div>
-                <p className="text-3xl font-black tracking-tight">{stats[0].v}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{stats[0].l}</p>
+                <p className="text-3xl font-black tracking-tight">{kpis[0].v}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{kpis[0].l}</p>
               </div>
               <div className="h-14 w-28">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={WEEKLY_SESSIONS}>
+                  <AreaChart data={weeklySessions}>
                     <defs>
                       <linearGradient id="dashSpark" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="var(--brand)" stopOpacity={0.4} />
@@ -156,7 +157,7 @@ function PsychologistDashboard() {
             </div>
           </Link>
 
-          {stats.slice(1).map((s) => (
+          {kpis.slice(1).map((s) => (
             <Link
               key={s.l}
               to={s.to}
@@ -178,7 +179,7 @@ function PsychologistDashboard() {
           <section className="rounded-2xl border border-border bg-background p-6">
             <h2 className="text-lg font-semibold">Today's schedule</h2>
             <div className="relative mt-6 space-y-6 before:absolute before:bottom-2 before:left-[15px] before:top-2 before:w-px before:bg-border">
-              {todaysMeetings.map((m) => (
+              {todayMeetings.map((m) => (
                 <div key={m.id} className="relative flex items-start gap-4 pl-0">
                   <span className="relative z-10 mt-1 grid h-8 w-8 shrink-0 place-items-center rounded-full border-2 border-background bg-brand text-[10px] font-bold text-brand-foreground">
                     {m.time.slice(0, 2)}

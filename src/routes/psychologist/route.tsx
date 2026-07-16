@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { PortalShell } from "../../components/portal-shell";
+import { PsychologistDataProvider } from "../../lib/psychologist-store";
 import { meFn } from "../../lib/auth.server";
 
 export const Route = createFileRoute("/psychologist")({
@@ -23,13 +24,16 @@ const NAV_ITEMS = [
   { label: "Diaries", to: "/psychologist/diaries" },
   { label: "Analytics", to: "/psychologist/analytics" },
   { label: "Notifications", to: "/psychologist/notifications" },
+  { label: "Support", to: "/psychologist/support" },
   { label: "Profile", to: "/psychologist/profile" },
 ];
 
 function PsychologistLayout() {
   return (
-    <PortalShell brand="Psychologist Portal" navItems={NAV_ITEMS}>
-      <Outlet />
-    </PortalShell>
+    <PsychologistDataProvider>
+      <PortalShell brand="Psychologist Portal" navItems={NAV_ITEMS}>
+        <Outlet />
+      </PortalShell>
+    </PsychologistDataProvider>
   );
 }

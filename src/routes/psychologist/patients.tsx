@@ -13,7 +13,8 @@ import {
 import { Badge } from "../../components/ui/badge";
 import { GradientAvatar } from "../../components/gradient-avatar";
 import { StaggerContainer, StaggerItem } from "../../components/scroll-reveal";
-import { MEETINGS, PATIENTS, PRACTICE_STATS, type PatientStatus } from "../../lib/psychologist";
+import type { PatientStatus } from "../../lib/psychologist";
+import { usePsychologistData } from "../../lib/psychologist-store";
 
 export const Route = createFileRoute("/psychologist/patients")({
   validateSearch: (search: Record<string, unknown>): { open?: string } => ({
@@ -30,6 +31,7 @@ function statusBadge(status: PatientStatus) {
 
 function PatientsPage() {
   const { open } = Route.useSearch();
+  const { patients, meetings, stats, logDiaryReminder } = usePsychologistData();
   const [tab, setTab] = useState<"All" | PatientStatus>("All");
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<string | null>(open ?? null);
@@ -38,7 +40,7 @@ function PatientsPage() {
     if (open) setSelected(open);
   }, [open]);
 
-  const filtered = PATIENTS.filter((p) => {
+  const filtered = patients.filter((p) => {
     const matchesTab = tab === "All" || p.status === tab;
     const q = search.toLowerCase();
     const matchesSearch =
@@ -46,8 +48,8 @@ function PatientsPage() {
     return matchesTab && matchesSearch;
   });
 
-  const detail = PATIENTS.find((p) => p.id === selected) ?? null;
-  const detailHistory = detail ? MEETINGS.filter((m) => m.patientId === detail.id) : [];
+  const detail = patients.find((p) => p.id === selected) ?? null;
+  const detailHistory = detail ? meetings.filter((m) => m.patientId === detail.id) : [];
 
   return (
     <div className="space-y-6">
@@ -60,7 +62,7 @@ function PatientsPage() {
           <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Patient roster</h1>
         </div>
         <p className="text-xs text-muted-foreground">
-          Showing {filtered.length} of {PRACTICE_STATS.activePatients} active patients practice-wide
+          Showing {filtered.length} of {stats.activePatients} active patients practice-wide
         </p>
       </div>
 
@@ -179,7 +181,10 @@ function PatientsPage() {
               </div>
 
               <button
-                onClick={() => toast.success("Reminder sent to patient (mock).")}
+                onClick={() => {
+                  logDiaryReminder(detail.id);
+                  toast.success("Reminder sent to patient.");
+                }}
                 className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand px-4 py-2.5 text-sm font-semibold text-brand-foreground transition hover:opacity-90"
               >
                 <BellRing className="h-4 w-4" /> Log diary reminder

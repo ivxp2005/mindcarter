@@ -15,6 +15,7 @@ import {
   Menu,
   ChevronDown,
   Flame,
+  LifeBuoy,
 } from "lucide-react";
 import logoImg from "../assets/mindcarter-logo.avif";
 import { Sheet, SheetContent } from "./ui/sheet";
@@ -30,6 +31,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Care Team", to: "/client/care-team", icon: Users },
   { label: "Wellness Journal", to: "/client/journal", icon: BookOpen },
   { label: "Notifications", to: "/client/notifications", icon: Bell },
+  { label: "Support", to: "/client/support", icon: LifeBuoy },
   { label: "Profile", to: "/client/profile", icon: UserCircle },
 ];
 

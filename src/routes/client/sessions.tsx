@@ -26,7 +26,7 @@ import { GradientAvatar } from "../../components/gradient-avatar";
 import { CountUp } from "../../components/count-up";
 import { ScrollReveal } from "../../components/scroll-reveal";
 import { usePatientData } from "../../lib/patient-store";
-import { TODAY, type PatientSession, type SessionStatus } from "../../lib/patient";
+import { todayISO, type PatientSession, type SessionStatus } from "../../lib/patient";
 
 export const Route = createFileRoute("/client/sessions")({
   validateSearch: (search: Record<string, unknown>): { open?: string } => ({
@@ -67,7 +67,7 @@ function SessionsPage() {
   } = usePatientData();
   const [activeTab, setActiveTab] = useState<"upcoming" | "past" | "canceled">("upcoming");
   const [selected, setSelected] = useState<string | null>(open ?? null);
-  const [calendarDate, setCalendarDate] = useState<Date | undefined>(parseISODate(TODAY));
+  const [calendarDate, setCalendarDate] = useState<Date | undefined>(parseISODate(todayISO()));
 
   useEffect(() => {
     if (open) setSelected(open);
@@ -109,7 +109,7 @@ function SessionsPage() {
   };
 
   function formatDate(dateStr: string) {
-    if (dateStr === TODAY) return "Today";
+    if (dateStr === todayISO()) return "Today";
     return parseISODate(dateStr).toLocaleDateString(undefined, {
       month: "short",
       day: "numeric",
@@ -317,7 +317,7 @@ function SessionsPage() {
               mode="single"
               selected={calendarDate}
               onSelect={setCalendarDate}
-              disabled={{ before: parseISODate(TODAY) }}
+              disabled={{ before: parseISODate(todayISO()) }}
               modifiers={{ hasSession: sessionDates }}
               modifiersClassNames={{
                 hasSession:
