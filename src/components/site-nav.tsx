@@ -26,8 +26,8 @@ const patientLinks = [{ to: "/client", label: "My Wellness", icon: Home }] as co
 
 const doctorLinks = [
   { to: "/psychologist", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/psychologist", label: "Schedule", icon: CalendarClock },
-  { to: "/psychologist", label: "Patients", icon: Users },
+  { to: "/psychologist/meetings", label: "Schedule", icon: CalendarClock },
+  { to: "/psychologist/patients", label: "Patients", icon: Users },
 ] as const;
 
 export function SiteNav() {

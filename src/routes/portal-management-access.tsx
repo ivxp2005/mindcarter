@@ -590,7 +590,13 @@ function AdminDashboard({ admin, onLogout }: { admin: SessionUser; onLogout: () 
         <main className="mx-auto max-w-7xl px-6 py-8">
           {activeNav === "overview" && <OverviewSection />}
           {activeNav === "bookings" && <BookingMasterLog />}
-          {activeNav === "verification" && <VerificationQueue />}
+          {activeNav === "verification" && (
+            <PlaceholderSection
+              id="verification"
+              label="Verification Queue"
+              message="Coming soon — this will populate once psychologists can apply for verification directly. Psychologist accounts are currently added by the admin."
+            />
+          )}
           {activeNav === "users" && <UserManagement />}
           {activeNav === "support" && <SupportTickets />}
           {activeNav === "revenue" && <PlaceholderSection id="revenue" label="Revenue" />}
@@ -1347,6 +1353,7 @@ function AddPsychologistModal({
   const [specialties, setSpecialties] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1417,13 +1424,26 @@ function AddPsychologistModal({
             />
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <input
-              placeholder="Password (min 8 characters)"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={FORM_INPUT_CLASS}
-              style={FORM_INPUT_STYLE}
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password (min 8 characters)"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={FORM_INPUT_CLASS}
+                style={{ ...FORM_INPUT_STYLE, paddingRight: "2.75rem" }}
+              />
+              <button
+                type="button"
+                tabIndex={-1}
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 transition"
+                style={{ color: C.muted }}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
             <input
               placeholder="Phone (optional)"
               value={phone}
@@ -2195,6 +2215,8 @@ function AdminSettingsSection({ admin }: { admin: SessionUser }) {
   const [pwMsg, setPwMsg] = useState<string | null>(null);
   const [pwError, setPwError] = useState<string | null>(null);
   const [pwSubmitting, setPwSubmitting] = useState(false);
+  const [showCurrentPw, setShowCurrentPw] = useState(false);
+  const [showNewPw, setShowNewPw] = useState(false);
 
   const saveName = (e: React.FormEvent) => {
     e.preventDefault();
@@ -2264,30 +2286,54 @@ function AdminSettingsSection({ admin }: { admin: SessionUser }) {
           <label className="mt-4 block text-xs font-semibold" style={{ color: C.muted }}>
             Current Password
           </label>
-          <input
-            type="password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            className="mt-1.5 w-full rounded-xl px-4 py-2.5 text-sm text-white outline-none"
-            style={{
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(255,255,255,0.1)",
-            }}
-          />
+          <div className="relative">
+            <input
+              type={showCurrentPw ? "text" : "password"}
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              className="mt-1.5 w-full rounded-xl py-2.5 pl-4 pr-11 text-sm text-white outline-none"
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.1)",
+              }}
+            />
+            <button
+              type="button"
+              tabIndex={-1}
+              onClick={() => setShowCurrentPw((v) => !v)}
+              aria-label={showCurrentPw ? "Hide password" : "Show password"}
+              className="absolute right-3.5 top-1/2 mt-[3px] -translate-y-1/2 transition"
+              style={{ color: C.muted }}
+            >
+              {showCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
           <label className="mt-4 block text-xs font-semibold" style={{ color: C.muted }}>
             New Password
           </label>
-          <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            minLength={8}
-            className="mt-1.5 w-full rounded-xl px-4 py-2.5 text-sm text-white outline-none"
-            style={{
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(255,255,255,0.1)",
-            }}
-          />
+          <div className="relative">
+            <input
+              type={showNewPw ? "text" : "password"}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              minLength={8}
+              className="mt-1.5 w-full rounded-xl py-2.5 pl-4 pr-11 text-sm text-white outline-none"
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.1)",
+              }}
+            />
+            <button
+              type="button"
+              tabIndex={-1}
+              onClick={() => setShowNewPw((v) => !v)}
+              aria-label={showNewPw ? "Hide password" : "Show password"}
+              className="absolute right-3.5 top-1/2 mt-[3px] -translate-y-1/2 transition"
+              style={{ color: C.muted }}
+            >
+              {showNewPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
           <button
             type="submit"
             disabled={pwSubmitting || !currentPassword || newPassword.length < 8}
@@ -2313,7 +2359,15 @@ function AdminSettingsSection({ admin }: { admin: SessionUser }) {
 }
 
 // ─── Placeholder ──────────────────────────────────────────────────────────────
-function PlaceholderSection({ id, label }: { id: string; label: string }) {
+function PlaceholderSection({
+  id,
+  label,
+  message = "Connect your database to populate this section.",
+}: {
+  id: string;
+  label: string;
+  message?: string;
+}) {
   return (
     <section>
       <SectionHeader eyebrow={id} title={label} />
@@ -2321,7 +2375,7 @@ function PlaceholderSection({ id, label }: { id: string; label: string }) {
         className="flex h-64 items-center justify-center rounded-2xl"
         style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.1)" }}
       >
-        <p style={{ color: C.mutedLow }}>Connect your database to populate this section.</p>
+        <p style={{ color: C.mutedLow }}>{message}</p>
       </div>
     </section>
   );

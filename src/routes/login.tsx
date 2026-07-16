@@ -3,6 +3,7 @@ import { Lock, LogIn, User, Stethoscope } from "lucide-react";
 import { useState } from "react";
 import { loginFn, resendOtpFn } from "../lib/auth.server";
 import type { UserRole } from "../lib/auth-types";
+import { PasswordInput } from "../components/password-input";
 
 const OAUTH_ERROR_MESSAGES: Record<string, string> = {
   oauth_state: "Google sign-in expired or was tampered with. Please try again.",
@@ -257,14 +258,13 @@ function LoginPage() {
                   Forgot password?
                 </Link>
               </div>
-              <input
+              <PasswordInput
                 id="signin-password"
-                type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-foreground transition"
+                className="mt-2 w-full rounded-xl border border-border bg-background py-3 pl-4 pr-11 text-sm outline-none transition focus:border-foreground"
               />
             </label>
 

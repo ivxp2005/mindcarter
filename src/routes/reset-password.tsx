@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { KeyRound } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { PasswordInput } from "../components/password-input";
 import { PasswordRequirements } from "../components/password-requirements";
 import { resetPasswordFn } from "../lib/auth.server";
 import { type ResetPasswordInput, resetPasswordSchema } from "../lib/auth-schemas";
@@ -81,11 +82,10 @@ function ResetPasswordPage() {
             <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               New password
             </span>
-            <input
-              type="password"
+            <PasswordInput
               {...register("password")}
               placeholder="••••••••"
-              className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-foreground transition"
+              className="mt-2 w-full rounded-xl border border-border bg-background py-3 pl-4 pr-11 text-sm outline-none transition focus:border-foreground"
             />
             {errors.password && (
               <p className="mt-1.5 text-xs text-red-600">{errors.password.message}</p>
