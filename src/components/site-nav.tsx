@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { logoutFn } from "../lib/auth.server";
 import { useSession } from "../lib/use-session";
+import { SpotlightNavbar } from "./ui/spotlight-navbar";
 
 const publicLinks = [
   { to: "/", label: "Home" },
@@ -106,10 +107,10 @@ export function SiteNav() {
             : "bg-background/10 backdrop-blur-sm border-b border-transparent"
       }`}
     >
-      <div className="mx-auto grid h-20 max-w-7xl grid-cols-3 items-center px-6 md:flex md:justify-between">
+      <div className="mx-auto grid h-20 max-w-7xl grid-cols-3 items-center px-6">
         <Link
           to="/"
-          className="col-start-2 row-start-1 flex items-center justify-self-center md:col-start-auto md:justify-self-auto"
+          className="col-start-2 row-start-1 flex items-center justify-self-center md:col-start-1 md:justify-self-start"
         >
           <img
             src={logoImg}
@@ -120,19 +121,8 @@ export function SiteNav() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-6 md:flex">
-          {publicLinks.map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              activeOptions={{ exact: true }}
-              activeProps={{ className: activeClass }}
-              inactiveProps={{ className: inactiveClass }}
-              className="text-sm font-medium transition-colors"
-            >
-              {l.label}
-            </Link>
-          ))}
+        <nav className="hidden items-center gap-6 md:col-start-2 md:flex md:justify-self-center">
+          <SpotlightNavbar items={publicLinks} variant={isDarkNav ? "overlay" : "solid"} />
 
           {/* Role portal links */}
           {roleLinks && (
@@ -145,9 +135,9 @@ export function SiteNav() {
                   activeOptions={{ exact: true }}
                   activeProps={{ className: activeClass }}
                   inactiveProps={{ className: inactiveClass }}
-                  className="flex items-center gap-1.5 text-sm font-medium transition-colors"
+                  className="flex items-center gap-1.5 whitespace-nowrap text-sm font-medium transition-colors"
                 >
-                  <l.icon className="h-3.5 w-3.5" />
+                  <l.icon className="h-3.5 w-3.5 shrink-0" />
                   {l.label}
                 </Link>
               ))}
@@ -156,7 +146,7 @@ export function SiteNav() {
         </nav>
 
         {/* Desktop right — logged out: Login + Book; logged in: profile avatar dropdown */}
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-3 md:col-start-3 md:flex md:justify-self-end">
           {role ? (
             /* ── Profile Avatar Dropdown ── */
             <div className="relative" ref={dropRef}>

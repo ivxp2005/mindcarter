@@ -43,11 +43,7 @@ const GOLD = "#F4C430";
 const INK = "#111111";
 
 const SERVICES: { icon: LucideIcon; title: string; desc: string }[] = [
-  {
-    icon: Brain,
-    title: "Individual Therapy",
-    desc: "One-on-one clinical care with licensed psychologists, delivered in-person or online.",
-  },
+
   {
     icon: Building2,
     title: "Organizational Consulting",
@@ -69,11 +65,6 @@ const SERVICES: { icon: LucideIcon; title: string; desc: string }[] = [
     desc: "Cohort programs to build resilient, values-aligned leadership benches.",
   },
   {
-    icon: Sparkles,
-    title: "Cognitive Crafting",
-    desc: "Structured reframing using CBT, ACT and mindfulness practices.",
-  },
-  {
     icon: Bot,
     title: "AI Assistant",
     desc: "24/7 reflective companion tuned to your clinical care plan.",
@@ -82,11 +73,6 @@ const SERVICES: { icon: LucideIcon; title: string; desc: string }[] = [
     icon: GraduationCap,
     title: "Career Coaching",
     desc: "Purpose-led career navigation, transition and re-entry support.",
-  },
-  {
-    icon: HeartPulse,
-    title: "Corporate Wellness",
-    desc: "Enterprise mental health programs designed with people teams.",
   },
   {
     icon: ShieldCheck,
@@ -132,11 +118,10 @@ function ServicesHero() {
         <ScrollReveal>
           <Eyebrow label="Services" dark />
           <h1 className="font-display mt-4 max-w-xl text-5xl font-black leading-[1.02] tracking-tight text-white sm:text-6xl">
-            Care and consulting, engineered for outcomes.
+            Organizational Psychology Solutions, Designed for Impact.
           </h1>
           <p className="mt-6 max-w-lg text-base leading-relaxed text-white/70">
-            A full-spectrum practice covering clinical therapy, assessments and enterprise
-            mental health — all delivered by doctorate-level clinicians.
+            An integrated portfolio of evidence-based solutions spanning psychometric assessments, employee assistance, leadership development, behavioral interviewing, and organizational consulting—helping organizations make better people decisions and build workplaces where people and performance thrive.
           </p>
           <Link
             to="/contact"
