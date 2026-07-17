@@ -4,9 +4,10 @@ import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { SiteShell } from "../components/site-shell";
 import amarRajanImg from "../assets/amar-rajan.png";
+import heroImg from "../assets/hero.jpg";
 import teamImg from "../assets/team.png";
 import aboutBannerImg from "../assets/image copy.png";
-import { ScrollReveal, StaggerContainer, StaggerItem } from "../components/scroll-reveal";
+import { ScrollReveal } from "../components/scroll-reveal";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -278,45 +279,72 @@ function OurStory() {
   );
 }
 
-/* ── 4. Mission & Vision — copy left, stacked cards right ────────────────── */
+/* ── 4. Mission & Vision — centered heading above, three panels below ────── */
 function MissionVision() {
   return (
-    <section className="relative overflow-hidden border-t border-border bg-muted/30 py-20 sm:py-28">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute right-0 top-16 h-44 w-44 rounded-l-[2.5rem] bg-brand/15"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -bottom-10 left-12 h-40 w-40 rounded-full bg-foreground/[0.03]"
-      />
-
-      <div className="relative mx-auto grid max-w-7xl items-center gap-16 px-6 lg:grid-cols-2">
-        <ScrollReveal>
+    <section className="relative border-t border-border bg-background pt-20 sm:pt-28">
+      {/* section heading */}
+      <ScrollReveal>
+        <div className="mx-auto max-w-3xl px-6 text-center">
           <Eyebrow>What drives us</Eyebrow>
           <h2 className="font-display mt-4 text-3xl font-black tracking-tight sm:text-4xl">
             The principles that guide every engagement.
           </h2>
-          <p className="mt-6 max-w-md leading-relaxed text-muted-foreground">
+          <p className="mt-6 leading-relaxed text-muted-foreground">
             Two commitments shape how we show up for the people and organizations we serve — one for
             today, one for the world we&rsquo;re working toward.
           </p>
+        </div>
+      </ScrollReveal>
+
+      <div className="mt-14 grid lg:grid-cols-3">
+        {/* Vision — cream panel */}
+        <ScrollReveal className="flex flex-col items-center justify-center bg-[#fdf6e0] px-8 py-16 text-center text-foreground sm:px-12 lg:py-24">
+          <h2 className="font-display text-3xl font-black uppercase leading-tight tracking-wide">
+            Our
+            <br />
+            <span className="text-brand">Vision</span>
+          </h2>
+          <div aria-hidden className="mt-5 h-0.5 w-10 bg-brand" />
+          <p className="mx-auto mt-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
+            To be a globally trusted organizational psychology company advancing the future of work
+            by integrating behavioral science, human-centered AI, and evidence-based practice. We
+            envision a world where organizations harness technology not to replace human potential,
+            but to discover it, enable it, and help it evolve.
+          </p>
         </ScrollReveal>
 
-        <StaggerContainer className="grid gap-5">
-          <StaggerItem>
-            <Panel
-              eyebrow="Mission"
-              title="To help individuals and organizations thrive in the age of AI by applying evidence-based organizational psychology to improve people decisions, strengthen leadership, enhance employee wellbeing, and build workplaces where human potential and technology work together to create sustainable organizational success."
-            />
-          </StaggerItem>
-          <StaggerItem>
-            <Panel
-              eyebrow="Vision"
-              title="To be a globally trusted organizational psychology company advancing the future of work by integrating behavioral science, human-centered AI, and evidence-based practice. We envision a world where organizations harness technology not to replace human potential, but to discover it, enable it, and help it evolve."
-            />
-          </StaggerItem>
-        </StaggerContainer>
+        {/* Middle — team photo on white */}
+        <ScrollReveal
+          delay={0.1}
+          className="flex items-center justify-center bg-background px-8 py-10 sm:px-12"
+        >
+          <img
+            src={heroImg}
+            alt="The Mindcarter team"
+            className="max-h-[440px] w-full object-cover"
+            loading="lazy"
+          />
+        </ScrollReveal>
+
+        {/* Mission — gold panel */}
+        <ScrollReveal
+          delay={0.2}
+          className="flex flex-col items-center justify-center bg-brand px-8 py-16 text-center text-brand-foreground sm:px-12 lg:py-24"
+        >
+          <h2 className="font-display text-3xl font-black uppercase leading-tight tracking-wide">
+            Our
+            <br />
+            Mission
+          </h2>
+          <div aria-hidden className="mt-5 h-0.5 w-10 bg-brand-foreground" />
+          <p className="mx-auto mt-6 max-w-sm text-sm leading-relaxed text-brand-foreground/80">
+            To help individuals and organizations thrive in the age of AI by applying evidence-based
+            organizational psychology to improve people decisions, strengthen leadership, enhance
+            employee wellbeing, and build workplaces where human potential and technology work
+            together to create sustainable organizational success.
+          </p>
+        </ScrollReveal>
       </div>
     </section>
   );
@@ -335,14 +363,3 @@ function AboutPage() {
   );
 }
 
-function Panel({ eyebrow, title }: { eyebrow: string; title: string }) {
-  return (
-    <div className="rounded-3xl border border-border bg-background p-8 shadow-sm transition-all duration-300 ease-out sm:p-10 hover:-translate-y-3 hover:scale-[1.03] hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.18)] hover:border-brand/30 transform-gpu cursor-default">
-      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-        <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
-        {eyebrow}
-      </p>
-      <p className="mt-4 text-sm font-semibold leading-snug tracking-tight sm:text-lg">{title}</p>
-    </div>
-  );
-}
