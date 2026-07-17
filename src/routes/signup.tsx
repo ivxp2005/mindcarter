@@ -48,7 +48,7 @@ function SignupPage() {
     // Email verification (OTP) isn't wired into signup yet — see the TODO in
     // signupFn (src/lib/auth.server.ts). Once re-enabled, this goes back to
     // navigating to /verify-email instead.
-    navigate({ to: "/client" });
+    navigate({ to: "/employee" });
   };
 
   return (

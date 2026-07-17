@@ -5,7 +5,7 @@ import { PatientDataProvider } from "../../lib/patient-store";
 import { meFn } from "../../lib/auth.server";
 import { getOnboardingStatusFn } from "../../lib/patient-data.server";
 
-export const Route = createFileRoute("/client")({
+export const Route = createFileRoute("/employee")({
   head: () => ({
     meta: [{ title: "My Wellness — Mindcarter" }, { name: "robots", content: "noindex" }],
   }),
@@ -15,14 +15,14 @@ export const Route = createFileRoute("/client")({
     if (!user || user.role !== "patient") {
       throw redirect({ to: "/login" });
     }
-    if (!onboardingComplete && location.pathname !== "/client/profile") {
-      throw redirect({ to: "/client/profile" });
+    if (!onboardingComplete && location.pathname !== "/employee/profile") {
+      throw redirect({ to: "/employee/profile" });
     }
   },
-  component: ClientLayout,
+  component: EmployeeLayout,
 });
 
-function ClientLayout() {
+function EmployeeLayout() {
   return (
     <PatientDataProvider>
       <WellnessShell>

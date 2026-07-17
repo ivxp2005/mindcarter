@@ -28,7 +28,7 @@ function emailError(value: string): string | null {
   return emailSchema.safeParse(value).success ? null : "Enter a valid email address";
 }
 
-export const Route = createFileRoute("/client/profile")({
+export const Route = createFileRoute("/employee/profile")({
   component: ProfilePage,
 });
 
@@ -189,7 +189,7 @@ function ProfilePage() {
             transition={{ duration: 0.6, ease: EASE_OUT }}
           >
             <GradientAvatar
-              name={name || "Client"}
+              name={name || "Employee"}
               size="xl"
               className="ring-4 ring-background/10"
             />
@@ -201,7 +201,7 @@ function ProfilePage() {
             <p className="text-sm text-background/60">
               {needsOnboarding
                 ? "Complete the details below to unlock the rest of your portal."
-                : "Client"}
+                : "Employee"}
             </p>
           </div>
           <span className="flex items-center gap-1.5 rounded-full border border-background/20 bg-background/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest">
@@ -277,7 +277,7 @@ function ProfilePage() {
                 (v) => v.trim().length > 0,
               );
               if (needsOnboarding && nowComplete) {
-                navigate({ to: "/client" });
+                navigate({ to: "/employee" });
               }
             }}
             className="space-y-4"

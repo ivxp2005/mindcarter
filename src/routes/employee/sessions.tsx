@@ -28,7 +28,7 @@ import { ScrollReveal } from "../../components/scroll-reveal";
 import { usePatientData } from "../../lib/patient-store";
 import { todayISO, type PatientSession, type SessionStatus } from "../../lib/patient";
 
-export const Route = createFileRoute("/client/sessions")({
+export const Route = createFileRoute("/employee/sessions")({
   validateSearch: (search: Record<string, unknown>): { open?: string } => ({
     open: typeof search.open === "string" ? search.open : undefined,
   }),
@@ -97,7 +97,7 @@ function SessionsPage() {
   const detail = sessions.find((s) => s.id === selected) ?? null;
   const closeDialog = () => {
     setSelected(null);
-    navigate({ to: "/client/sessions", search: {} });
+    navigate({ to: "/employee/sessions", search: {} });
   };
 
   const handleJoin = (s: PatientSession) => {
@@ -360,7 +360,7 @@ function SessionsPage() {
               {detail.notes && <p className="text-sm text-muted-foreground">{detail.notes}</p>}
               <div className="flex items-center gap-2">{statusBadge(effectiveStatus(detail))}</div>
               <Link
-                to="/client/care-team"
+                to="/employee/care-team"
                 className="text-sm font-semibold text-foreground underline underline-offset-2"
               >
                 View care team profile →

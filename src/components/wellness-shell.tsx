@@ -26,13 +26,13 @@ import { usePatientData } from "../lib/patient-store";
 type NavItem = { label: string; to: string; exact?: boolean; icon: React.ElementType };
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Dashboard", to: "/client", exact: true, icon: LayoutDashboard },
-  { label: "Sessions", to: "/client/sessions", icon: CalendarHeart },
-  { label: "Care Team", to: "/client/care-team", icon: Users },
-  { label: "Wellness Journal", to: "/client/journal", icon: BookOpen },
-  { label: "Notifications", to: "/client/notifications", icon: Bell },
-  { label: "Support", to: "/client/support", icon: LifeBuoy },
-  { label: "Profile", to: "/client/profile", icon: UserCircle },
+  { label: "Dashboard", to: "/employee", exact: true, icon: LayoutDashboard },
+  { label: "Sessions", to: "/employee/sessions", icon: CalendarHeart },
+  { label: "Care Team", to: "/employee/care-team", icon: Users },
+  { label: "Wellness Journal", to: "/employee/journal", icon: BookOpen },
+  { label: "Notifications", to: "/employee/notifications", icon: Bell },
+  { label: "Support", to: "/employee/support", icon: LifeBuoy },
+  { label: "Profile", to: "/employee/profile", icon: UserCircle },
 ];
 
 /** Human-friendly section name for the top-bar breadcrumb (never the raw path). */
@@ -57,8 +57,8 @@ function NavLinks({ idPrefix, onNavigate }: { idPrefix: string; onNavigate?: () 
           : location.pathname === item.to || location.pathname.startsWith(item.to + "/");
         const Icon = item.icon;
         const badge =
-          item.to === "/client/notifications" && stats.unreadCount > 0 ? stats.unreadCount : null;
-        const locked = onboardingLocked && item.to !== "/client/profile";
+          item.to === "/employee/notifications" && stats.unreadCount > 0 ? stats.unreadCount : null;
+        const locked = onboardingLocked && item.to !== "/employee/profile";
 
         if (locked) {
           return (
@@ -266,7 +266,7 @@ export function WellnessShell({ children }: { children: ReactNode }) {
                   <div className="absolute right-0 top-12 z-20 w-52 overflow-hidden rounded-xl border border-border bg-background shadow-xl">
                     <div className="border-b border-border px-4 py-3">
                       <p className="text-sm font-semibold">{userName}</p>
-                      <p className="text-xs text-muted-foreground">Client</p>
+                      <p className="text-xs text-muted-foreground">Employee</p>
                     </div>
                     <div className="p-1.5">
                       <Link

@@ -1,5 +1,5 @@
 /**
- * patient-data.server.ts — DB-backed data layer for the client (patient) portal.
+ * patient-data.server.ts — DB-backed data layer for the employee (patient) portal.
  *
  * Every handler is scoped to the logged-in patient via `getSessionUser()`; a
  * non-patient session is rejected. DB rows are mapped to the portal's existing
@@ -319,7 +319,7 @@ export const getPortalDataFn = createServerFn({ method: "GET" }).handler(
   },
 );
 
-/** Lightweight status check used by the /client route guard — avoids loading
+/** Lightweight status check used by the /employee route guard — avoids loading
  *  the whole portal payload just to decide whether to redirect. */
 export const getOnboardingStatusFn = createServerFn({ method: "GET" }).handler(
   async (): Promise<{ onboardingComplete: boolean }> => {
@@ -474,7 +474,7 @@ export const bookSessionFn = createServerFn({ method: "POST" })
       kind: "meeting",
       title: "Session booked",
       body: `Your ${data.kind} with ${psychName} on ${data.date} at ${data.time} is confirmed.`,
-      actionUrl: "/client/sessions",
+      actionUrl: "/employee/sessions",
       actionParams: { open: inserted.id },
     });
 
@@ -513,7 +513,7 @@ export const cancelSessionFn = createServerFn({ method: "POST" })
       kind: "meeting",
       title: "Session canceled",
       body: `Your session with ${psychRow[0]?.name ?? "your clinician"} on ${rows[0].scheduledDate} was canceled.`,
-      actionUrl: "/client/sessions",
+      actionUrl: "/employee/sessions",
     });
 
     return { ok: true as const };

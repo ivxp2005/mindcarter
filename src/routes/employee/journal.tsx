@@ -14,8 +14,9 @@ import { StaggerContainer, StaggerItem, ScrollReveal } from "../../components/sc
 import { CountUp } from "../../components/count-up";
 import { usePatientData } from "../../lib/patient-store";
 import { MOOD_EMOJI, MOOD_LABEL, todayISO, type Mood } from "../../lib/patient";
+import { useMoodCheckIn } from "../../lib/use-mood-checkin";
 
-export const Route = createFileRoute("/client/journal")({
+export const Route = createFileRoute("/employee/journal")({
   validateSearch: (search: Record<string, unknown>): { open?: string } => ({
     open: typeof search.open === "string" ? search.open : undefined,
   }),
@@ -39,7 +40,11 @@ function JournalPage() {
   const { open } = Route.useSearch();
   const { journal: entries, stats, moodTrend, checkInMood, addJournalEntry } = usePatientData();
   const [selected, setSelected] = useState<string | null>(open ?? entries[0]?.id ?? null);
-  const [checkedInMood, setCheckedInMood] = useState<Mood | null>(null);
+  const { checkedInMood, isEditingWindow, isLockedIn, remainingSec, handleCheckIn } =
+    useMoodCheckIn(entries, (m) => {
+      checkInMood(m);
+      toast.success(`Mood logged: ${MOOD_LABEL[m]} ${MOOD_EMOJI[m]}`);
+    });
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -60,12 +65,6 @@ function JournalPage() {
     setTagDraft("");
   };
   const removeTag = (tag: string) => setTags((prev) => prev.filter((t) => t !== tag));
-
-  const handleCheckIn = (m: Mood) => {
-    setCheckedInMood(m);
-    checkInMood(m);
-    toast.success(`Mood logged: ${MOOD_LABEL[m]} ${MOOD_EMOJI[m]}`);
-  };
 
   const handleSaveEntry = (e: FormEvent) => {
     e.preventDefault();
@@ -127,20 +126,32 @@ function JournalPage() {
               <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-background/50">
                 Today's check-in — how are you feeling?
               </p>
-              <div className="mt-3 flex gap-2">
-                {([1, 2, 3, 4, 5] as Mood[]).map((m) => (
-                  <button
-                    key={m}
-                    onClick={() => handleCheckIn(m)}
-                    className={`grid h-12 w-12 place-items-center rounded-2xl text-2xl transition-all duration-200 ease-out hover:-translate-y-1 active:scale-90 ${
-                      checkedInMood === m ? "bg-brand" : "bg-background/10 hover:bg-background/20"
-                    }`}
-                    aria-label={MOOD_LABEL[m]}
-                    title={MOOD_LABEL[m]}
-                  >
-                    {MOOD_EMOJI[m]}
-                  </button>
-                ))}
+              <div className="mt-3 flex items-center gap-3">
+                <div className="flex gap-2">
+                  {([1, 2, 3, 4, 5] as Mood[]).map((m) => (
+                    <button
+                      key={m}
+                      onClick={() => handleCheckIn(m)}
+                      disabled={isLockedIn}
+                      className={`grid h-12 w-12 place-items-center rounded-2xl text-2xl transition-all duration-200 ease-out ${
+                        isLockedIn
+                          ? "cursor-not-allowed opacity-50"
+                          : "hover:-translate-y-1 active:scale-90"
+                      } ${
+                        checkedInMood === m ? "bg-brand" : "bg-background/10 hover:bg-background/20"
+                      }`}
+                      aria-label={MOOD_LABEL[m]}
+                      title={isLockedIn ? "Logged for today" : MOOD_LABEL[m]}
+                    >
+                      {MOOD_EMOJI[m]}
+                    </button>
+                  ))}
+                </div>
+                {isEditingWindow && (
+                  <span className="whitespace-nowrap rounded-full bg-background/10 px-2.5 py-1 text-xs font-semibold tabular-nums text-background/70">
+                    You can still change · {remainingSec}s
+                  </span>
+                )}
               </div>
             </div>
           </div>

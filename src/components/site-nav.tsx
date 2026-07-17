@@ -23,7 +23,7 @@ const publicLinks = [
   { to: "/contact", label: "Contact" },
 ] as const;
 
-const patientLinks = [{ to: "/client", label: "My Wellness", icon: Home }] as const;
+const patientLinks = [{ to: "/employee", label: "My Wellness", icon: Home }] as const;
 
 const doctorLinks = [
   { to: "/psychologist", label: "Dashboard", icon: LayoutDashboard },
@@ -68,10 +68,10 @@ export function SiteNav() {
 
   const isDoctor = role === "psychologist";
   const isPatient = role === "patient";
-  const portalTo = isDoctor ? "/psychologist" : "/client";
+  const portalTo = isDoctor ? "/psychologist" : "/employee";
   const roleLinks = isDoctor ? doctorLinks : isPatient ? patientLinks : null;
   const userName = session?.name ?? "";
-  const userRole = isDoctor ? "Psychologist" : isPatient ? "Client" : "";
+  const userRole = isDoctor ? "Psychologist" : isPatient ? "Employee" : "";
   const initials = session
     ? session.name
         .split(" ")
@@ -303,7 +303,7 @@ export function SiteNav() {
               <>
                 <div className="my-2 border-t border-border" />
                 <p className="px-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                  {isDoctor ? "Doctor Portal" : "Client Portal"}
+                  {isDoctor ? "Doctor Portal" : "Employee Portal"}
                 </p>
                 {roleLinks.map((l) => (
                   <Link

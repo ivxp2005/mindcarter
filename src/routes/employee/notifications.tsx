@@ -7,7 +7,7 @@ import { CountUp } from "../../components/count-up";
 import { usePatientData } from "../../lib/patient-store";
 import type { NotificationKind, PortalNotification } from "../../lib/patient";
 
-export const Route = createFileRoute("/client/notifications")({
+export const Route = createFileRoute("/employee/notifications")({
   component: NotificationsPage,
 });
 

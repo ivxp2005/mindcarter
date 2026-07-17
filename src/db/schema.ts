@@ -150,14 +150,14 @@ export const patientProfiles = pgTable("patient_profiles", {
   primaryConcern: text("primary_concern"),
   tags: text("tags").array(),
   totalSessions: integer("total_sessions").notNull().default(0),
-  // Profile-page fields (client portal /client/profile).
+  // Profile-page fields (employee portal /employee/profile).
   dateOfBirth: date("date_of_birth"),
   address: text("address"),
   emergencyContactName: varchar("emergency_contact_name", { length: 255 }),
   emergencyContactPhone: varchar("emergency_contact_phone", { length: 32 }),
   preferredLanguage: varchar("preferred_language", { length: 64 }),
   notificationPrefs: jsonb("notification_prefs"),
-  // Gates access to the rest of the client portal — false until the patient
+  // Gates access to the rest of the employee portal — false until the patient
   // fills in and saves the required profile fields at least once.
   onboardingComplete: boolean("onboarding_complete").notNull().default(false),
 });
@@ -177,7 +177,7 @@ export const psychologistProfiles = pgTable("psychologist_profiles", {
   specialties: text("specialties").array(),
   bio: text("bio"),
   yearsExperience: integer("years_experience"),
-  // Care-Team card fields (client portal /client/care-team) + booking price.
+  // Care-Team card fields (employee portal /employee/care-team) + booking price.
   rating: numeric("rating", { precision: 2, scale: 1 }),
   price: numeric("price", { precision: 10, scale: 2 }),
   // Psychologist portal profile page notification toggles — mirrors
@@ -238,7 +238,7 @@ export const diaryEntries = pgTable(
     submittedAt: timestamp("submitted_at", { withTimezone: true }).notNull().defaultNow(),
     content: text("content").notNull(),
     clinicianNote: text("clinician_note"),
-    // Client-portal wellness journal: 1–5 mood, freeform tags, and the
+    // Employee-portal wellness journal: 1–5 mood, freeform tags, and the
     // calendar-day the entry belongs to (streak / per-day upsert / grouping).
     mood: integer("mood"),
     tags: text("tags").array(),
@@ -266,7 +266,7 @@ export const notifications = pgTable("notifications", {
 });
 
 // ─── care_team_members ──────────────────────────────────────────────────────
-// The patient↔clinician link the client portal's Care Team reads from. A
+// The patient↔clinician link the employee portal's Care Team reads from. A
 // patient can have several clinicians; exactly one is flagged `is_primary`.
 
 export const careTeamMembers = pgTable(

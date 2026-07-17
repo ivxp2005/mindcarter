@@ -9,7 +9,7 @@ import { Badge } from "../../components/ui/badge";
 import { usePatientData } from "../../lib/patient-store";
 import { todayISO } from "../../lib/patient";
 
-export const Route = createFileRoute("/client/care-team")({
+export const Route = createFileRoute("/employee/care-team")({
   component: CareTeamPage,
 });
 

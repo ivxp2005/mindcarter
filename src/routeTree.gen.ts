@@ -21,10 +21,10 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BookingRouteImport } from './routes/booking'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as PsychologistRouteRouteImport } from './routes/psychologist/route'
-import { Route as ClientRouteRouteImport } from './routes/client/route'
+import { Route as EmployeeRouteRouteImport } from './routes/employee/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PsychologistIndexRouteImport } from './routes/psychologist/index'
-import { Route as ClientIndexRouteImport } from './routes/client/index'
+import { Route as EmployeeIndexRouteImport } from './routes/employee/index'
 import { Route as PsychologistSupportRouteImport } from './routes/psychologist/support'
 import { Route as PsychologistProfileRouteImport } from './routes/psychologist/profile'
 import { Route as PsychologistPatientsRouteImport } from './routes/psychologist/patients'
@@ -32,12 +32,12 @@ import { Route as PsychologistNotificationsRouteImport } from './routes/psycholo
 import { Route as PsychologistMeetingsRouteImport } from './routes/psychologist/meetings'
 import { Route as PsychologistDiariesRouteImport } from './routes/psychologist/diaries'
 import { Route as PsychologistAnalyticsRouteImport } from './routes/psychologist/analytics'
-import { Route as ClientSupportRouteImport } from './routes/client/support'
-import { Route as ClientSessionsRouteImport } from './routes/client/sessions'
-import { Route as ClientProfileRouteImport } from './routes/client/profile'
-import { Route as ClientNotificationsRouteImport } from './routes/client/notifications'
-import { Route as ClientJournalRouteImport } from './routes/client/journal'
-import { Route as ClientCareTeamRouteImport } from './routes/client/care-team'
+import { Route as EmployeeSupportRouteImport } from './routes/employee/support'
+import { Route as EmployeeSessionsRouteImport } from './routes/employee/sessions'
+import { Route as EmployeeProfileRouteImport } from './routes/employee/profile'
+import { Route as EmployeeNotificationsRouteImport } from './routes/employee/notifications'
+import { Route as EmployeeJournalRouteImport } from './routes/employee/journal'
+import { Route as EmployeeCareTeamRouteImport } from './routes/employee/care-team'
 import { Route as AuthGoogleRouteImport } from './routes/auth/google'
 import { Route as AuthGoogleCallbackRouteImport } from './routes/auth/google.callback'
 
@@ -101,9 +101,9 @@ const PsychologistRouteRoute = PsychologistRouteRouteImport.update({
   path: '/psychologist',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ClientRouteRoute = ClientRouteRouteImport.update({
-  id: '/client',
-  path: '/client',
+const EmployeeRouteRoute = EmployeeRouteRouteImport.update({
+  id: '/employee',
+  path: '/employee',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -116,10 +116,10 @@ const PsychologistIndexRoute = PsychologistIndexRouteImport.update({
   path: '/',
   getParentRoute: () => PsychologistRouteRoute,
 } as any)
-const ClientIndexRoute = ClientIndexRouteImport.update({
+const EmployeeIndexRoute = EmployeeIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => ClientRouteRoute,
+  getParentRoute: () => EmployeeRouteRoute,
 } as any)
 const PsychologistSupportRoute = PsychologistSupportRouteImport.update({
   id: '/support',
@@ -157,35 +157,35 @@ const PsychologistAnalyticsRoute = PsychologistAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => PsychologistRouteRoute,
 } as any)
-const ClientSupportRoute = ClientSupportRouteImport.update({
+const EmployeeSupportRoute = EmployeeSupportRouteImport.update({
   id: '/support',
   path: '/support',
-  getParentRoute: () => ClientRouteRoute,
+  getParentRoute: () => EmployeeRouteRoute,
 } as any)
-const ClientSessionsRoute = ClientSessionsRouteImport.update({
+const EmployeeSessionsRoute = EmployeeSessionsRouteImport.update({
   id: '/sessions',
   path: '/sessions',
-  getParentRoute: () => ClientRouteRoute,
+  getParentRoute: () => EmployeeRouteRoute,
 } as any)
-const ClientProfileRoute = ClientProfileRouteImport.update({
+const EmployeeProfileRoute = EmployeeProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => ClientRouteRoute,
+  getParentRoute: () => EmployeeRouteRoute,
 } as any)
-const ClientNotificationsRoute = ClientNotificationsRouteImport.update({
+const EmployeeNotificationsRoute = EmployeeNotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
-  getParentRoute: () => ClientRouteRoute,
+  getParentRoute: () => EmployeeRouteRoute,
 } as any)
-const ClientJournalRoute = ClientJournalRouteImport.update({
+const EmployeeJournalRoute = EmployeeJournalRouteImport.update({
   id: '/journal',
   path: '/journal',
-  getParentRoute: () => ClientRouteRoute,
+  getParentRoute: () => EmployeeRouteRoute,
 } as any)
-const ClientCareTeamRoute = ClientCareTeamRouteImport.update({
+const EmployeeCareTeamRoute = EmployeeCareTeamRouteImport.update({
   id: '/care-team',
   path: '/care-team',
-  getParentRoute: () => ClientRouteRoute,
+  getParentRoute: () => EmployeeRouteRoute,
 } as any)
 const AuthGoogleRoute = AuthGoogleRouteImport.update({
   id: '/auth/google',
@@ -200,7 +200,7 @@ const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/client': typeof ClientRouteRouteWithChildren
+  '/employee': typeof EmployeeRouteRouteWithChildren
   '/psychologist': typeof PsychologistRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/booking': typeof BookingRoute
@@ -214,12 +214,12 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
-  '/client/care-team': typeof ClientCareTeamRoute
-  '/client/journal': typeof ClientJournalRoute
-  '/client/notifications': typeof ClientNotificationsRoute
-  '/client/profile': typeof ClientProfileRoute
-  '/client/sessions': typeof ClientSessionsRoute
-  '/client/support': typeof ClientSupportRoute
+  '/employee/care-team': typeof EmployeeCareTeamRoute
+  '/employee/journal': typeof EmployeeJournalRoute
+  '/employee/notifications': typeof EmployeeNotificationsRoute
+  '/employee/profile': typeof EmployeeProfileRoute
+  '/employee/sessions': typeof EmployeeSessionsRoute
+  '/employee/support': typeof EmployeeSupportRoute
   '/psychologist/analytics': typeof PsychologistAnalyticsRoute
   '/psychologist/diaries': typeof PsychologistDiariesRoute
   '/psychologist/meetings': typeof PsychologistMeetingsRoute
@@ -227,7 +227,7 @@ export interface FileRoutesByFullPath {
   '/psychologist/patients': typeof PsychologistPatientsRoute
   '/psychologist/profile': typeof PsychologistProfileRoute
   '/psychologist/support': typeof PsychologistSupportRoute
-  '/client/': typeof ClientIndexRoute
+  '/employee/': typeof EmployeeIndexRoute
   '/psychologist/': typeof PsychologistIndexRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
@@ -245,12 +245,12 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
-  '/client/care-team': typeof ClientCareTeamRoute
-  '/client/journal': typeof ClientJournalRoute
-  '/client/notifications': typeof ClientNotificationsRoute
-  '/client/profile': typeof ClientProfileRoute
-  '/client/sessions': typeof ClientSessionsRoute
-  '/client/support': typeof ClientSupportRoute
+  '/employee/care-team': typeof EmployeeCareTeamRoute
+  '/employee/journal': typeof EmployeeJournalRoute
+  '/employee/notifications': typeof EmployeeNotificationsRoute
+  '/employee/profile': typeof EmployeeProfileRoute
+  '/employee/sessions': typeof EmployeeSessionsRoute
+  '/employee/support': typeof EmployeeSupportRoute
   '/psychologist/analytics': typeof PsychologistAnalyticsRoute
   '/psychologist/diaries': typeof PsychologistDiariesRoute
   '/psychologist/meetings': typeof PsychologistMeetingsRoute
@@ -258,14 +258,14 @@ export interface FileRoutesByTo {
   '/psychologist/patients': typeof PsychologistPatientsRoute
   '/psychologist/profile': typeof PsychologistProfileRoute
   '/psychologist/support': typeof PsychologistSupportRoute
-  '/client': typeof ClientIndexRoute
+  '/employee': typeof EmployeeIndexRoute
   '/psychologist': typeof PsychologistIndexRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/client': typeof ClientRouteRouteWithChildren
+  '/employee': typeof EmployeeRouteRouteWithChildren
   '/psychologist': typeof PsychologistRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/booking': typeof BookingRoute
@@ -279,12 +279,12 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
-  '/client/care-team': typeof ClientCareTeamRoute
-  '/client/journal': typeof ClientJournalRoute
-  '/client/notifications': typeof ClientNotificationsRoute
-  '/client/profile': typeof ClientProfileRoute
-  '/client/sessions': typeof ClientSessionsRoute
-  '/client/support': typeof ClientSupportRoute
+  '/employee/care-team': typeof EmployeeCareTeamRoute
+  '/employee/journal': typeof EmployeeJournalRoute
+  '/employee/notifications': typeof EmployeeNotificationsRoute
+  '/employee/profile': typeof EmployeeProfileRoute
+  '/employee/sessions': typeof EmployeeSessionsRoute
+  '/employee/support': typeof EmployeeSupportRoute
   '/psychologist/analytics': typeof PsychologistAnalyticsRoute
   '/psychologist/diaries': typeof PsychologistDiariesRoute
   '/psychologist/meetings': typeof PsychologistMeetingsRoute
@@ -292,7 +292,7 @@ export interface FileRoutesById {
   '/psychologist/patients': typeof PsychologistPatientsRoute
   '/psychologist/profile': typeof PsychologistProfileRoute
   '/psychologist/support': typeof PsychologistSupportRoute
-  '/client/': typeof ClientIndexRoute
+  '/employee/': typeof EmployeeIndexRoute
   '/psychologist/': typeof PsychologistIndexRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
@@ -300,7 +300,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/client'
+    | '/employee'
     | '/psychologist'
     | '/about'
     | '/booking'
@@ -314,12 +314,12 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify-email'
     | '/auth/google'
-    | '/client/care-team'
-    | '/client/journal'
-    | '/client/notifications'
-    | '/client/profile'
-    | '/client/sessions'
-    | '/client/support'
+    | '/employee/care-team'
+    | '/employee/journal'
+    | '/employee/notifications'
+    | '/employee/profile'
+    | '/employee/sessions'
+    | '/employee/support'
     | '/psychologist/analytics'
     | '/psychologist/diaries'
     | '/psychologist/meetings'
@@ -327,7 +327,7 @@ export interface FileRouteTypes {
     | '/psychologist/patients'
     | '/psychologist/profile'
     | '/psychologist/support'
-    | '/client/'
+    | '/employee/'
     | '/psychologist/'
     | '/auth/google/callback'
   fileRoutesByTo: FileRoutesByTo
@@ -345,12 +345,12 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify-email'
     | '/auth/google'
-    | '/client/care-team'
-    | '/client/journal'
-    | '/client/notifications'
-    | '/client/profile'
-    | '/client/sessions'
-    | '/client/support'
+    | '/employee/care-team'
+    | '/employee/journal'
+    | '/employee/notifications'
+    | '/employee/profile'
+    | '/employee/sessions'
+    | '/employee/support'
     | '/psychologist/analytics'
     | '/psychologist/diaries'
     | '/psychologist/meetings'
@@ -358,13 +358,13 @@ export interface FileRouteTypes {
     | '/psychologist/patients'
     | '/psychologist/profile'
     | '/psychologist/support'
-    | '/client'
+    | '/employee'
     | '/psychologist'
     | '/auth/google/callback'
   id:
     | '__root__'
     | '/'
-    | '/client'
+    | '/employee'
     | '/psychologist'
     | '/about'
     | '/booking'
@@ -378,12 +378,12 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify-email'
     | '/auth/google'
-    | '/client/care-team'
-    | '/client/journal'
-    | '/client/notifications'
-    | '/client/profile'
-    | '/client/sessions'
-    | '/client/support'
+    | '/employee/care-team'
+    | '/employee/journal'
+    | '/employee/notifications'
+    | '/employee/profile'
+    | '/employee/sessions'
+    | '/employee/support'
     | '/psychologist/analytics'
     | '/psychologist/diaries'
     | '/psychologist/meetings'
@@ -391,14 +391,14 @@ export interface FileRouteTypes {
     | '/psychologist/patients'
     | '/psychologist/profile'
     | '/psychologist/support'
-    | '/client/'
+    | '/employee/'
     | '/psychologist/'
     | '/auth/google/callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ClientRouteRoute: typeof ClientRouteRouteWithChildren
+  EmployeeRouteRoute: typeof EmployeeRouteRouteWithChildren
   PsychologistRouteRoute: typeof PsychologistRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   BookingRoute: typeof BookingRoute
@@ -500,11 +500,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PsychologistRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/client': {
-      id: '/client'
-      path: '/client'
-      fullPath: '/client'
-      preLoaderRoute: typeof ClientRouteRouteImport
+    '/employee': {
+      id: '/employee'
+      path: '/employee'
+      fullPath: '/employee'
+      preLoaderRoute: typeof EmployeeRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -521,12 +521,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PsychologistIndexRouteImport
       parentRoute: typeof PsychologistRouteRoute
     }
-    '/client/': {
-      id: '/client/'
+    '/employee/': {
+      id: '/employee/'
       path: '/'
-      fullPath: '/client/'
-      preLoaderRoute: typeof ClientIndexRouteImport
-      parentRoute: typeof ClientRouteRoute
+      fullPath: '/employee/'
+      preLoaderRoute: typeof EmployeeIndexRouteImport
+      parentRoute: typeof EmployeeRouteRoute
     }
     '/psychologist/support': {
       id: '/psychologist/support'
@@ -577,47 +577,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PsychologistAnalyticsRouteImport
       parentRoute: typeof PsychologistRouteRoute
     }
-    '/client/support': {
-      id: '/client/support'
+    '/employee/support': {
+      id: '/employee/support'
       path: '/support'
-      fullPath: '/client/support'
-      preLoaderRoute: typeof ClientSupportRouteImport
-      parentRoute: typeof ClientRouteRoute
+      fullPath: '/employee/support'
+      preLoaderRoute: typeof EmployeeSupportRouteImport
+      parentRoute: typeof EmployeeRouteRoute
     }
-    '/client/sessions': {
-      id: '/client/sessions'
+    '/employee/sessions': {
+      id: '/employee/sessions'
       path: '/sessions'
-      fullPath: '/client/sessions'
-      preLoaderRoute: typeof ClientSessionsRouteImport
-      parentRoute: typeof ClientRouteRoute
+      fullPath: '/employee/sessions'
+      preLoaderRoute: typeof EmployeeSessionsRouteImport
+      parentRoute: typeof EmployeeRouteRoute
     }
-    '/client/profile': {
-      id: '/client/profile'
+    '/employee/profile': {
+      id: '/employee/profile'
       path: '/profile'
-      fullPath: '/client/profile'
-      preLoaderRoute: typeof ClientProfileRouteImport
-      parentRoute: typeof ClientRouteRoute
+      fullPath: '/employee/profile'
+      preLoaderRoute: typeof EmployeeProfileRouteImport
+      parentRoute: typeof EmployeeRouteRoute
     }
-    '/client/notifications': {
-      id: '/client/notifications'
+    '/employee/notifications': {
+      id: '/employee/notifications'
       path: '/notifications'
-      fullPath: '/client/notifications'
-      preLoaderRoute: typeof ClientNotificationsRouteImport
-      parentRoute: typeof ClientRouteRoute
+      fullPath: '/employee/notifications'
+      preLoaderRoute: typeof EmployeeNotificationsRouteImport
+      parentRoute: typeof EmployeeRouteRoute
     }
-    '/client/journal': {
-      id: '/client/journal'
+    '/employee/journal': {
+      id: '/employee/journal'
       path: '/journal'
-      fullPath: '/client/journal'
-      preLoaderRoute: typeof ClientJournalRouteImport
-      parentRoute: typeof ClientRouteRoute
+      fullPath: '/employee/journal'
+      preLoaderRoute: typeof EmployeeJournalRouteImport
+      parentRoute: typeof EmployeeRouteRoute
     }
-    '/client/care-team': {
-      id: '/client/care-team'
+    '/employee/care-team': {
+      id: '/employee/care-team'
       path: '/care-team'
-      fullPath: '/client/care-team'
-      preLoaderRoute: typeof ClientCareTeamRouteImport
-      parentRoute: typeof ClientRouteRoute
+      fullPath: '/employee/care-team'
+      preLoaderRoute: typeof EmployeeCareTeamRouteImport
+      parentRoute: typeof EmployeeRouteRoute
     }
     '/auth/google': {
       id: '/auth/google'
@@ -636,28 +636,28 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface ClientRouteRouteChildren {
-  ClientCareTeamRoute: typeof ClientCareTeamRoute
-  ClientJournalRoute: typeof ClientJournalRoute
-  ClientNotificationsRoute: typeof ClientNotificationsRoute
-  ClientProfileRoute: typeof ClientProfileRoute
-  ClientSessionsRoute: typeof ClientSessionsRoute
-  ClientSupportRoute: typeof ClientSupportRoute
-  ClientIndexRoute: typeof ClientIndexRoute
+interface EmployeeRouteRouteChildren {
+  EmployeeCareTeamRoute: typeof EmployeeCareTeamRoute
+  EmployeeJournalRoute: typeof EmployeeJournalRoute
+  EmployeeNotificationsRoute: typeof EmployeeNotificationsRoute
+  EmployeeProfileRoute: typeof EmployeeProfileRoute
+  EmployeeSessionsRoute: typeof EmployeeSessionsRoute
+  EmployeeSupportRoute: typeof EmployeeSupportRoute
+  EmployeeIndexRoute: typeof EmployeeIndexRoute
 }
 
-const ClientRouteRouteChildren: ClientRouteRouteChildren = {
-  ClientCareTeamRoute: ClientCareTeamRoute,
-  ClientJournalRoute: ClientJournalRoute,
-  ClientNotificationsRoute: ClientNotificationsRoute,
-  ClientProfileRoute: ClientProfileRoute,
-  ClientSessionsRoute: ClientSessionsRoute,
-  ClientSupportRoute: ClientSupportRoute,
-  ClientIndexRoute: ClientIndexRoute,
+const EmployeeRouteRouteChildren: EmployeeRouteRouteChildren = {
+  EmployeeCareTeamRoute: EmployeeCareTeamRoute,
+  EmployeeJournalRoute: EmployeeJournalRoute,
+  EmployeeNotificationsRoute: EmployeeNotificationsRoute,
+  EmployeeProfileRoute: EmployeeProfileRoute,
+  EmployeeSessionsRoute: EmployeeSessionsRoute,
+  EmployeeSupportRoute: EmployeeSupportRoute,
+  EmployeeIndexRoute: EmployeeIndexRoute,
 }
 
-const ClientRouteRouteWithChildren = ClientRouteRoute._addFileChildren(
-  ClientRouteRouteChildren,
+const EmployeeRouteRouteWithChildren = EmployeeRouteRoute._addFileChildren(
+  EmployeeRouteRouteChildren,
 )
 
 interface PsychologistRouteRouteChildren {
@@ -699,7 +699,7 @@ const AuthGoogleRouteWithChildren = AuthGoogleRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ClientRouteRoute: ClientRouteRouteWithChildren,
+  EmployeeRouteRoute: EmployeeRouteRouteWithChildren,
   PsychologistRouteRoute: PsychologistRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   BookingRoute: BookingRoute,

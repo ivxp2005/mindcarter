@@ -64,7 +64,7 @@ function RoleWelcomeBanner() {
     >
       <span>
         Welcome back, <strong>{session.name}</strong> — signed in as{" "}
-        <span className="font-semibold">{isDoctor ? "Psychologist" : "Client"}</span>
+        <span className="font-semibold">{isDoctor ? "Psychologist" : "Employee"}</span>
       </span>
       {isDoctor && (
         <Link

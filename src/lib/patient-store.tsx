@@ -32,7 +32,7 @@ import {
 } from "./support-data.server";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Single reactive source of truth for the client portal — now DB-backed.
+// Single reactive source of truth for the employee portal — now DB-backed.
 //
 // One TanStack Query (`["patient-portal"]`) loads everything for the logged-in
 // patient from Supabase via `getPortalDataFn`; mutations call the matching

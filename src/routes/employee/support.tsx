@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "../../components/scroll-reveal";
 import { usePatientData } from "../../lib/patient-store";
 
-export const Route = createFileRoute("/client/support")({
+export const Route = createFileRoute("/employee/support")({
   component: SupportPage,
 });
 

@@ -462,7 +462,7 @@ export const adminReplyFn = createServerFn({ method: "POST" })
       kind: "message",
       title: "Support ticket update",
       body: data.body.length > 140 ? `${data.body.slice(0, 140)}…` : data.body,
-      actionUrl: ticket.authorRole === "psychologist" ? "/psychologist/support" : "/client/support",
+      actionUrl: ticket.authorRole === "psychologist" ? "/psychologist/support" : "/employee/support",
     });
 
     return { ok: true as const };

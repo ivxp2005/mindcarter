@@ -18,9 +18,10 @@ import { CountUp } from "../../components/count-up";
 import { useSession } from "../../lib/use-session";
 import { usePatientData } from "../../lib/patient-store";
 import { MOOD_EMOJI, MOOD_LABEL, todayISO, type Mood } from "../../lib/patient";
+import { useMoodCheckIn } from "../../lib/use-mood-checkin";
 
-export const Route = createFileRoute("/client/")({
-  component: ClientDashboard,
+export const Route = createFileRoute("/employee/")({
+  component: EmployeeDashboard,
 });
 
 /** Premium ease-out — matches the marketing site's motion language. */
@@ -53,10 +54,9 @@ function LiveClock() {
   );
 }
 
-function ClientDashboard() {
+function EmployeeDashboard() {
   const { data: session } = useSession();
   const firstName = session?.name?.split(" ")[0] ?? "there";
-  const [checkedInMood, setCheckedInMood] = useState<Mood | null>(null);
 
   const {
     upcoming: upcomingSessions,
@@ -72,11 +72,14 @@ function ClientDashboard() {
   const recentEntries = journal.slice(0, 4);
   const unreadNotifications = stats.unreadCount;
 
-  const handleCheckIn = (m: Mood) => {
-    setCheckedInMood(m);
-    checkInMood(m);
-    toast.success(`Mood logged: ${MOOD_LABEL[m]} ${MOOD_EMOJI[m]}`);
-  };
+  const { checkedInMood, isEditingWindow, isLockedIn, remainingSec, handleCheckIn } =
+    useMoodCheckIn(journal, (m) => {
+      checkInMood(m);
+      toast.success(`Mood logged: ${MOOD_LABEL[m]} ${MOOD_EMOJI[m]}`);
+    });
+  // Show the check-in prompt only while nothing is logged yet today, or while
+  // the 10s edit window from the first click this session is still open.
+  const showMoodCheckIn = !isLockedIn;
 
   return (
     <div className="space-y-4">
@@ -150,7 +153,7 @@ function ClientDashboard() {
                 Book a new session
               </button>
               <Link
-                to="/client/sessions"
+                to="/employee/sessions"
                 className="rounded-full border border-background/25 px-4 py-2.5 text-sm font-semibold transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-background/10 active:translate-y-0 active:scale-95"
               >
                 View all sessions
@@ -193,42 +196,51 @@ function ClientDashboard() {
       </section>
 
       {/* ─────────────────────── Mood check-in strip ────────────────────── */}
-      <ScrollReveal>
-        <section className="flex flex-col gap-4 rounded-2xl border border-border bg-background p-5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold">How are you feeling today?</p>
-            <p className="text-xs text-muted-foreground">
-              {checkedInMood
-                ? `Logged — feeling ${MOOD_LABEL[checkedInMood].toLowerCase()}. See you in the journal.`
-                : "A quick check-in keeps your streak alive."}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            {([1, 2, 3, 4, 5] as Mood[]).map((m) => (
-              <button
-                key={m}
-                onClick={() => handleCheckIn(m)}
-                aria-label={MOOD_LABEL[m]}
-                title={MOOD_LABEL[m]}
-                className={`grid h-11 w-11 place-items-center rounded-xl text-2xl transition-all duration-200 ease-out hover:-translate-y-1 active:scale-90 ${
-                  checkedInMood === m
-                    ? "bg-brand/20 ring-2 ring-brand"
-                    : "bg-muted hover:bg-muted/70"
-                }`}
-              >
-                {MOOD_EMOJI[m]}
-              </button>
-            ))}
-          </div>
-        </section>
-      </ScrollReveal>
+      {showMoodCheckIn && (
+        <ScrollReveal>
+          <section className="flex flex-col gap-4 rounded-2xl border border-border bg-background p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold">How are you feeling today?</p>
+              <p className="text-xs text-muted-foreground">
+                {checkedInMood
+                  ? `Logged — feeling ${MOOD_LABEL[checkedInMood].toLowerCase()}. See you in the journal.`
+                  : "A quick check-in keeps your streak alive."}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex gap-2">
+                {([1, 2, 3, 4, 5] as Mood[]).map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => handleCheckIn(m)}
+                    aria-label={MOOD_LABEL[m]}
+                    title={MOOD_LABEL[m]}
+                    className={`grid h-11 w-11 place-items-center rounded-xl text-2xl transition-all duration-200 ease-out hover:-translate-y-1 active:scale-90 ${
+                      checkedInMood === m
+                        ? "bg-brand/20 ring-2 ring-brand"
+                        : "bg-muted hover:bg-muted/70"
+                    }`}
+                  >
+                    {MOOD_EMOJI[m]}
+                  </button>
+                ))}
+              </div>
+              {isEditingWindow && (
+                <span className="whitespace-nowrap rounded-full bg-muted px-2.5 py-1 text-xs font-semibold tabular-nums text-muted-foreground">
+                  You can still change · {remainingSec}s
+                </span>
+              )}
+            </div>
+          </section>
+        </ScrollReveal>
+      )}
 
       {/* ─────────────────────────── KPI tiles ─────────────────────────── */}
       <ScrollReveal>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {/* Next session (wide) + sparkline */}
           <Link
-            to="/client/sessions"
+            to="/employee/sessions"
             className="group relative overflow-hidden rounded-2xl border border-border bg-background p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)] lg:col-span-2"
           >
             <div className="flex items-start justify-between">
@@ -271,7 +283,7 @@ function ClientDashboard() {
 
           {/* Wellness streak */}
           <Link
-            to="/client/journal"
+            to="/employee/journal"
             className="group rounded-2xl border border-border bg-background p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]"
           >
             <div className="flex items-start justify-between">
@@ -292,7 +304,7 @@ function ClientDashboard() {
 
           {/* Journal entries this month */}
           <Link
-            to="/client/journal"
+            to="/employee/journal"
             className="group rounded-2xl border border-border bg-background p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]"
           >
             <div className="flex items-start justify-between">
@@ -309,7 +321,7 @@ function ClientDashboard() {
 
           {/* Notifications */}
           <Link
-            to="/client/notifications"
+            to="/employee/notifications"
             className="group rounded-2xl border border-border bg-background p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]"
           >
             <div className="flex items-start justify-between">
@@ -333,7 +345,7 @@ function ClientDashboard() {
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Upcoming sessions</h2>
             <Link
-              to="/client/sessions"
+              to="/employee/sessions"
               className="text-xs font-semibold text-muted-foreground transition hover:text-foreground"
             >
               View all
@@ -380,7 +392,7 @@ function ClientDashboard() {
                           </div>
                         </div>
                         <Link
-                          to="/client/sessions"
+                          to="/employee/sessions"
                           search={{ open: s.id }}
                           className="shrink-0 rounded-full border border-border bg-background px-3 py-1 text-[11px] font-semibold transition hover:bg-foreground hover:text-background"
                         >
@@ -403,7 +415,7 @@ function ClientDashboard() {
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Recent journal entries</h2>
             <Link
-              to="/client/journal"
+              to="/employee/journal"
               className="text-xs font-semibold text-muted-foreground transition hover:text-foreground"
             >
               View all
@@ -413,7 +425,7 @@ function ClientDashboard() {
             {recentEntries.map((j) => (
               <StaggerItem key={j.id}>
                 <Link
-                  to="/client/journal"
+                  to="/employee/journal"
                   search={{ open: j.id }}
                   className="group flex items-start gap-3 rounded-xl border-l-4 border-l-brand/50 bg-muted/30 p-3 text-sm transition-all duration-200 ease-out hover:translate-x-0.5 hover:border-l-brand hover:bg-muted"
                 >

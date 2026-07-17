@@ -27,7 +27,7 @@ export const Route = createFileRoute("/login")({
       { title: "Sign in — Mindcarter" },
       {
         name: "description",
-        content: "Sign in to your Mindcarter account — patient or psychologist portal.",
+        content: "Sign in to your Mindcarter account — employee or psychologist portal.",
       },
       { name: "robots", content: "noindex" },
     ],
@@ -49,13 +49,13 @@ const ROLE_CONFIG: Record<
   }
 > = {
   patient: {
-    label: "Patient",
+    label: "Employee",
     icon: User,
-    tagline: "Your mental wellness journey",
+    tagline: "You don't have to navigate this alone",
     portalDesc: "Access your sessions, progress and wellness tools.",
-    panelHeading: "Your healing journey starts here.",
+    panelHeading: "Confidential support, whenever work or life feels overwhelming.",
     panelSub:
-      "Secure, private access to your wellness dashboard, session history and personal progress.",
+      "Securely access your wellbeing resources, connect with a qualified psychologist, review your appointments, and continue your journey toward greater resilience and wellbeing.",
   },
   psychologist: {
     label: "Psychologist",
@@ -68,7 +68,7 @@ const ROLE_CONFIG: Record<
 };
 
 const ROLE_REDIRECT: Record<UserRole, string> = {
-  patient: "/client",
+  patient: "/employee",
   psychologist: "/psychologist",
   admin: "/",
 };

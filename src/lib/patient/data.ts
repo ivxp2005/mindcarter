@@ -204,7 +204,7 @@ export const NOTIFICATIONS: PortalNotification[] = [
     body: "Your session with Dr. Aditi Carter is today at 09:00.",
     time: "1 hr ago",
     read: false,
-    actionTo: "/client/sessions",
+    actionTo: "/employee/sessions",
     actionSearch: { open: "s-1" },
   },
   {
@@ -214,7 +214,7 @@ export const NOTIFICATIONS: PortalNotification[] = [
     body: "Dr. Carter shared a grounding-exercise worksheet ahead of your next session.",
     time: "3 hr ago",
     read: false,
-    actionTo: "/client/care-team",
+    actionTo: "/employee/care-team",
   },
   {
     id: "n-3",
@@ -223,7 +223,7 @@ export const NOTIFICATIONS: PortalNotification[] = [
     body: "You've logged your mood 5 days in a row — keep it going.",
     time: "Yesterday",
     read: false,
-    actionTo: "/client/journal",
+    actionTo: "/employee/journal",
   },
   {
     id: "n-4",
@@ -232,7 +232,7 @@ export const NOTIFICATIONS: PortalNotification[] = [
     body: "Your notification preferences were saved successfully.",
     time: "2 days ago",
     read: true,
-    actionTo: "/client/profile",
+    actionTo: "/employee/profile",
   },
   {
     id: "n-5",
@@ -241,7 +241,7 @@ export const NOTIFICATIONS: PortalNotification[] = [
     body: "Your session with Dr. Aditi Carter on Jul 17, 09:00 is confirmed.",
     time: "3 days ago",
     read: true,
-    actionTo: "/client/sessions",
+    actionTo: "/employee/sessions",
     actionSearch: { open: "s-6" },
   },
   {

@@ -497,7 +497,7 @@ export const logDiaryReminderFn = createServerFn({ method: "POST" })
       kind: "diary",
       title: "Diary reminder",
       body: "Your clinician would like you to log a diary entry.",
-      actionUrl: "/client/journal",
+      actionUrl: "/employee/journal",
     });
     return { ok: true as const };
   });

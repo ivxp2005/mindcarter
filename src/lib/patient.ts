@@ -1,4 +1,4 @@
-// Shared types and display maps for the client (patient) portal. The actual
+// Shared types and display maps for the employee (patient) portal. The actual
 // data now comes from the DB via `patient-data.server.ts` / `patient-store.tsx`
 // — this file holds only non-mock constants (today's date + mood emoji/labels)
 // and the TS shapes those layers map DB rows into.
@@ -9,6 +9,10 @@
 export function todayISO(): string {
   return new Date().toISOString().slice(0, 10);
 }
+
+/** How long a mood check-in stays editable (from the first click) before it
+ *  locks in permanently for the day. */
+export const MOOD_LOCK_MS = 10_000;
 
 export type Mood = 1 | 2 | 3 | 4 | 5;
 export type SessionStatus = "upcoming" | "completed" | "canceled";
