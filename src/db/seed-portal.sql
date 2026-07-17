@@ -117,6 +117,16 @@ INSERT INTO diary_entries
    4, ARRAY['self-care'], CURRENT_DATE - 15)
 ON CONFLICT (id) DO NOTHING;
 
+-- ── Session notes (psychologist's private per-session clinical diary) ────────
+-- One immutable note for the oldest completed session; the two more recent
+-- past sessions (today + last week) are deliberately left un-documented so the
+-- "Add session note" composer has something to do.
+INSERT INTO session_notes (id, booking_id, patient_id, psychologist_id, content) VALUES
+  ('f0000000-0000-0000-0000-000000000001', 'b0000000-0000-0000-0000-000000000005',
+   '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222',
+   'Explored early childhood patterns and their link to current work stress. Patient was engaged and reflective; noticeable insight around perfectionism. Plan: introduce cognitive restructuring next session and set a small behavioural experiment.')
+ON CONFLICT (id) DO NOTHING;
+
 -- ── Notifications ───────────────────────────────────────────────────────────
 INSERT INTO notifications
   (id, user_id, kind, title, body, read, action_url, action_params, created_at) VALUES

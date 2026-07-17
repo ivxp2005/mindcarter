@@ -72,21 +72,10 @@ function toISO(date: Date): string {
   return `${y}-${m}-${d}`;
 }
 
-/** A slot is taken if a non-canceled session already exists for that clinician,
- *  date and time. */
-function slotTaken(
-  sessions: PatientSession[],
-  psychologistId: string,
-  date: string,
-  time: string,
-): boolean {
-  return sessions.some(
-    (s) =>
-      s.status !== "canceled" &&
-      s.psychologistId === psychologistId &&
-      s.date === date &&
-      s.time === time,
-  );
+/** A slot is taken if the patient already has a non-canceled session at that
+ *  date and time — regardless of clinician, since they can't attend two at once. */
+function slotTaken(sessions: PatientSession[], date: string, time: string): boolean {
+  return sessions.some((s) => s.status !== "canceled" && s.date === date && s.time === time);
 }
 
 function bySchedule(a: PatientSession, b: PatientSession): number {
@@ -161,11 +150,11 @@ interface PatientDataValue {
   openBooking: (psychologistId?: string) => void;
   openReschedule: (session: PatientSession) => void;
   closeBooking: () => void;
-  bookSession: (input: BookSessionInput) => boolean;
+  bookSession: (input: BookSessionInput) => Promise<{ ok: boolean; error?: string }>;
   rescheduleSession: (
     id: string,
     input: { date: string; time: string; mode: PatientSession["mode"] },
-  ) => void;
+  ) => Promise<{ ok: boolean; error?: string }>;
   cancelSession: (id: string) => void;
   completeSession: (id: string) => void;
   checkInMood: (mood: Mood) => void;
@@ -182,7 +171,7 @@ interface PatientDataValue {
     preferredLanguage: string;
     notificationPrefs: Record<string, boolean>;
   }) => void;
-  isSlotTaken: (psychologistId: string, date: string, time: string) => boolean;
+  isSlotTaken: (date: string, time: string) => boolean;
   // Support tickets
   tickets: TicketDTO[];
   submitTicket: (input: {
@@ -226,16 +215,22 @@ export function PatientDataProvider({ children }: { children: ReactNode }) {
   const profile = data?.profile ?? null;
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+  // Booking writes also change clinician-wide slot availability, so refresh the
+  // per-clinician "booked slots" queries the booking dialog reads from.
+  const invalidateAll = () => {
+    invalidate();
+    queryClient.invalidateQueries({ queryKey: ["clinician-booked"] });
+  };
   const patchData = (fn: (prev: PortalData) => PortalData) =>
     queryClient.setQueryData<PortalData>(QUERY_KEY, (prev) => (prev ? fn(prev) : prev));
   const invalidateTickets = () => queryClient.invalidateQueries({ queryKey: TICKETS_QUERY_KEY });
 
   // Mutations. Read/write actions optimistically patch the cache where it keeps
   // the UI instant (mood, notifications); the rest invalidate to refetch.
-  const bookMut = useMutation({ mutationFn: bookSessionFn, onSuccess: invalidate });
-  const cancelMut = useMutation({ mutationFn: cancelSessionFn, onSuccess: invalidate });
-  const completeMut = useMutation({ mutationFn: completeSessionFn, onSuccess: invalidate });
-  const rescheduleMut = useMutation({ mutationFn: rescheduleSessionFn, onSuccess: invalidate });
+  const bookMut = useMutation({ mutationFn: bookSessionFn, onSuccess: invalidateAll });
+  const cancelMut = useMutation({ mutationFn: cancelSessionFn, onSuccess: invalidateAll });
+  const completeMut = useMutation({ mutationFn: completeSessionFn, onSuccess: invalidateAll });
+  const rescheduleMut = useMutation({ mutationFn: rescheduleSessionFn, onSuccess: invalidateAll });
   const addEntryMut = useMutation({ mutationFn: addJournalEntryFn, onSuccess: invalidate });
   const checkInMut = useMutation({ mutationFn: checkInMoodFn, onSuccess: invalidate });
   const markReadMut = useMutation({ mutationFn: markNotificationReadFn, onSuccess: invalidate });
@@ -315,15 +310,19 @@ export function PatientDataProvider({ children }: { children: ReactNode }) {
         setRescheduleSessionId(null);
         setBookingPresetId(null);
       },
-      bookSession: (input) => {
-        // Client-side guard for instant feedback; the server re-validates.
-        if (input.date < todayISO()) return false;
-        if (slotTaken(sessions, input.psychologistId, input.date, input.time)) return false;
-        bookMut.mutate({ data: input });
-        return true;
+      bookSession: async (input) => {
+        // Client-side guards for instant feedback; the server re-validates and
+        // its result (incl. cross-patient clinician clashes) is what we return.
+        if (input.date <= todayISO()) {
+          return { ok: false, error: "Pick a future date." };
+        }
+        if (slotTaken(sessions, input.date, input.time)) {
+          return { ok: false, error: "That slot is already taken." };
+        }
+        return bookMut.mutateAsync({ data: input });
       },
       rescheduleSession: (id, input) =>
-        rescheduleMut.mutate({
+        rescheduleMut.mutateAsync({
           data: { id, date: input.date, time: input.time, mode: input.mode },
         }),
       cancelSession: (id) => cancelMut.mutate({ data: { id } }),
@@ -366,7 +365,7 @@ export function PatientDataProvider({ children }: { children: ReactNode }) {
         markAllMut.mutate();
       },
       saveProfile: (input) => profileMut.mutate({ data: input }),
-      isSlotTaken: (psychologistId, date, time) => slotTaken(sessions, psychologistId, date, time),
+      isSlotTaken: (date, time) => slotTaken(sessions, date, time),
       tickets,
       submitTicket: (input) => submitTicketMut.mutate({ data: input }),
       replyToTicket: (ticketId, body) => replyTicketMut.mutate({ data: { ticketId, body } }),

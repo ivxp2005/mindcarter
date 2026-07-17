@@ -1,20 +1,20 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { DiaryEntry, Meeting, PortalNotification } from "./psychologist";
+import type { Meeting, PortalNotification } from "./psychologist";
 import {
+  addDiaryNoteFn,
   cancelMeetingFn,
   completeMeetingFn,
   getPortalDataFn,
   logDiaryReminderFn,
   markAllReadFn,
-  markDiaryReviewedFn,
   markNotificationReadFn,
   rescheduleMeetingFn,
-  saveDiaryNoteFn,
   updateProfileFn,
   type PatientRosterDTO,
   type PortalData,
   type PsychologistProfileDTO,
+  type SessionNoteDTO,
 } from "./psychologist-data.server";
 import {
   getMyTicketsFn,
@@ -37,7 +37,7 @@ import {
 const QUERY_KEY = ["psychologist-portal"] as const;
 const TICKETS_QUERY_KEY = ["psychologist-support-tickets"] as const;
 
-export type { PatientRosterDTO, PsychologistProfileDTO, TicketDTO };
+export type { PatientRosterDTO, PsychologistProfileDTO, SessionNoteDTO, TicketDTO };
 
 function todayISO(): string {
   return new Date().toISOString().slice(0, 10);
@@ -92,7 +92,7 @@ function computePatientGrowth(patients: PatientRosterDTO[]): { month: string; pa
 interface PsychologistDataValue {
   meetings: Meeting[];
   patients: PatientRosterDTO[];
-  diaries: DiaryEntry[];
+  diaryNotes: SessionNoteDTO[];
   notifications: PortalNotification[];
   profile: PsychologistProfileDTO | null;
   isLoading: boolean;
@@ -102,7 +102,7 @@ interface PsychologistDataValue {
   stats: {
     todaysMeetings: number;
     activePatients: number;
-    diariesPending: number;
+    sessionsToDocument: number;
     notificationsTotal: number;
     unreadCount: number;
   };
@@ -115,8 +115,7 @@ interface PsychologistDataValue {
   ) => void;
   completeMeeting: (id: string) => void;
   cancelMeeting: (id: string) => void;
-  saveDiaryNote: (id: string, note: string) => void;
-  markDiaryReviewed: (id: string) => void;
+  addDiaryNote: (bookingId: string, content: string) => void;
   markNotificationRead: (id: string) => void;
   markAllRead: () => void;
   logDiaryReminder: (patientId: string) => void;
@@ -154,7 +153,7 @@ export function PsychologistDataProvider({ children }: { children: ReactNode }) 
 
   const meetings = useMemo(() => data?.meetings ?? [], [data]);
   const patients = useMemo(() => data?.patients ?? [], [data]);
-  const diaries = useMemo(() => data?.diaries ?? [], [data]);
+  const diaryNotes = useMemo(() => data?.diaryNotes ?? [], [data]);
   const notifications = useMemo(() => data?.notifications ?? [], [data]);
   const tickets = useMemo(() => ticketsData ?? [], [ticketsData]);
   const profile = data?.profile ?? null;
@@ -167,8 +166,7 @@ export function PsychologistDataProvider({ children }: { children: ReactNode }) 
   const rescheduleMut = useMutation({ mutationFn: rescheduleMeetingFn, onSuccess: invalidate });
   const completeMut = useMutation({ mutationFn: completeMeetingFn, onSuccess: invalidate });
   const cancelMut = useMutation({ mutationFn: cancelMeetingFn, onSuccess: invalidate });
-  const saveNoteMut = useMutation({ mutationFn: saveDiaryNoteFn, onSuccess: invalidate });
-  const markReviewedMut = useMutation({ mutationFn: markDiaryReviewedFn, onSuccess: invalidate });
+  const addNoteMut = useMutation({ mutationFn: addDiaryNoteFn, onSuccess: invalidate });
   const markReadMut = useMutation({ mutationFn: markNotificationReadFn, onSuccess: invalidate });
   const markAllMut = useMutation({ mutationFn: () => markAllReadFn(), onSuccess: invalidate });
   const logReminderMut = useMutation({ mutationFn: logDiaryReminderFn, onSuccess: invalidate });
@@ -182,7 +180,11 @@ export function PsychologistDataProvider({ children }: { children: ReactNode }) 
     const upcomingMeetings = meetings.filter((m) => m.date > today && m.status === "upcoming");
     const pastMeetings = meetings.filter((m) => m.date < today || m.status === "completed");
     const activePatients = patients.filter((p) => p.status === "Active").length;
-    const diariesPending = diaries.filter((d) => d.status === "pending_review").length;
+    // Past / completed sessions that don't yet have a clinical note.
+    const notedBookingIds = new Set(diaryNotes.map((n) => n.bookingId));
+    const sessionsToDocument = meetings.filter(
+      (m) => m.status !== "canceled" && m.date <= today && !notedBookingIds.has(m.id),
+    ).length;
     const unreadCount = notifications.filter((n) => !n.read).length;
 
     return {
@@ -192,7 +194,7 @@ export function PsychologistDataProvider({ children }: { children: ReactNode }) 
       stats: {
         todaysMeetings: todayMeetings.length,
         activePatients,
-        diariesPending,
+        sessionsToDocument,
         notificationsTotal: notifications.length,
         unreadCount,
       },
@@ -200,13 +202,13 @@ export function PsychologistDataProvider({ children }: { children: ReactNode }) 
       sessionTypeBreakdown: computeSessionTypeBreakdown(meetings),
       patientGrowth: computePatientGrowth(patients),
     };
-  }, [meetings, patients, diaries, notifications]);
+  }, [meetings, patients, diaryNotes, notifications]);
 
   const value = useMemo<PsychologistDataValue>(() => {
     return {
       meetings,
       patients,
-      diaries,
+      diaryNotes,
       notifications,
       profile,
       isLoading,
@@ -217,20 +219,9 @@ export function PsychologistDataProvider({ children }: { children: ReactNode }) 
         }),
       completeMeeting: (id) => completeMut.mutate({ data: { id } }),
       cancelMeeting: (id) => cancelMut.mutate({ data: { id } }),
-      saveDiaryNote: (id, note) => {
-        patchData((prev) => ({
-          ...prev,
-          diaries: prev.diaries.map((d) => (d.id === id ? { ...d, clinicianNote: note } : d)),
-        }));
-        saveNoteMut.mutate({ data: { id, note } });
-      },
-      markDiaryReviewed: (id) => {
-        patchData((prev) => ({
-          ...prev,
-          diaries: prev.diaries.map((d) => (d.id === id ? { ...d, status: "reviewed" } : d)),
-        }));
-        markReviewedMut.mutate({ data: { id } });
-      },
+      // Insert-only: notes are immutable once written, so there is no optimistic
+      // patch to reconcile — just fire and re-fetch.
+      addDiaryNote: (bookingId, content) => addNoteMut.mutate({ data: { bookingId, content } }),
       markNotificationRead: (id) => {
         patchData((prev) => ({
           ...prev,
@@ -252,7 +243,7 @@ export function PsychologistDataProvider({ children }: { children: ReactNode }) 
       replyToTicket: (ticketId, body) => replyTicketMut.mutate({ data: { ticketId, body } }),
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meetings, patients, diaries, notifications, profile, isLoading, derived, tickets]);
+  }, [meetings, patients, diaryNotes, notifications, profile, isLoading, derived, tickets]);
 
   return (
     <PsychologistDataContext.Provider value={value}>{children}</PsychologistDataContext.Provider>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -11,6 +12,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Calendar } from "./ui/calendar";
 import { usePatientData, parseISODate } from "../lib/patient-store";
+import { getClinicianBookedSlotsFn } from "../lib/patient-data.server";
 import { todayISO, type PatientSession } from "../lib/patient";
 
 const TIME_SLOTS = [
@@ -80,39 +82,75 @@ export function BookSessionDialog() {
     }
   }, [bookingOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Slots this clinician is already booked for, across ALL patients — so a slot
+  // another patient took shows as unavailable here too.
+  const { data: clinicianSlots = [] } = useQuery({
+    queryKey: ["clinician-booked", psychId],
+    queryFn: () => getClinicianBookedSlotsFn({ data: { psychologistId: psychId } }),
+    enabled: !!psychId && bookingOpen,
+  });
+
   const isoDate = date ? toISO(date) : "";
   const canSubmit = !!psychId && !!isoDate && !!time && !!kind;
 
-  const handleConfirm = () => {
-    if (!canSubmit) return;
-    if (isReschedule && editing) {
-      rescheduleSession(editing.id, { date: isoDate, time, mode });
-      toast.success("Session rescheduled", {
-        description: `Now ${isoDate} at ${time}.`,
+  /** A slot is unavailable if this clinician is already booked for it (any
+   *  patient) or the current patient has another session then — except the very
+   *  slot being rescheduled, which the patient may keep. */
+  const isSlotUnavailable = (slot: string): boolean => {
+    if (!isoDate) return false;
+    const isOwnEditingSlot = !!editing && editing.date === isoDate && editing.time === slot;
+    if (isOwnEditingSlot) return false;
+    const takenByClinician = clinicianSlots.some((s) => s.date === isoDate && s.time === slot);
+    return takenByClinician || isSlotTaken(isoDate, slot);
+  };
+
+  // Earliest bookable day is tomorrow — today and all past days are unavailable.
+  const tomorrow = parseISODate(todayISO());
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleConfirm = async () => {
+    if (!canSubmit || submitting) return;
+    setSubmitting(true);
+    try {
+      if (isReschedule && editing) {
+        const result = await rescheduleSession(editing.id, { date: isoDate, time, mode });
+        if (!result.ok) {
+          toast.error("Couldn't reschedule", {
+            description: result.error ?? "Pick a future date and an open time.",
+          });
+          return;
+        }
+        toast.success("Session rescheduled", {
+          description: `Now ${isoDate} at ${time}.`,
+        });
+        closeBooking();
+        return;
+      }
+      const durationMin = kind === "Executive Coaching" || kind === "Assessment" ? 60 : 50;
+      const result = await bookSession({
+        psychologistId: psychId,
+        date: isoDate,
+        time,
+        kind,
+        mode,
+        durationMin,
+      });
+      if (!result.ok) {
+        toast.error("That slot isn't available", {
+          description: result.error ?? "Pick a future date and an open time.",
+        });
+        return;
+      }
+      const name = clinicians.find((m) => m.id === psychId)?.name ?? "your clinician";
+      toast.success("Session booked", {
+        description: `${kind} with ${name} on ${isoDate} at ${time}.`,
       });
       closeBooking();
-      return;
+    } finally {
+      setSubmitting(false);
     }
-    const durationMin = kind === "Executive Coaching" || kind === "Assessment" ? 60 : 50;
-    const ok = bookSession({
-      psychologistId: psychId,
-      date: isoDate,
-      time,
-      kind,
-      mode,
-      durationMin,
-    });
-    if (!ok) {
-      toast.error("That slot isn't available", {
-        description: "Pick a future date and an open time.",
-      });
-      return;
-    }
-    const name = clinicians.find((m) => m.id === psychId)?.name ?? "your clinician";
-    toast.success("Session booked", {
-      description: `${kind} with ${name} on ${isoDate} at ${time}.`,
-    });
-    closeBooking();
   };
 
   return (
@@ -160,7 +198,7 @@ export function BookSessionDialog() {
                   setDate(d);
                   setTime("");
                 }}
-                disabled={{ before: parseISODate(todayISO()) }}
+                disabled={{ before: tomorrow }}
               />
             </div>
           </div>
@@ -176,12 +214,7 @@ export function BookSessionDialog() {
               </SelectTrigger>
               <SelectContent>
                 {TIME_SLOTS.map((slot) => {
-                  // Allow keeping the current slot when rescheduling this session.
-                  const taken =
-                    !!psychId &&
-                    !!isoDate &&
-                    isSlotTaken(psychId, isoDate, slot) &&
-                    !(editing && editing.date === isoDate && editing.time === slot);
+                  const taken = isSlotUnavailable(slot);
                   return (
                     <SelectItem key={slot} value={slot} disabled={taken}>
                       {slot}
@@ -241,10 +274,16 @@ export function BookSessionDialog() {
           </button>
           <button
             onClick={handleConfirm}
-            disabled={!canSubmit}
+            disabled={!canSubmit || submitting}
             className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none"
           >
-            {isReschedule ? "Confirm reschedule" : "Confirm booking"}
+            {submitting
+              ? isReschedule
+                ? "Rescheduling…"
+                : "Booking…"
+              : isReschedule
+                ? "Confirm reschedule"
+                : "Confirm booking"}
           </button>
         </DialogFooter>
       </DialogContent>

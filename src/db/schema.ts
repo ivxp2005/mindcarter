@@ -249,6 +249,35 @@ export const diaryEntries = pgTable(
   (table) => [check("diary_entries_mood_range", sql`${table.mood} BETWEEN 1 AND 5`)],
 );
 
+// ─── session_notes ──────────────────────────────────────────────────────────
+// The psychologist's per-patient clinical diary: one immutable note per session
+// (booking). Distinct from diary_entries (the patient's own wellness journal) —
+// these are authored by the clinician, never shown to the patient or admin, and
+// write-once (no update/delete path; UNIQUE(booking_id) blocks a second note).
+
+export const sessionNotes = pgTable(
+  "session_notes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    // The session this note documents — one note per booking.
+    bookingId: uuid("booking_id")
+      .notNull()
+      .references(() => bookings.id, { onDelete: "cascade" }),
+    // Denormalized for scoping/queries (bookings.patientId is nullable; notes
+    // are only allowed on individual sessions that have a patient).
+    patientId: uuid("patient_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    // Author = the psychologist.
+    psychologistId: uuid("psychologist_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    content: text("content").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [unique("session_notes_booking_unique").on(table.bookingId)],
+);
+
 // ─── notifications ──────────────────────────────────────────────────────────
 
 export const notifications = pgTable("notifications", {
@@ -351,6 +380,8 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   bookingsAsPsychologist: many(bookings, { relationName: "psychologistBookings" }),
   diaryEntriesAsPatient: many(diaryEntries, { relationName: "patientDiaryEntries" }),
   diaryEntriesAsAuthor: many(diaryEntries, { relationName: "authoredDiaryEntries" }),
+  sessionNotesAsPatient: many(sessionNotes, { relationName: "patientSessionNotes" }),
+  sessionNotesAsPsychologist: many(sessionNotes, { relationName: "psychologistSessionNotes" }),
   notifications: many(notifications),
   careTeamAsPatient: many(careTeamMembers, { relationName: "patientCareTeam" }),
   careTeamAsPsychologist: many(careTeamMembers, { relationName: "psychologistCareTeam" }),
@@ -425,6 +456,23 @@ export const diaryEntriesRelations = relations(diaryEntries, ({ one }) => ({
     fields: [diaryEntries.authorId],
     references: [users.id],
     relationName: "authoredDiaryEntries",
+  }),
+}));
+
+export const sessionNotesRelations = relations(sessionNotes, ({ one }) => ({
+  booking: one(bookings, {
+    fields: [sessionNotes.bookingId],
+    references: [bookings.id],
+  }),
+  patient: one(users, {
+    fields: [sessionNotes.patientId],
+    references: [users.id],
+    relationName: "patientSessionNotes",
+  }),
+  psychologist: one(users, {
+    fields: [sessionNotes.psychologistId],
+    references: [users.id],
+    relationName: "psychologistSessionNotes",
   }),
 }));
 

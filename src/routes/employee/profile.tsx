@@ -28,6 +28,10 @@ function emailError(value: string): string | null {
   return emailSchema.safeParse(value).success ? null : "Enter a valid email address";
 }
 
+function requiredError(value: string): string | null {
+  return value.trim() === "" ? "This field is required" : null;
+}
+
 export const Route = createFileRoute("/employee/profile")({
   component: ProfilePage,
 });
@@ -41,6 +45,7 @@ function Field({
   onChange,
   type = "text",
   error,
+  required = false,
   digitsOnly = false,
   maxLength,
 }: {
@@ -49,6 +54,7 @@ function Field({
   onChange: (v: string) => void;
   type?: string;
   error?: string | null;
+  required?: boolean;
   digitsOnly?: boolean;
   maxLength?: number;
 }) {
@@ -56,6 +62,7 @@ function Field({
     <label className="block">
       <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
         {label}
+        {required && <span className="ml-0.5 text-destructive">*</span>}
       </span>
       <input
         type={type}
@@ -83,7 +90,17 @@ function toISO(date: Date): string {
   return `${y}-${m}-${d}`;
 }
 
-function DateOfBirthField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+function DateOfBirthField({
+  value,
+  onChange,
+  required = false,
+  error,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  required?: boolean;
+  error?: string | null;
+}) {
   const [open, setOpen] = useState(false);
   const selected = value ? parseISODate(value) : undefined;
 
@@ -91,12 +108,16 @@ function DateOfBirthField({ value, onChange }: { value: string; onChange: (v: st
     <label className="block">
       <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
         Date of birth
+        {required && <span className="ml-0.5 text-destructive">*</span>}
       </span>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <button
             type="button"
-            className="mt-2 flex w-full items-center justify-between rounded-xl border border-border bg-background px-4 py-3 text-left text-sm outline-none transition-colors hover:border-foreground/40 focus:border-foreground"
+            aria-invalid={!!error}
+            className={`mt-2 flex w-full items-center justify-between rounded-xl border bg-background px-4 py-3 text-left text-sm outline-none transition-colors hover:border-foreground/40 focus:border-foreground ${
+              error ? "border-destructive focus:border-destructive" : "border-border"
+            }`}
           >
             <span className={selected ? "" : "text-muted-foreground"}>
               {selected
@@ -127,6 +148,7 @@ function DateOfBirthField({ value, onChange }: { value: string; onChange: (v: st
           />
         </PopoverContent>
       </Popover>
+      {error && <span className="mt-1.5 block text-xs text-destructive">{error}</span>}
     </label>
   );
 }
@@ -149,6 +171,9 @@ function ProfilePage() {
     careTeamMessages: true,
     marketing: false,
   });
+  // Only surface "required" messages once the user has tried to save, so the
+  // initially-empty onboarding form isn't a wall of red on first paint.
+  const [attempted, setAttempted] = useState(false);
 
   // Hydrate the form once the patient's profile loads from the DB.
   useEffect(() => {
@@ -162,6 +187,24 @@ function ProfilePage() {
     setEmergencyPhone(profile.emergencyContactPhone);
     setPrefs(profile.notificationPrefs);
   }, [profile]);
+
+  // Per-field errors. Required-only fields show their message after a save
+  // attempt; format errors (phone/email) show live as the user types.
+  const nameErr = attempted ? requiredError(name) : null;
+  const dobErr = attempted ? requiredError(dob) : null;
+  const addressErr = attempted ? requiredError(address) : null;
+  const emergencyNameErr = attempted ? requiredError(emergencyName) : null;
+  const emailErr = emailError(email);
+  const phoneErr = phoneError(phone);
+  const emergencyPhoneErr = phoneError(emergencyPhone);
+  const hasErrors =
+    !!nameErr ||
+    !!dobErr ||
+    !!addressErr ||
+    !!emergencyNameErr ||
+    !!emailErr ||
+    !!phoneErr ||
+    !!emergencyPhoneErr;
 
   return (
     <div className="space-y-4">
@@ -258,8 +301,20 @@ function ProfilePage() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              if (emailError(email) || phoneError(phone) || phoneError(emergencyPhone)) {
-                toast.error("Please fix the highlighted fields before saving.");
+              // Reveal required messages and block the save if anything's
+              // missing or malformed — the six onboarding fields must all be
+              // valid before the profile can be considered complete.
+              const invalid =
+                requiredError(name) ||
+                requiredError(dob) ||
+                requiredError(address) ||
+                requiredError(emergencyName) ||
+                emailError(email) ||
+                phoneError(phone) ||
+                phoneError(emergencyPhone);
+              if (invalid) {
+                setAttempted(true);
+                toast.error("Please fill in all required fields before saving.");
                 return;
               }
               saveProfile({
@@ -273,49 +328,60 @@ function ProfilePage() {
                 notificationPrefs: prefs,
               });
               toast.success("Profile updated.");
-              const nowComplete = [name, phone, dob, address, emergencyName, emergencyPhone].every(
-                (v) => v.trim().length > 0,
-              );
-              if (needsOnboarding && nowComplete) {
+              if (needsOnboarding) {
                 navigate({ to: "/employee" });
               }
             }}
             className="space-y-4"
           >
+            {attempted && hasErrors && (
+              <div className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                Please fill in all required fields below before saving.
+              </div>
+            )}
+
             <section className="rounded-2xl border border-border bg-background p-6">
               <h2 className="text-lg font-semibold">Personal info</h2>
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                <Field label="Full name" value={name} onChange={setName} />
-                <DateOfBirthField value={dob} onChange={setDob} />
+                <Field label="Full name" value={name} onChange={setName} required error={nameErr} />
+                <DateOfBirthField value={dob} onChange={setDob} required error={dobErr} />
                 <Field
                   label="Email"
                   type="email"
                   value={email}
                   onChange={setEmail}
-                  error={emailError(email)}
+                  error={emailErr}
                 />
                 <Field
                   label="Phone"
                   type="tel"
                   value={phone}
                   onChange={setPhone}
+                  required
                   digitsOnly
                   maxLength={10}
-                  error={phoneError(phone)}
+                  error={phoneErr}
                 />
-                <Field label="Address" value={address} onChange={setAddress} />
+                <Field label="Address" value={address} onChange={setAddress} required error={addressErr} />
               </div>
             </section>
 
             <section className="rounded-2xl border border-border bg-background p-6">
               <h2 className="text-lg font-semibold">Emergency contact</h2>
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                <Field label="Contact name" value={emergencyName} onChange={setEmergencyName} />
+                <Field
+                  label="Contact name"
+                  value={emergencyName}
+                  onChange={setEmergencyName}
+                  required
+                  error={emergencyNameErr}
+                />
                 <Field
                   label="Contact phone"
                   type="tel"
                   value={emergencyPhone}
                   onChange={setEmergencyPhone}
+                  required
                   digitsOnly
                   maxLength={10}
                   error={phoneError(emergencyPhone)}

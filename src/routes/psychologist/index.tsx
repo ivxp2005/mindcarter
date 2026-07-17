@@ -12,9 +12,9 @@ export const Route = createFileRoute("/psychologist/")({
 
 function PsychologistDashboard() {
   const navigate = useNavigate();
-  const { todayMeetings, diaries, stats, weeklySessions, profile } = usePsychologistData();
+  const { todayMeetings, diaryNotes, stats, weeklySessions, profile } = usePsychologistData();
   const nextMeeting = todayMeetings.find((m) => m.status === "upcoming");
-  const recentDiaries = diaries.slice(0, 4);
+  const recentNotes = diaryNotes.slice(0, 4);
   const firstName = profile?.name.split(" ").pop() ?? "there";
 
   const handleStartNext = () => {
@@ -40,8 +40,8 @@ function PsychologistDashboard() {
     },
     {
       icon: Notebook,
-      l: "Diaries pending",
-      v: String(stats.diariesPending),
+      l: "Sessions to document",
+      v: String(stats.sessionsToDocument),
       to: "/psychologist/diaries",
     },
     {
@@ -208,22 +208,27 @@ function PsychologistDashboard() {
           </section>
 
           <section className="rounded-2xl border border-border bg-background p-6">
-            <h2 className="text-lg font-semibold">Recent patient diaries</h2>
+            <h2 className="text-lg font-semibold">Recent session notes</h2>
             <StaggerContainer className="mt-4 space-y-3" staggerDelay={0.05}>
-              {recentDiaries.map((d) => (
-                <StaggerItem key={d.id}>
+              {recentNotes.map((n) => (
+                <StaggerItem key={n.id}>
                   <Link
                     to="/psychologist/diaries"
-                    search={{ open: d.id }}
-                    className={`block rounded-xl border-l-4 bg-muted/30 p-3 text-sm transition hover:bg-muted ${
-                      d.status === "pending_review" ? "border-l-brand" : "border-l-border"
-                    }`}
+                    search={{ patient: n.patientId }}
+                    className="block rounded-xl border-l-4 border-l-brand bg-muted/30 p-3 text-sm transition hover:bg-muted"
                   >
-                    <p className="font-medium">{d.title}</p>
-                    <p className="mt-0.5 text-xs text-muted-foreground">Submitted {d.submitted}</p>
+                    <p className="font-medium">{n.patientName}</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {n.sessionKind} · Noted {n.created}
+                    </p>
                   </Link>
                 </StaggerItem>
               ))}
+              {recentNotes.length === 0 && (
+                <p className="rounded-xl border border-dashed border-border p-6 text-center text-xs text-muted-foreground">
+                  No session notes yet.
+                </p>
+              )}
             </StaggerContainer>
           </section>
         </div>

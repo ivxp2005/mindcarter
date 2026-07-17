@@ -19,18 +19,6 @@ export interface Meeting {
   notes?: string;
 }
 
-export interface DiaryEntry {
-  id: string;
-  patientName: string;
-  patientId: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  submitted: string;
-  status: "pending_review" | "reviewed";
-  clinicianNote?: string;
-}
-
 export interface PortalNotification {
   id: string;
   kind: NotificationKind;

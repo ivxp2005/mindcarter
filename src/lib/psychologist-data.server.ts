@@ -3,9 +3,8 @@
  *
  * Mirrors patient-data.server.ts: every handler is scoped to the logged-in
  * psychologist via `getSessionUser()`, DB rows are mapped to the portal's
- * existing TS shapes (Meeting / DiaryEntry / PortalNotification / patient
- * roster row) so the store and pages need no shape changes, and enum↔label
- * mapping (booking status/mode/kind) lives here.
+ * TS shapes (Meeting / SessionNoteDTO / PortalNotification / patient roster
+ * row), and enum↔label mapping (booking status/mode/kind) lives here.
  */
 import { createServerFn } from "@tanstack/react-start";
 import { and, eq, inArray } from "drizzle-orm";
@@ -14,15 +13,14 @@ import {
   availabilitySlots,
   bookings,
   careTeamMembers,
-  diaryEntries,
   notifications,
   patientProfiles,
   psychologistProfiles,
+  sessionNotes,
   users,
 } from "../db/schema";
 import { getSessionUser } from "./auth.server";
 import type {
-  DiaryEntry,
   Meeting,
   MeetingStatus,
   NotificationKind,
@@ -44,6 +42,24 @@ export interface PatientRosterDTO {
   tags: string[];
 }
 
+/**
+ * One immutable clinical note the psychologist wrote for a single session
+ * (booking). The patient's own wellness journal (diary_entries) is a separate
+ * concept and never surfaces here.
+ */
+export interface SessionNoteDTO {
+  id: string;
+  patientId: string;
+  patientName: string;
+  bookingId: string;
+  sessionDate: string; // yyyy-mm-dd
+  sessionTime: string; // 12h label
+  sessionKind: string; // label
+  sessionMode: Meeting["mode"];
+  content: string;
+  created: string; // relative label e.g. "2d ago"
+}
+
 export interface PsychologistProfileDTO {
   name: string;
   title: string;
@@ -63,7 +79,7 @@ export interface PsychologistProfileDTO {
 export interface PortalData {
   meetings: Meeting[];
   patients: PatientRosterDTO[];
-  diaries: DiaryEntry[];
+  diaryNotes: SessionNoteDTO[];
   notifications: PortalNotification[];
   profile: PsychologistProfileDTO | null;
 }
@@ -71,7 +87,7 @@ export interface PortalData {
 const EMPTY_PORTAL: PortalData = {
   meetings: [],
   patients: [],
-  diaries: [],
+  diaryNotes: [],
   notifications: [],
   profile: null,
 };
@@ -168,25 +184,6 @@ function timeAgo(d: Date): string {
   return `${Math.floor(days / 7)}w ago`;
 }
 
-/** Coarse relative label for a calendar-day entryDate ("2026-07-16"). */
-function daysAgoLabel(entryDate: string): string {
-  const today = todayISO();
-  if (entryDate === today) return "Today";
-  const [y, m, d] = entryDate.split("-").map(Number);
-  const [ty, tm, td] = today.split("-").map(Number);
-  const diffDays = Math.round(
-    (Date.UTC(ty, tm - 1, td) - Date.UTC(y, m - 1, d)) / (1000 * 60 * 60 * 24),
-  );
-  if (diffDays <= 0) return "Today";
-  if (diffDays === 1) return "Yesterday";
-  return `${diffDays} days ago`;
-}
-
-function excerptOf(content: string): string {
-  const trimmed = content.trim();
-  return trimmed.length > 140 ? `${trimmed.slice(0, 140).trimEnd()}…` : trimmed;
-}
-
 function todayISO(): string {
   return new Date().toISOString().slice(0, 10);
 }
@@ -226,7 +223,7 @@ export const getPortalDataFn = createServerFn({ method: "GET" }).handler(
 
     const rosterIds = await getRosterPatientIds(meId);
 
-    const [meetingRows, patientRows, diaryRows, notifRows, userRow, profileRow, slotRows] =
+    const [meetingRows, patientRows, noteRows, notifRows, userRow, profileRow, slotRows] =
       await Promise.all([
         db
           .select({
@@ -258,22 +255,23 @@ export const getPortalDataFn = createServerFn({ method: "GET" }).handler(
               .from(users)
               .leftJoin(patientProfiles, eq(patientProfiles.userId, users.id))
               .where(inArray(users.id, rosterIds)),
-        rosterIds.length === 0
-          ? Promise.resolve([])
-          : db
-              .select({
-                id: diaryEntries.id,
-                patientId: diaryEntries.patientId,
-                patientName: users.name,
-                title: diaryEntries.title,
-                content: diaryEntries.content,
-                status: diaryEntries.status,
-                clinicianNote: diaryEntries.clinicianNote,
-                entryDate: diaryEntries.entryDate,
-              })
-              .from(diaryEntries)
-              .innerJoin(users, eq(diaryEntries.patientId, users.id))
-              .where(inArray(diaryEntries.patientId, rosterIds)),
+        db
+          .select({
+            id: sessionNotes.id,
+            patientId: sessionNotes.patientId,
+            patientName: users.name,
+            bookingId: sessionNotes.bookingId,
+            content: sessionNotes.content,
+            createdAt: sessionNotes.createdAt,
+            sessionDate: bookings.scheduledDate,
+            sessionTime: bookings.scheduledTime,
+            sessionKind: bookings.sessionKind,
+            sessionMode: bookings.mode,
+          })
+          .from(sessionNotes)
+          .innerJoin(users, eq(sessionNotes.patientId, users.id))
+          .innerJoin(bookings, eq(sessionNotes.bookingId, bookings.id))
+          .where(eq(sessionNotes.psychologistId, meId)),
         db.select().from(notifications).where(eq(notifications.userId, meId)),
         db.select().from(users).where(eq(users.id, meId)).limit(1),
         db
@@ -322,17 +320,23 @@ export const getPortalDataFn = createServerFn({ method: "GET" }).handler(
       };
     });
 
-    const diaries: DiaryEntry[] = diaryRows.map((d) => ({
-      id: d.id,
-      patientName: d.patientName,
-      patientId: d.patientId,
-      title: d.title,
-      excerpt: excerptOf(d.content),
-      content: d.content,
-      submitted: daysAgoLabel(d.entryDate),
-      status: d.status,
-      clinicianNote: d.clinicianNote ?? undefined,
-    }));
+    const diaryNotes: SessionNoteDTO[] = noteRows
+      .map((n) => ({
+        id: n.id,
+        patientId: n.patientId,
+        patientName: n.patientName,
+        bookingId: n.bookingId,
+        sessionDate: n.sessionDate,
+        sessionTime: to12h(n.sessionTime),
+        sessionKind: KIND_TO_LABEL[n.sessionKind as SessionKind] ?? n.sessionKind,
+        sessionMode: MODE_TO_PORTAL[n.sessionMode as BookingMode],
+        content: n.content,
+        created: timeAgo(n.createdAt),
+        createdAt: n.createdAt,
+      }))
+      // Newest note first.
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .map(({ createdAt: _createdAt, ...rest }) => rest);
 
     const portalNotifications: PortalNotification[] = notifRows.map((r) => ({
       id: r.id,
@@ -386,7 +390,7 @@ export const getPortalDataFn = createServerFn({ method: "GET" }).handler(
         }
       : null;
 
-    return { meetings, patients, diaries, notifications: portalNotifications, profile };
+    return { meetings, patients, diaryNotes, notifications: portalNotifications, profile };
   },
 );
 
@@ -436,31 +440,45 @@ export const cancelMeetingFn = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
-export const saveDiaryNoteFn = createServerFn({ method: "POST" })
-  .validator((data: unknown) => data as { id: string; note: string })
+/**
+ * Add a clinical note for one session. Write-once: there is deliberately no
+ * update or delete counterpart, and UNIQUE(booking_id) blocks a second note for
+ * the same session. Scoped so a psychologist can only note their own bookings.
+ */
+export const addDiaryNoteFn = createServerFn({ method: "POST" })
+  .validator((data: unknown) => data as { bookingId: string; content: string })
   .handler(async ({ data }) => {
     const meId = await requirePsychologistId();
     if (!meId) return { ok: false as const, error: "Not authorized." };
-    const rosterIds = await getRosterPatientIds(meId);
-    if (rosterIds.length === 0) return { ok: false as const, error: "Diary not found." };
-    await db
-      .update(diaryEntries)
-      .set({ clinicianNote: data.note })
-      .where(and(eq(diaryEntries.id, data.id), inArray(diaryEntries.patientId, rosterIds)));
-    return { ok: true as const };
-  });
 
-export const markDiaryReviewedFn = createServerFn({ method: "POST" })
-  .validator((data: unknown) => data as { id: string })
-  .handler(async ({ data }) => {
-    const meId = await requirePsychologistId();
-    if (!meId) return { ok: false as const, error: "Not authorized." };
-    const rosterIds = await getRosterPatientIds(meId);
-    if (rosterIds.length === 0) return { ok: false as const, error: "Diary not found." };
-    await db
-      .update(diaryEntries)
-      .set({ status: "reviewed" })
-      .where(and(eq(diaryEntries.id, data.id), inArray(diaryEntries.patientId, rosterIds)));
+    const content = data.content.trim();
+    if (!content) return { ok: false as const, error: "The note can't be empty." };
+
+    const bookingRow = await db
+      .select({ patientId: bookings.patientId, psychologistId: bookings.psychologistId })
+      .from(bookings)
+      .where(eq(bookings.id, data.bookingId))
+      .limit(1);
+    const booking = bookingRow[0];
+    if (!booking || booking.psychologistId !== meId || !booking.patientId) {
+      return { ok: false as const, error: "Session not found." };
+    }
+
+    const existing = await db
+      .select({ id: sessionNotes.id })
+      .from(sessionNotes)
+      .where(eq(sessionNotes.bookingId, data.bookingId))
+      .limit(1);
+    if (existing.length > 0) {
+      return { ok: false as const, error: "This session has already been documented." };
+    }
+
+    await db.insert(sessionNotes).values({
+      bookingId: data.bookingId,
+      patientId: booking.patientId,
+      psychologistId: meId,
+      content,
+    });
     return { ok: true as const };
   });
 

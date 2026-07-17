@@ -8,7 +8,7 @@
  * (booking status/mode/kind, notification kind) lives here.
  */
 import { createServerFn } from "@tanstack/react-start";
-import { and, desc, eq, ne, sql } from "drizzle-orm";
+import { and, desc, eq, gte, ne, sql } from "drizzle-orm";
 import { db } from "../db/client.server";
 import {
   bookings,
@@ -375,6 +375,29 @@ export const getAllCliniciansFn = createServerFn({ method: "GET" }).handler(
   },
 );
 
+/** Every non-canceled, today-or-future booking for one clinician, across ALL
+ *  patients — so the booking dialog can grey out slots another patient already
+ *  took. Returns only busy date/time pairs (no patient identity). */
+export const getClinicianBookedSlotsFn = createServerFn({ method: "GET" })
+  .validator((d: unknown) => d as { psychologistId: string })
+  .handler(async ({ data }): Promise<{ date: string; time: string }[]> => {
+    const meId = await requirePatientId();
+    if (!meId || !data.psychologistId) return [];
+
+    const rows = await db
+      .select({ date: bookings.scheduledDate, time: bookings.scheduledTime })
+      .from(bookings)
+      .where(
+        and(
+          eq(bookings.psychologistId, data.psychologistId),
+          ne(bookings.status, "canceled"),
+          gte(bookings.scheduledDate, todayISO()),
+        ),
+      );
+
+    return rows.map((r) => ({ date: r.date, time: to12h(r.time) }));
+  });
+
 // ─── Mutations ──────────────────────────────────────────────────────────────
 
 export const bookSessionFn = createServerFn({ method: "POST" })
@@ -393,7 +416,7 @@ export const bookSessionFn = createServerFn({ method: "POST" })
     const meId = await requirePatientId();
     if (!meId) return { ok: false as const, error: "Not authorized." };
 
-    if (data.date < todayISO()) {
+    if (data.date <= todayISO()) {
       return { ok: false as const, error: "That date is in the past." };
     }
 
@@ -413,6 +436,23 @@ export const bookSessionFn = createServerFn({ method: "POST" })
       )
       .limit(1);
     if (clash.length > 0) {
+      return { ok: false as const, error: "That slot is already taken." };
+    }
+
+    // The patient can't attend two sessions at once (any clinician).
+    const selfClash = await db
+      .select({ id: bookings.id })
+      .from(bookings)
+      .where(
+        and(
+          eq(bookings.patientId, meId),
+          eq(bookings.scheduledDate, data.date),
+          eq(bookings.scheduledTime, sqlTime),
+          ne(bookings.status, "canceled"),
+        ),
+      )
+      .limit(1);
+    if (selfClash.length > 0) {
       return { ok: false as const, error: "That slot is already taken." };
     }
 
@@ -536,14 +576,62 @@ export const rescheduleSessionFn = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const meId = await requirePatientId();
     if (!meId) return { ok: false as const, error: "Not authorized." };
-    if (data.date < todayISO()) {
+    if (data.date <= todayISO()) {
       return { ok: false as const, error: "That date is in the past." };
     }
+
+    const sqlTime = to24h(data.time);
+
+    // The session being moved — need its clinician to check that clinician's
+    // slots aren't already taken by another patient.
+    const [target] = await db
+      .select({ psychologistId: bookings.psychologistId })
+      .from(bookings)
+      .where(and(eq(bookings.id, data.id), eq(bookings.patientId, meId)))
+      .limit(1);
+    if (!target) return { ok: false as const, error: "Session not found." };
+
+    // Slot free for this clinician? (any patient, not canceled, excluding this one)
+    const clinicianClash = await db
+      .select({ id: bookings.id })
+      .from(bookings)
+      .where(
+        and(
+          eq(bookings.psychologistId, target.psychologistId),
+          eq(bookings.scheduledDate, data.date),
+          eq(bookings.scheduledTime, sqlTime),
+          ne(bookings.status, "canceled"),
+          ne(bookings.id, data.id),
+        ),
+      )
+      .limit(1);
+    if (clinicianClash.length > 0) {
+      return { ok: false as const, error: "That slot is already taken." };
+    }
+
+    // The patient can't attend two sessions at once — exclude the one being moved.
+    const selfClash = await db
+      .select({ id: bookings.id })
+      .from(bookings)
+      .where(
+        and(
+          eq(bookings.patientId, meId),
+          eq(bookings.scheduledDate, data.date),
+          eq(bookings.scheduledTime, sqlTime),
+          ne(bookings.status, "canceled"),
+          ne(bookings.id, data.id),
+        ),
+      )
+      .limit(1);
+    if (selfClash.length > 0) {
+      return { ok: false as const, error: "That slot is already taken." };
+    }
+
     await db
       .update(bookings)
       .set({
         scheduledDate: data.date,
-        scheduledTime: to24h(data.time),
+        scheduledTime: sqlTime,
         mode: MODE_TO_DB[data.mode] ?? "video",
         updatedAt: new Date(),
       })
