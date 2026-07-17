@@ -45,6 +45,18 @@ function parseISODate(dateStr: string): Date {
 
 const MODE_ICON = { Video, "In-person": MapPin, Phone } as const;
 
+/** A session can still carry status "upcoming" after its date has passed if
+ *  nobody explicitly marked it complete/canceled — treat it as elapsed so the
+ *  UI (tab placement, badge, action buttons) reflects reality instead of a
+ *  stale status field. */
+function isElapsed(s: PatientSession): boolean {
+  return s.status === "upcoming" && s.date < todayISO();
+}
+
+function effectiveStatus(s: PatientSession): SessionStatus {
+  return isElapsed(s) ? "completed" : s.status;
+}
+
 function statusBadge(status: SessionStatus) {
   if (status === "upcoming") return <Badge variant="secondary">Upcoming</Badge>;
   if (status === "completed") return <Badge variant="outline">Completed</Badge>;
@@ -237,8 +249,8 @@ function SessionsPage() {
       </ScrollReveal>
 
       {/* ─────────────────────── Table + calendar ─────────────────────── */}
-      <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr]">
-        <ScrollReveal className="rounded-2xl border border-border bg-background p-6">
+      <div className="grid min-w-0 gap-4 overflow-x-hidden lg:grid-cols-[1.3fr_1fr]">
+        <ScrollReveal className="min-w-0 rounded-2xl border border-border bg-background p-6">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
             <TabsList>
               <TabsTrigger value="upcoming">Upcoming ({upcoming.length})</TabsTrigger>
@@ -282,7 +294,7 @@ function SessionsPage() {
                               <ModeIcon className="h-3.5 w-3.5" /> {s.mode}
                             </span>
                           </TableCell>
-                          <TableCell>{statusBadge(s.status)}</TableCell>
+                          <TableCell>{statusBadge(effectiveStatus(s))}</TableCell>
                           <TableCell className="text-right">
                             <span className="rounded-full border border-border px-3 py-1 text-[11px] font-semibold transition group-hover:bg-foreground group-hover:text-background">
                               View
@@ -305,9 +317,9 @@ function SessionsPage() {
           </Tabs>
         </ScrollReveal>
 
-        <ScrollReveal delay={0.1}>
-          <section className="rounded-2xl border border-border bg-background p-6">
-            <div className="mb-3 flex items-center justify-between">
+        <ScrollReveal delay={0.1} className="min-w-0">
+          <section className="min-w-0 overflow-hidden rounded-2xl border border-border bg-background p-6">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-sm font-semibold">Calendar</h2>
               <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                 <span className="h-1.5 w-1.5 rounded-full bg-brand" /> Has session
@@ -346,14 +358,14 @@ function SessionsPage() {
                 </div>
               </DialogHeader>
               {detail.notes && <p className="text-sm text-muted-foreground">{detail.notes}</p>}
-              <div className="flex items-center gap-2">{statusBadge(detail.status)}</div>
+              <div className="flex items-center gap-2">{statusBadge(effectiveStatus(detail))}</div>
               <Link
                 to="/client/care-team"
                 className="text-sm font-semibold text-foreground underline underline-offset-2"
               >
                 View care team profile →
               </Link>
-              {detail.status === "upcoming" && (
+              {effectiveStatus(detail) === "upcoming" && (
                 <DialogFooter>
                   <button
                     onClick={() => handleCancel(detail)}

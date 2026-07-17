@@ -313,7 +313,7 @@ export function SiteNav() {
               <>
                 <div className="my-2 border-t border-border" />
                 <p className="px-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                  Doctor Portal
+                  {isDoctor ? "Doctor Portal" : "Client Portal"}
                 </p>
                 {roleLinks.map((l) => (
                   <Link

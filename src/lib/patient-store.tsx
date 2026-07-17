@@ -245,14 +245,17 @@ export function PatientDataProvider({ children }: { children: ReactNode }) {
   const replyTicketMut = useMutation({ mutationFn: replyToTicketFn, onSuccess: invalidateTickets });
 
   const derived = useMemo(() => {
-    const upcoming = sessions.filter((s) => s.status === "upcoming").sort(bySchedule);
-    const past = sessions.filter((s) => s.status === "completed");
+    const today = todayISO();
+    const isUpcoming = (s: PatientSession) => s.status === "upcoming" && s.date >= today;
+    const isElapsed = (s: PatientSession) => s.status === "upcoming" && s.date < today;
+
+    const upcoming = sessions.filter(isUpcoming).sort(bySchedule);
+    const past = sessions.filter((s) => s.status === "completed" || isElapsed(s));
     const canceled = sessions.filter((s) => s.status === "canceled");
 
     const careTeam: EnrichedCareMember[] = careTeamBase.map((m) => {
       const own = sessions.filter((s) => s.psychologistId === m.id);
-      const nextSession =
-        own.filter((s) => s.status === "upcoming").sort(bySchedule)[0]?.date ?? null;
+      const nextSession = own.filter(isUpcoming).sort(bySchedule)[0]?.date ?? null;
       return {
         ...m,
         sessionCount: own.filter((s) => s.status !== "canceled").length,

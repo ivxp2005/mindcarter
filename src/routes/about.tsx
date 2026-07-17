@@ -59,14 +59,17 @@ function AboutHero() {
             className="font-display mt-4 text-3xl font-black leading-[1.15] tracking-tight text-white sm:text-4xl lg:text-5xl"
             style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}
           >
-            A practice built where clinical rigor meets{" "}
-            <span className="italic text-brand">human curiosity.</span>
+            Where Organizational Psychology Meets{" "}
+            <span className="italic text-brand">Human Potential</span>
           </h1>
           <p
             className="mt-5 text-sm font-medium italic text-white"
             style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
           >
-            &ldquo;Every breakthrough begins with being understood.&rdquo; — The Mindcarter Team
+            &ldquo;The future of work belongs to those who understand themselves before they seek to
+            transform their organizations. In the age of AI, self-discovery unlocks human potential,
+            organizational support enables that potential, and together they evolve toward sustained
+            excellence.&rdquo; — The Mindcarter Team
           </p>
           <Link
             to="/contact"
@@ -113,16 +116,24 @@ function OurStory() {
         <ScrollReveal delay={0.15}>
           <Eyebrow>Our story</Eyebrow>
           <h2 className="font-display mt-4 text-3xl font-black tracking-tight sm:text-4xl">
-            Founded by clinicians, built for scale.
+            Built on the Science of Human Behavior. Designed for the Future of Work.
           </h2>
           <p className="mt-6 leading-relaxed text-muted-foreground">
-            We started Mindcarter after a decade in academic hospitals and Fortune 500 boardrooms —
-            convinced that the tools of clinical psychology and organizational science deserved a
-            modern, accessible home.
+            MindCarter was founded with a simple belief: organizations perform at their best when
+            they understand the people behind performance. As workplaces become increasingly shaped
+            by AI, technological disruption, and changing workforce expectations, success depends not
+            only on innovation but also on understanding human behavior.
           </p>
           <p className="mt-4 leading-relaxed text-muted-foreground">
-            Today we serve individuals in 32 countries and partner with enterprises across finance,
-            technology and healthcare — always with the same evidence-first standard.
+            Drawing on the principles of organizational psychology and behavioral science, we help
+            organizations make better people decisions—from selecting and developing talent to
+            strengthening leadership, supporting employee wellbeing, and building high-performing
+            teams. Every solution we deliver is grounded in scientific evidence, informed by real
+            workplace challenges, and designed to create measurable organizational impact.
+          </p>
+          <p className="mt-4 leading-relaxed text-muted-foreground">
+            At MindCarter, we exist to help individuals discover their potential, enable meaningful
+            growth, and evolve alongside the organizations they help shape.
           </p>
         </ScrollReveal>
       </div>
@@ -159,13 +170,13 @@ function MissionVision() {
           <StaggerItem>
             <Panel
               eyebrow="Mission"
-              title="Make research-backed psychological care the default — for people and organizations."
+              title="To help individuals and organizations thrive in the age of AI by applying evidence-based organizational psychology to improve people decisions, strengthen leadership, enhance employee wellbeing, and build workplaces where human potential and technology work together to create sustainable organizational success."
             />
           </StaggerItem>
           <StaggerItem>
             <Panel
               eyebrow="Vision"
-              title="A world where every leader, team and individual has a licensed guide for the inner work."
+              title="To be a globally trusted organizational psychology company advancing the future of work by integrating behavioral science, human-centered AI, and evidence-based practice. We envision a world where organizations harness technology not to replace human potential, but to discover it, enable it, and help it evolve."
             />
           </StaggerItem>
         </StaggerContainer>
@@ -174,58 +185,7 @@ function MissionVision() {
   );
 }
 
-/* ── 4. Team — photo left, copy right, then the leadership grid ──────────── */
-const LEADERSHIP = ["Dr. Aditi Carter", "Dr. Marcus Vale", "Dr. Lena Ortiz", "Dr. Rohan Mehra"];
 
-function Team() {
-  return (
-    <section className="relative overflow-hidden border-t border-border bg-background py-20 sm:py-28">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="grid items-center gap-16 lg:grid-cols-2">
-          {/* Left — team photo with accent block */}
-          <ScrollReveal className="relative">
-            <div
-              aria-hidden
-              className="absolute -bottom-5 -right-5 h-32 w-32 rounded-3xl bg-brand"
-            />
-            <div className="relative overflow-hidden rounded-[2rem] shadow-2xl">
-              <img
-                src={heroImg}
-                alt="The Mindcarter team"
-                className="aspect-[4/3] h-full w-full object-cover"
-              />
-            </div>
-          </ScrollReveal>
-
-          {/* Right — copy */}
-          <ScrollReveal delay={0.15}>
-            <Eyebrow>Leadership</Eyebrow>
-            <h2 className="font-display mt-4 text-3xl font-black tracking-tight sm:text-4xl">
-              The people behind the practice.
-            </h2>
-            <p className="mt-6 max-w-md leading-relaxed text-muted-foreground">
-              Doctorate-level clinicians and organizational scientists who bring both rigor and
-              warmth to every engagement — and a team that keeps growing.
-            </p>
-          </ScrollReveal>
-        </div>
-
-        {/* Leadership grid */}
-        <StaggerContainer className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {LEADERSHIP.map((n) => (
-            <StaggerItem key={n}>
-              <div className="h-full rounded-2xl border border-border bg-background p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-                <div className="aspect-square rounded-xl bg-gradient-to-br from-neutral-300 to-neutral-500 transition-transform duration-500 hover:scale-105" />
-                <h3 className="mt-4 text-base font-semibold">{n}</h3>
-                <p className="text-xs text-muted-foreground">Doctorate-level clinician</p>
-              </div>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
-      </div>
-    </section>
-  );
-}
 
 function AboutPage() {
   return (
@@ -233,19 +193,18 @@ function AboutPage() {
       <AboutHero />
       <OurStory />
       <MissionVision />
-      <Team />
     </SiteShell>
   );
 }
 
 function Panel({ eyebrow, title }: { eyebrow: string; title: string }) {
   return (
-    <div className="rounded-3xl border border-border bg-background p-8 shadow-sm sm:p-10">
+    <div className="rounded-3xl border border-border bg-background p-8 shadow-sm transition-all duration-300 ease-out sm:p-10 hover:-translate-y-3 hover:scale-[1.03] hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.18)] hover:border-brand/30 transform-gpu cursor-default">
       <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
         <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
         {eyebrow}
       </p>
-      <p className="mt-4 text-xl font-semibold leading-snug tracking-tight sm:text-2xl">{title}</p>
+      <p className="mt-4 text-sm font-semibold leading-snug tracking-tight sm:text-lg">{title}</p>
     </div>
   );
 }
