@@ -464,46 +464,20 @@ function WhyChoose() {
             />
           </svg>
 
-          <div className="grid gap-14 lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:gap-10">
-            <StaggerContainer className="grid gap-14 sm:grid-cols-2 lg:grid-cols-1">
-              <StaggerItem>
-                <WhyItem item={WHY_ITEMS[0]} />
-              </StaggerItem>
-              <StaggerItem>
-                <WhyItem item={WHY_ITEMS[2]} />
-              </StaggerItem>
-            </StaggerContainer>
-
-            <ScrollReveal
-              delay={0.15}
-              className="relative order-first mx-auto w-52 shrink-0 sm:w-64 lg:order-none"
-            >
-              <div
-                aria-hidden
-                className="absolute inset-0 -z-10 scale-125 rounded-full bg-brand/20 blur-3xl"
-              />
-              <div className="aspect-[3/4] overflow-hidden rounded-[2.5rem] border border-background/10 shadow-2xl">
-                <div
-                  aria-hidden
-                  style={{
-                    backgroundImage: `url(${teamImg})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                  className="h-full w-full"
-                />
-              </div>
-            </ScrollReveal>
-
-            <StaggerContainer className="grid gap-14 sm:grid-cols-2 lg:grid-cols-1">
-              <StaggerItem>
-                <WhyItem item={WHY_ITEMS[1]} />
-              </StaggerItem>
-              <StaggerItem>
-                <WhyItem item={WHY_ITEMS[3]} />
-              </StaggerItem>
-            </StaggerContainer>
-          </div>
+          <StaggerContainer className="grid gap-14 sm:grid-cols-2 lg:gap-x-24">
+            <StaggerItem>
+              <WhyItem item={WHY_ITEMS[0]} />
+            </StaggerItem>
+            <StaggerItem>
+              <WhyItem item={WHY_ITEMS[1]} />
+            </StaggerItem>
+            <StaggerItem>
+              <WhyItem item={WHY_ITEMS[2]} />
+            </StaggerItem>
+            <StaggerItem>
+              <WhyItem item={WHY_ITEMS[3]} />
+            </StaggerItem>
+          </StaggerContainer>
         </div>
       </div>
     </section>
