@@ -14,6 +14,19 @@ import { AnimatePresence, motion } from "framer-motion";
 import appCss from "../styles.css?url";
 import { Toaster } from "../components/ui/sonner";
 
+// After a redeploy, an already-open tab can hold an old bundle whose route
+// chunks (hashed filenames) no longer exist on the server. Reload once to
+// pick up the current deployment instead of leaving the user on a dead page.
+if (typeof window !== "undefined") {
+  const RELOAD_FLAG = "mc-preload-reload";
+  window.addEventListener("vite:preloadError", () => {
+    if (sessionStorage.getItem(RELOAD_FLAG)) return;
+    sessionStorage.setItem(RELOAD_FLAG, "1");
+    window.location.reload();
+  });
+  window.addEventListener("load", () => sessionStorage.removeItem(RELOAD_FLAG));
+}
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
