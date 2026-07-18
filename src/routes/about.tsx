@@ -1,13 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ArrowRight, ChevronDown, Phone } from "lucide-react";
 import { SiteShell } from "../components/site-shell";
 import amarRajanImg from "../assets/amar-rajan.png";
 import heroImg from "../assets/hero.jpg";
-import teamImg from "../assets/team.png";
+import aboutUsImg from "../assets/345.png";
 import aboutBannerImg from "../assets/image copy.png";
-import { ScrollReveal } from "../components/scroll-reveal";
+import { ScrollReveal, StaggerContainer, StaggerItem } from "../components/scroll-reveal";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -161,8 +161,8 @@ function AboutUs() {
         <ScrollReveal delay={0.15} className="relative">
           <div className="relative overflow-hidden">
             <img
-              src={teamImg}
-              alt="MindCarter consultants collaborating during a working session"
+              src={aboutUsImg}
+              alt="MindCarter consultants celebrating a successful working session"
               className="aspect-[4/3] w-full object-cover"
               loading="lazy"
             />
@@ -352,6 +352,148 @@ function MissionVision() {
 
 
 
+/* ── 5. Why choose Mindcarter — dark panel, four numbered pillars ────────── */
+const WHY_ITEMS = [
+  {
+    k: "01",
+    t: "Evidence-based",
+    sub: "Research, not intuition",
+    d: "A premier authority in organizational behavior, offering evidence-based solutions grounded in academic rigor and published research.",
+  },
+  {
+    k: "02",
+    t: "Global expertise",
+    sub: "Practitioners, not theorists",
+    d: "A team of global experts and revered industry practitioners keeps us at the forefront of the latest trends.",
+  },
+  {
+    k: "03",
+    t: "Specialized offerings",
+    sub: "Assessments to coaching",
+    d: "Internationally recognized psychometric assessments, comprehensive training, developmental initiatives and coaching programs.",
+  },
+  {
+    k: "04",
+    t: "Lasting impact",
+    sub: "Built to last",
+    d: "Practical, research-rooted solutions that enhance organizational effectiveness and nurture employee satisfaction.",
+  },
+];
+
+function WhyItem({ item }: { item: (typeof WHY_ITEMS)[number] }) {
+  return (
+    <div className="group">
+      <p className="font-mono text-xs text-brand transition-transform duration-300 ease-out group-hover:-translate-y-0.5">
+        {item.k}
+      </p>
+      <h3 className="mt-3 text-lg font-semibold text-background">{item.t}</h3>
+      <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-brand/80">{item.sub}</p>
+      <p className="mt-2 text-sm leading-relaxed text-background/60">{item.d}</p>
+    </div>
+  );
+}
+
+function WhyChoose() {
+  return (
+    <section className="border-b border-border bg-foreground py-24 text-background">
+      <div className="mx-auto max-w-7xl px-6">
+        <ScrollReveal>
+          <div className="text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-background/60">
+              <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
+              Why Mindcarter
+            </p>
+            <h2 className="font-display mx-auto mt-3 max-w-2xl text-5xl font-black leading-[1.0] tracking-tight sm:text-6xl">
+              Why Choose <span className="text-brand">Mindcarter?</span>
+            </h2>
+          </div>
+        </ScrollReveal>
+
+        <div className="relative mt-20">
+          <svg
+            aria-hidden
+            viewBox="0 0 1200 160"
+            preserveAspectRatio="none"
+            className="pointer-events-none absolute -top-14 left-0 hidden h-28 w-full lg:block"
+          >
+            <path
+              d="M0,140 Q600,-40 1200,140"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeDasharray="2 10"
+              strokeLinecap="round"
+              className="text-background/25"
+            />
+          </svg>
+
+          <StaggerContainer className="grid gap-14 sm:grid-cols-2 lg:gap-x-24">
+            <StaggerItem>
+              <WhyItem item={WHY_ITEMS[0]} />
+            </StaggerItem>
+            <StaggerItem>
+              <WhyItem item={WHY_ITEMS[1]} />
+            </StaggerItem>
+            <StaggerItem>
+              <WhyItem item={WHY_ITEMS[2]} />
+            </StaggerItem>
+            <StaggerItem>
+              <WhyItem item={WHY_ITEMS[3]} />
+            </StaggerItem>
+          </StaggerContainer>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── 6. Final CTA — gold rounded panel with booking actions ──────────────── */
+function FinalCTA() {
+  return (
+    <section className="bg-background">
+      <ScrollReveal className="mx-auto max-w-7xl px-6 py-24">
+        <div
+          className="relative overflow-hidden rounded-3xl bg-brand bg-cover bg-center p-10 sm:p-16"
+          style={{ backgroundImage: `url(${aboutBannerImg})` }}
+        >
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-foreground/5"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -bottom-24 -left-10 h-72 w-72 rounded-full bg-foreground/5"
+          />
+          <div className="relative grid gap-8 md:grid-cols-[1.5fr_1fr] md:items-end">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/70">
+                Begin
+              </p>
+              <h2 className="font-display mt-3 max-w-2xl text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-5xl">
+                Ready to evolve? Book a confidential consultation.
+              </h2>
+            </div>
+            <div className="flex flex-wrap gap-3 md:justify-end">
+              <Link
+                to="/contact"
+                className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-3 text-sm font-semibold text-background shadow-md transition-all duration-200 ease-out hover:-translate-y-0.5 hover:opacity-90 active:translate-y-0 active:scale-95"
+              >
+                Book Consultation <ArrowRight className="h-4 w-4" />
+              </Link>
+              <a
+                href="tel:+14155550139"
+                className="inline-flex items-center gap-2 rounded-full border border-foreground/20 bg-background px-5 py-3 text-sm font-semibold text-foreground transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-background/90 active:translate-y-0 active:scale-95"
+              >
+                <Phone className="h-4 w-4" /> Call Us
+              </a>
+            </div>
+          </div>
+        </div>
+      </ScrollReveal>
+    </section>
+  );
+}
+
 function AboutPage() {
   return (
     <SiteShell>
@@ -359,6 +501,8 @@ function AboutPage() {
       <AboutUs />
       <OurStory />
       <MissionVision />
+      <WhyChoose />
+      <FinalCTA />
     </SiteShell>
   );
 }

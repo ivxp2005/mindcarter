@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LayoutDashboard } from "lucide-react";
 import { motion, MotionConfig } from "framer-motion";
 import {
@@ -13,6 +13,7 @@ import {
   Quote,
   Search,
 } from "lucide-react";
+import heroBgImg from "../assets/890.png";
 import amarRajanImg from "../assets/amar-rajan.png";
 import teamImg from "../assets/team.png";
 import imageImg from "../assets/image.png";
@@ -42,7 +43,6 @@ function Index() {
         <HomeAbout />
         <Psychologists />
         <Services />
-        <WhyChoose />
         <OurClients />
         <FinalCTA />
       </SiteShell>
@@ -99,17 +99,70 @@ function LiveClock() {
 function Hero() {
   const scrollY = useParallaxScroll();
   const textY = Math.min(scrollY * 0.25, 80);
+  const sectionRef = useRef<HTMLElement>(null);
+  const targetRef = useRef({ x: 0.5, y: 0.35 });
+  const currentRef = useRef({ x: 0.5, y: 0.35 });
+  const rafRef = useRef(0);
+
+  // Cursor-follow spotlight: lerps the shadow-mask center toward the pointer
+  // every frame so the "un-shadowed" reveal glides rather than snaps.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const applyVars = (xPct: number, yPct: number) => {
+      section.style.setProperty("--cursor-x", `${xPct * 100}%`);
+      section.style.setProperty("--cursor-y", `${yPct * 100}%`);
+    };
+    applyVars(currentRef.current.x, currentRef.current.y);
+
+    const tick = () => {
+      const cur = currentRef.current;
+      const target = targetRef.current;
+      cur.x += (target.x - cur.x) * 0.12;
+      cur.y += (target.y - cur.y) * 0.12;
+      applyVars(cur.x, cur.y);
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+
+    const handleMove = (e: MouseEvent) => {
+      const rect = section.getBoundingClientRect();
+      targetRef.current = {
+        x: (e.clientX - rect.left) / rect.width,
+        y: (e.clientY - rect.top) / rect.height,
+      };
+    };
+    section.addEventListener("mousemove", handleMove);
+    return () => {
+      section.removeEventListener("mousemove", handleMove);
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-foreground">
-      {/* ── Fine grid texture — evokes structured, data-driven analysis ── */}
+    <section
+      ref={sectionRef}
+      className="relative h-screen w-full overflow-hidden bg-foreground"
+    >
+      {/* ── Full-screen background photo ── */}
       <div
         aria-hidden
-        className="absolute inset-0 opacity-[0.05]"
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${heroBgImg})` }}
+      />
+
+      {/* ── Shadow overlay — darkens the photo (heaviest at the top); a soft
+          spotlight follows the cursor and cuts through it, letting that patch
+          of the image show at full, un-shadowed brightness ── */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-b from-black/92 via-black/78 to-black/60 transition-opacity duration-300"
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
-          backgroundSize: "56px 56px",
+          maskImage:
+            "radial-gradient(circle 160px at var(--cursor-x, 50%) var(--cursor-y, 35%), transparent 0%, transparent 15%, black 100%)",
+          WebkitMaskImage:
+            "radial-gradient(circle 160px at var(--cursor-x, 50%) var(--cursor-y, 35%), transparent 0%, transparent 15%, black 100%)",
         }}
       />
 
@@ -125,7 +178,7 @@ function Hero() {
         style={{ background: "radial-gradient(circle, #F4C430 0%, transparent 70%)" }}
       />
 
-      {/* ── Content — centered over the abstract background ── */}
+      {/* ── Content — centered over the photo ── */}
       <div
         className="relative flex h-full flex-col items-center justify-center px-6 text-center"
         style={{ transform: `translateY(${textY}px)`, willChange: "transform" }}
@@ -387,100 +440,6 @@ function SectionHeading({
         <p className="max-w-xl text-base leading-relaxed text-muted-foreground">{description}</p>
       )}
     </div>
-  );
-}
-
-const WHY_ITEMS = [
-  {
-    k: "01",
-    t: "Evidence-based",
-    sub: "Research, not intuition",
-    d: "A premier authority in organizational behavior, offering evidence-based solutions grounded in academic rigor and published research.",
-  },
-  {
-    k: "02",
-    t: "Global expertise",
-    sub: "Practitioners, not theorists",
-    d: "A team of global experts and revered industry practitioners keeps us at the forefront of the latest trends.",
-  },
-  {
-    k: "03",
-    t: "Specialized offerings",
-    sub: "Assessments to coaching",
-    d: "Internationally recognized psychometric assessments, comprehensive training, developmental initiatives and coaching programs.",
-  },
-  {
-    k: "04",
-    t: "Lasting impact",
-    sub: "Built to last",
-    d: "Practical, research-rooted solutions that enhance organizational effectiveness and nurture employee satisfaction.",
-  },
-];
-
-function WhyItem({ item }: { item: (typeof WHY_ITEMS)[number] }) {
-  return (
-    <div className="group">
-      <p className="font-mono text-xs text-brand transition-transform duration-300 ease-out group-hover:-translate-y-0.5">
-        {item.k}
-      </p>
-      <h3 className="mt-3 text-lg font-semibold text-background">{item.t}</h3>
-      <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-brand/80">{item.sub}</p>
-      <p className="mt-2 text-sm leading-relaxed text-background/60">{item.d}</p>
-    </div>
-  );
-}
-
-function WhyChoose() {
-  return (
-    <section className="border-b border-border bg-foreground py-24 text-background">
-      <div className="mx-auto max-w-7xl px-6">
-        <ScrollReveal>
-          <div className="text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-background/60">
-              <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
-              Why Mindcarter
-            </p>
-            <h2 className="font-display mx-auto mt-3 max-w-2xl text-5xl font-black leading-[1.0] tracking-tight sm:text-6xl">
-              Why Choose <span className="text-brand">Mindcarter?</span>
-            </h2>
-          </div>
-        </ScrollReveal>
-
-        <div className="relative mt-20">
-          <svg
-            aria-hidden
-            viewBox="0 0 1200 160"
-            preserveAspectRatio="none"
-            className="pointer-events-none absolute -top-14 left-0 hidden h-28 w-full lg:block"
-          >
-            <path
-              d="M0,140 Q600,-40 1200,140"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeDasharray="2 10"
-              strokeLinecap="round"
-              className="text-background/25"
-            />
-          </svg>
-
-          <StaggerContainer className="grid gap-14 sm:grid-cols-2 lg:gap-x-24">
-            <StaggerItem>
-              <WhyItem item={WHY_ITEMS[0]} />
-            </StaggerItem>
-            <StaggerItem>
-              <WhyItem item={WHY_ITEMS[1]} />
-            </StaggerItem>
-            <StaggerItem>
-              <WhyItem item={WHY_ITEMS[2]} />
-            </StaggerItem>
-            <StaggerItem>
-              <WhyItem item={WHY_ITEMS[3]} />
-            </StaggerItem>
-          </StaggerContainer>
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -800,7 +759,10 @@ function FinalCTA() {
   return (
     <section className="bg-background">
       <ScrollReveal className="mx-auto max-w-7xl px-6 py-24">
-        <div className="relative overflow-hidden rounded-3xl bg-brand p-10 sm:p-16">
+        <div
+          className="relative overflow-hidden rounded-3xl bg-brand bg-cover bg-center p-10 sm:p-16"
+          style={{ backgroundImage: `url(${imageCopyImg})` }}
+        >
           <div
             aria-hidden
             className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-foreground/5"
@@ -827,7 +789,7 @@ function FinalCTA() {
               </Link>
               <a
                 href="tel:+14155550139"
-                className="inline-flex items-center gap-2 rounded-full border border-foreground/20 bg-transparent px-5 py-3 text-sm font-semibold text-foreground transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-foreground/10 active:translate-y-0 active:scale-95"
+                className="inline-flex items-center gap-2 rounded-full border border-foreground/20 bg-background px-5 py-3 text-sm font-semibold text-foreground transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-background/90 active:translate-y-0 active:scale-95"
               >
                 <Phone className="h-4 w-4" /> Call Us
               </a>
