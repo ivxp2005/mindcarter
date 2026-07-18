@@ -51,12 +51,6 @@ function AboutHero() {
 
       <div className="relative mx-auto max-w-3xl px-6 py-14 text-center sm:py-20">
         <ScrollReveal>
-          <p
-            className="text-sm font-semibold italic text-white"
-            style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
-          >
-            About Us
-          </p>
           <h1
             className="font-display mt-4 text-3xl font-black leading-[1.15] tracking-tight text-white sm:text-4xl lg:text-5xl"
             style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}
