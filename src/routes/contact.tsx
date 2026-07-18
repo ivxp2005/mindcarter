@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteShell } from "../components/site-shell";
 import { PageHero } from "../components/page-hero";
-import { Mail, MapPin, Phone, ArrowRight } from "lucide-react";
-import { ScrollReveal, StaggerContainer, StaggerItem } from "../components/scroll-reveal";
+import { Mail, MapPin, Phone, Facebook, Instagram, Twitter } from "lucide-react";
+import { ScrollReveal } from "../components/scroll-reveal";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -31,136 +31,138 @@ function ContactPage() {
       </ScrollReveal>
 
       <section className="border-b border-border bg-background py-20">
-        <StaggerContainer className="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-[1.2fr_1fr]">
-          <StaggerItem>
+        <ScrollReveal className="mx-auto max-w-6xl px-6">
+          <div className="grid overflow-hidden rounded-2xl border border-border shadow-sm lg:grid-cols-[3fr_2fr]">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 setSent(true);
               }}
-              className="rounded-3xl border border-border bg-background p-8 sm:p-10 transition-shadow hover:shadow-lg"
+              className="bg-background p-8 sm:p-12"
             >
-              <h2 className="text-2xl font-semibold tracking-tight">Send an inquiry</h2>
-              <div className="mt-8 grid gap-5 sm:grid-cols-2">
-                <Field label="Full name" name="name" required />
-                <Field label="Email" name="email" type="email" required />
-                <Field label="Phone" name="phone" />
-                <Field label="Organization" name="org" />
+              <h2 className="font-display text-3xl font-black tracking-tight sm:text-4xl">
+                Contact Us
+              </h2>
+              <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
+                Our intake team responds within one business day. Existing clients — please sign in for scheduling.
+              </p>
+
+              <div className="mt-8 space-y-5">
+                <TextField label="Name" name="name" required />
+                <TextField label="Email" name="email" type="email" required />
+                <TextField label="Message" name="message" as="textarea" rows={5} required />
               </div>
-              <div className="mt-5">
-                <label className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  How can we help?
-                </label>
-                <textarea
-                  required
-                  rows={5}
-                  className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none transition focus:border-foreground"
-                />
-              </div>
+
               <button
                 type="submit"
-                className="mt-8 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:scale-105 active:scale-95"
+                className="mt-8 rounded-md bg-brand px-9 py-3 text-xs font-bold uppercase tracking-[0.18em] text-brand-foreground transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0"
               >
-                {sent ? "Thank you — we'll be in touch" : "Send inquiry"}
-                {!sent && <ArrowRight className="h-4 w-4" />}
+                {sent ? "Sent" : "Send"}
               </button>
             </form>
-          </StaggerItem>
 
-          <StaggerItem>
-            <aside className="space-y-4">
-              <Info icon={Phone} title="Call" body="+1 (415) 555-0139" />
-              <Info icon={Mail} title="Email" body="hello@mindcarter.co" />
-              <Info icon={MapPin} title="Studio" body="200 Market Street, Suite 1400, San Francisco, CA 94111" />
-              <div className="overflow-hidden rounded-2xl border border-border transition-transform hover:scale-[1.02]">
-                <iframe
-                  title="Mindcarter location"
-                  className="h-64 w-full grayscale"
-                  loading="lazy"
-                  src="https://www.openstreetmap.org/export/embed.html?bbox=-122.402%2C37.789%2C-122.394%2C37.796&layer=mapnik"
-                />
+            <div className="relative flex flex-col justify-between overflow-hidden bg-foreground p-8 text-background sm:p-10">
+              <span
+                aria-hidden
+                className="pointer-events-none absolute right-0 top-0 h-36 w-36 bg-brand [clip-path:polygon(30%_0,100%_0,100%_70%)]"
+              />
+              <span
+                aria-hidden
+                className="pointer-events-none absolute bottom-0 left-0 h-20 w-20 bg-brand [clip-path:polygon(0_30%,0_100%,70%_100%)]"
+              />
+
+              <div className="relative z-10 mt-6">
+                <h3 className="font-display text-2xl font-black tracking-tight">Info</h3>
+                <div className="mt-8 space-y-5">
+                  <InfoRow icon={Phone} label="+1 (415) 555-0139" href="tel:+14155550139" />
+                  <InfoRow icon={Mail} label="hello@mindcarter.co" href="mailto:hello@mindcarter.co" />
+                  <InfoRow
+                    icon={MapPin}
+                    label="200 Market Street, Suite 1400, San Francisco, CA 94111"
+                  />
+                </div>
               </div>
-            </aside>
-          </StaggerItem>
-        </StaggerContainer>
-      </section>
 
-      <section className="bg-muted/40 py-20">
-        <ScrollReveal className="mx-auto max-w-4xl px-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">FAQ</p>
-          <h2 className="font-display mt-3 text-3xl font-black tracking-tight sm:text-4xl">Frequently asked</h2>
-          <StaggerContainer className="mt-10 divide-y divide-border rounded-2xl border border-border bg-background">
-            {FAQ.map((f) => (
-              <StaggerItem key={f.q}>
-                <details className="group p-6">
-                  <summary className="flex cursor-pointer list-none items-center justify-between text-base font-semibold">
-                    {f.q}
-                    <span className="ml-4 grid h-8 w-8 shrink-0 place-items-center rounded-full border border-border transition-transform duration-300 group-open:rotate-45 group-hover:bg-foreground group-hover:text-background">
-                      +
-                    </span>
-                  </summary>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{f.a}</p>
-                </details>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
+              <div className="relative z-10 mt-10 flex gap-3">
+                {[Twitter, Facebook, Instagram].map((Icon, i) => (
+                  <a
+                    key={i}
+                    href="#"
+                    aria-label={Icon.displayName}
+                    className="grid h-8 w-8 place-items-center rounded-full border border-background/25 transition-all duration-200 hover:-translate-y-0.5 hover:border-brand hover:bg-brand hover:text-brand-foreground"
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </ScrollReveal>
+
+        <ScrollReveal className="mx-auto mt-8 max-w-6xl px-6">
+          <div className="overflow-hidden rounded-2xl border border-border transition-transform duration-300 hover:scale-[1.01]">
+            <iframe
+              title="Mindcarter location"
+              className="h-64 w-full grayscale"
+              loading="lazy"
+              src="https://www.openstreetmap.org/export/embed.html?bbox=-122.402%2C37.789%2C-122.394%2C37.796&layer=mapnik"
+            />
+          </div>
         </ScrollReveal>
       </section>
     </SiteShell>
   );
 }
 
-const FAQ = [
-  { q: "How quickly can I be seen?", a: "Most new clients are matched with a psychologist within 3 business days." },
-  { q: "Do you take insurance?", a: "We're out-of-network in the US and provide superbills. Enterprise plans are direct-billed." },
-  { q: "Are sessions online or in-person?", a: "Both. Our platform supports secure video sessions and our SF studio is open by appointment." },
-  { q: "How is my privacy protected?", a: "We are HIPAA-aligned and ISO 27001 informed. Data is encrypted end-to-end." },
-];
-
-function Field({
+function TextField({
   label,
   name,
   type = "text",
   required,
+  as = "input",
+  rows,
 }: {
   label: string;
   name: string;
   type?: string;
   required?: boolean;
+  as?: "input" | "textarea";
+  rows?: number;
 }) {
+  const sharedClassName =
+    "w-full rounded-md border border-transparent bg-muted px-4 py-3 text-sm text-foreground outline-none transition focus:border-brand focus:bg-background";
   return (
     <label className="block">
-      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-        {label}
-      </span>
-      <input
-        name={name}
-        type={type}
-        required={required}
-        className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none transition focus:border-foreground"
-      />
+      <span className="text-xs font-medium text-muted-foreground">{label}</span>
+      {as === "textarea" ? (
+        <textarea name={name} required={required} rows={rows} className={`mt-1.5 ${sharedClassName}`} />
+      ) : (
+        <input name={name} type={type} required={required} className={`mt-1.5 ${sharedClassName}`} />
+      )}
     </label>
   );
 }
 
-function Info({
+function InfoRow({
   icon: Icon,
-  title,
-  body,
+  label,
+  href,
 }: {
   icon: typeof Phone;
-  title: string;
-  body: string;
+  label: string;
+  href?: string;
 }) {
-  return (
-    <div className="flex gap-4 rounded-2xl border border-border bg-background p-5">
-      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-foreground text-background">
-        <Icon className="h-4 w-4" />
-      </span>
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{title}</p>
-        <p className="mt-1 text-sm font-medium">{body}</p>
-      </div>
+  const content = (
+    <div className="flex items-start gap-3 text-sm text-background/85 transition-colors group-hover:text-brand">
+      <Icon className="mt-0.5 h-4 w-4 shrink-0" />
+      <span className="leading-relaxed">{label}</span>
     </div>
+  );
+  return href ? (
+    <a href={href} className="group block">
+      {content}
+    </a>
+  ) : (
+    content
   );
 }

@@ -3,15 +3,12 @@ import { SiteShell } from "../components/site-shell";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "../components/scroll-reveal";
 import {
   Brain,
-  Building2,
   ClipboardCheck,
-  Compass,
   Sparkles,
-  Bot,
-  GraduationCap,
   HeartPulse,
   Users,
   ShieldCheck,
+  UserCheck,
   ArrowRight,
   Mail,
   Phone,
@@ -43,41 +40,25 @@ const GOLD = "#F4C430";
 const INK = "#111111";
 
 const SERVICES: { icon: LucideIcon; title: string; desc: string }[] = [
-
   {
-    icon: Building2,
-    title: "Organizational Consulting",
-    desc: "Diagnostics and interventions for culture, org design and complex change.",
+    icon: ShieldCheck,
+    title: "Employee Assistance Program (EAP)",
+    desc: "Confidential EAP support for organizations of every size — counseling, crisis support and referrals.",
+  },
+  {
+    icon: Users,
+    title: "Personality-Based Leadership Development",
+    desc: "Cohort programs that build resilient leadership benches grounded in validated personality science.",
+  },
+  {
+    icon: UserCheck,
+    title: "Behavioral Interview Program",
+    desc: "Structured, evidence-based interview frameworks that improve hiring accuracy and consistency.",
   },
   {
     icon: ClipboardCheck,
     title: "Psychometric Assessments",
     desc: "Validated instruments across personality, EI, cognition and workplace behavior.",
-  },
-  {
-    icon: Compass,
-    title: "Executive Coaching",
-    desc: "Confidential coaching for founders, executives and rising leaders.",
-  },
-  {
-    icon: Users,
-    title: "Leadership Development",
-    desc: "Cohort programs to build resilient, values-aligned leadership benches.",
-  },
-  {
-    icon: Bot,
-    title: "AI Assistant",
-    desc: "24/7 reflective companion tuned to your clinical care plan.",
-  },
-  {
-    icon: GraduationCap,
-    title: "Career Coaching",
-    desc: "Purpose-led career navigation, transition and re-entry support.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Employee Assistance",
-    desc: "Confidential EAP programs for organizations of every size.",
   },
 ];
 
@@ -85,13 +66,6 @@ const PROCESS = [
   { n: "01", word: "Discover", variant: "black" as const },
   { n: "02", word: "Enable", variant: "gold" as const },
   { n: "03", word: "Evolve", variant: "black" as const },
-];
-
-const TEAM = [
-  { name: "Dr. Aditi Carter", role: "Clinical Psychologist" },
-  { name: "Dr. Marcus Vale", role: "Organizational Psychologist" },
-  { name: "Dr. Lena Ortiz", role: "Neuropsychologist" },
-  { name: "Dr. Rohan Mehra", role: "Executive Coach" },
 ];
 
 function Eyebrow({ label, dark }: { label: string; dark?: boolean }) {
@@ -122,29 +96,14 @@ function ServicesHero() {
       />
       <div aria-hidden className="absolute inset-0 bg-foreground/15" />
 
-      <div className="relative mx-auto max-w-3xl px-6 py-20 text-center sm:py-28">
+      <div className="relative mx-auto max-w-3xl px-6 py-14 text-center sm:py-20">
         <ScrollReveal>
-          <Eyebrow label="Services" dark />
           <h1
-            className="font-display mt-4 text-4xl font-black leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl"
+            className="font-display mt-4 text-3xl font-black leading-[1.15] tracking-tight text-white sm:text-4xl lg:text-5xl"
             style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}
           >
             Organizational Psychology Solutions, Designed for Impact.
           </h1>
-          <p
-            className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-white/85"
-            style={{ textShadow: "0 2px 10px rgba(0,0,0,0.45)" }}
-          >
-            Evidence-based assessments, coaching and consulting that help organizations make
-            better people decisions.
-          </p>
-          <Link
-            to="/contact"
-            className="mt-8 inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-bold shadow-lg transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:scale-95"
-            style={{ backgroundColor: GOLD, color: INK }}
-          >
-            Book Consultation <ArrowRight className="h-4 w-4" />
-          </Link>
         </ScrollReveal>
       </div>
     </section>
@@ -208,7 +167,7 @@ function WhatWeDo() {
           </h2>
         </ScrollReveal>
 
-        <StaggerContainer className="mt-16 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+        <StaggerContainer className="mx-auto mt-16 grid max-w-4xl gap-x-12 gap-y-12 sm:grid-cols-2">
           {SERVICES.map((s) => (
             <StaggerItem key={s.title} className="flex gap-4">
               <span
@@ -224,6 +183,16 @@ function WhatWeDo() {
             </StaggerItem>
           ))}
         </StaggerContainer>
+
+        <ScrollReveal className="mt-16 text-center">
+          <Link
+            to="/contact"
+            className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-bold shadow-lg transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:scale-95"
+            style={{ backgroundColor: GOLD, color: INK }}
+          >
+            Book Consultation <ArrowRight className="h-4 w-4" />
+          </Link>
+        </ScrollReveal>
       </div>
     </section>
   );
@@ -277,52 +246,7 @@ function HowWeWork() {
   );
 }
 
-// ─── 5. Meet the team ────────────────────────────────────────────────────────
-function DiamondAvatar({ name }: { name: string }) {
-  const initials = name
-    .replace(/^Dr\.\s*/, "")
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .slice(0, 2);
-  return (
-    <div
-      className="mx-auto grid h-24 w-24 rotate-45 place-items-center overflow-hidden rounded-2xl shadow-xl"
-      style={{ background: `linear-gradient(135deg, ${GOLD}, ${INK})` }}
-    >
-      <span className="-rotate-45 text-lg font-black text-white">{initials}</span>
-    </div>
-  );
-}
-
-function MeetTheTeam() {
-  return (
-    <section className="border-t border-border bg-muted/40 py-20 sm:py-28">
-      <div className="mx-auto max-w-7xl px-6">
-        <ScrollReveal className="text-center">
-          <Eyebrow label="Our creative bench" />
-          <h2 className="font-display mx-auto mt-4 max-w-2xl text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-5xl">
-            Meet the team
-          </h2>
-        </ScrollReveal>
-
-        <StaggerContainer className="mt-20 grid grid-cols-2 gap-x-6 gap-y-16 sm:grid-cols-4">
-          {TEAM.map((t) => (
-            <StaggerItem key={t.name} className="text-center">
-              <DiamondAvatar name={t.name} />
-              <p className="mt-6 text-sm font-bold tracking-tight text-foreground">{t.name}</p>
-              <p className="mt-1 text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                {t.role}
-              </p>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
-      </div>
-    </section>
-  );
-}
-
-// ─── 6. Testimonial ──────────────────────────────────────────────────────────
+// ─── 5. Testimonial ──────────────────────────────────────────────────────────
 function Testimonial() {
   return (
     <section className="bg-background py-20 sm:py-28">
@@ -346,7 +270,7 @@ function Testimonial() {
   );
 }
 
-// ─── 7. Get in touch ─────────────────────────────────────────────────────────
+// ─── 6. Get in touch ─────────────────────────────────────────────────────────
 function GetInTouch() {
   return (
     <section className="border-t border-border py-20 sm:py-24" style={{ backgroundColor: INK }}>
@@ -396,7 +320,6 @@ function ServicesPage() {
       <WhoWeAre />
       <WhatWeDo />
       <HowWeWork />
-      <MeetTheTeam />
       <Testimonial />
       <GetInTouch />
     </SiteShell>
