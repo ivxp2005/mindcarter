@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Video, MapPin, Phone, Sparkles } from "lucide-react";
+import { Video, MapPin, Phone, Sparkles, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
 import {
@@ -283,6 +283,22 @@ function MeetingsPage() {
               </DialogHeader>
               {detail.notes && <p className="text-sm text-muted-foreground">{detail.notes}</p>}
               <div className="flex items-center gap-2">{statusBadge(detail.status)}</div>
+              {detail.status === "upcoming" &&
+                (detail.meetLink ? (
+                  <a
+                    href={detail.meetLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm font-semibold text-foreground underline underline-offset-2"
+                  >
+                    <Video className="h-4 w-4" /> Join Google Meet →
+                  </a>
+                ) : (
+                  <p className="flex items-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-600">
+                    <AlertTriangle className="h-3.5 w-3.5" /> Meet link pending — add manually or
+                    connect your Google Calendar in Profile.
+                  </p>
+                ))}
               {detail.patientId && (
                 <Link
                   to="/psychologist/patients"

@@ -74,6 +74,7 @@ export interface PsychologistProfileDTO {
     diaryAlerts: boolean;
     marketing: boolean;
   };
+  googleCalendarConnected: boolean;
 }
 
 export interface PortalData {
@@ -237,6 +238,7 @@ export const getPortalDataFn = createServerFn({ method: "GET" }).handler(
             durationMin: bookings.durationMinutes,
             status: bookings.status,
             notes: bookings.notes,
+            meetLink: bookings.meetLink,
           })
           .from(bookings)
           .innerJoin(users, eq(bookings.patientId, users.id))
@@ -293,6 +295,7 @@ export const getPortalDataFn = createServerFn({ method: "GET" }).handler(
       durationMin: r.durationMin,
       status: toPortalStatus(r.status as BookingStatus),
       notes: r.notes ?? undefined,
+      meetLink: r.meetLink ?? undefined,
     }));
 
     const today = todayISO();
@@ -387,6 +390,7 @@ export const getPortalDataFn = createServerFn({ method: "GET" }).handler(
             ...DEFAULT_PREFS,
             ...((pp?.notificationPrefs as Partial<typeof DEFAULT_PREFS> | null) ?? {}),
           },
+          googleCalendarConnected: pp?.googleCalendarConnected ?? false,
         }
       : null;
 

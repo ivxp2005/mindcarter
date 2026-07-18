@@ -142,19 +142,25 @@ function BookingDetailPage() {
     setHoldExpiresAt(null);
   };
 
+  // TEMP: payment provider is disconnected for now so booking writes can be
+  // verified against the DB directly. "Pay now" confirms the booking
+  // immediately instead of routing through the PaymentStep UI below — that
+  // component and the "pay" step are left in place, just unreached, so
+  // reconnecting Razorpay later is a one-line change (see handlePay).
   const handlePay = () => {
     if (!date || !time) return;
-    setStep("pay");
+    handleSubmitPayment();
   };
 
-  // TODO(payments): when a real provider is integrated, run its checkout here
-  // before (or instead of) the simulated delay. bookSessionFn is the source of
-  // truth — it re-validates the slot server-side and records the amount.
+  // TODO(payments): when Razorpay (or another provider) is integrated, change
+  // handlePay above back to `setStep("pay")` so this runs from the PaymentStep
+  // form's onSubmit instead of directly from the summary rail/mobile bar.
+  // bookSessionFn is the source of truth either way — it re-validates the slot
+  // server-side and records the amount.
   const handleSubmitPayment = async () => {
     if (!clinician || !date || !time || submitting) return;
     setSubmitting(true);
     try {
-      await new Promise((r) => setTimeout(r, 600)); // simulated processing
       const kindOption = KINDS.find((k) => k.label === kind) ?? KINDS[0];
       const result = await bookSession({
         psychologistId: clinician.id,
@@ -350,6 +356,7 @@ function BookingDetailPage() {
                   selections={selections}
                   holdMsLeft={holdMsLeft}
                   onPay={handlePay}
+                  paying={submitting}
                 />
               </div>
             </motion.div>
@@ -397,6 +404,7 @@ function BookingDetailPage() {
           selections={selections}
           holdMsLeft={holdMsLeft}
           onPay={handlePay}
+          paying={submitting}
         />
       )}
     </div>

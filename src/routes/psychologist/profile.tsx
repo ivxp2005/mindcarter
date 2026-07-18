@@ -1,6 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { X, KeyRound, Clock, Mail, Phone, ShieldCheck } from "lucide-react";
+import {
+  X,
+  KeyRound,
+  Clock,
+  Mail,
+  Phone,
+  ShieldCheck,
+  CalendarCheck,
+  CalendarPlus,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Switch } from "../../components/ui/switch";
 import { GradientAvatar } from "../../components/gradient-avatar";
@@ -9,6 +18,9 @@ import { usePsychologistData } from "../../lib/psychologist-store";
 import { requestPasswordResetFn } from "../../lib/auth.server";
 
 export const Route = createFileRoute("/psychologist/profile")({
+  validateSearch: (search: Record<string, unknown>): { calendar?: string } => ({
+    calendar: typeof search.calendar === "string" ? search.calendar : undefined,
+  }),
   component: ProfilePage,
 });
 
@@ -47,6 +59,8 @@ const DEFAULT_PREFS = {
 
 function ProfilePage() {
   const { profile, saveProfile } = usePsychologistData();
+  const { calendar } = Route.useSearch();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [title, setTitle] = useState("");
   const [email, setEmail] = useState("");
@@ -64,6 +78,16 @@ function ProfilePage() {
     setSpecialties(profile.specialties);
     setPrefs(profile.notificationPrefs);
   }, [profile]);
+
+  // Surface the outcome of the Google Calendar connect round-trip, then strip
+  // the ?calendar=… param so a refresh doesn't re-toast.
+  useEffect(() => {
+    if (!calendar) return;
+    if (calendar === "connected") toast.success("Google Calendar connected.");
+    else if (calendar === "denied") toast.error("Calendar connection was denied.");
+    else toast.error("Couldn't connect Google Calendar. Please try again.");
+    navigate({ to: "/psychologist/profile", search: {}, replace: true });
+  }, [calendar, navigate]);
 
   const addTag = () => {
     const tag = newTag.trim();
@@ -141,6 +165,25 @@ function ProfilePage() {
               >
                 <KeyRound className="h-4 w-4" /> Change password
               </button>
+            </section>
+
+            <section className="rounded-2xl border border-border bg-background p-6">
+              <h2 className="text-sm font-semibold">Google Calendar</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Connect your calendar so confirmed bookings automatically get a Google Meet link.
+              </p>
+              {profile?.googleCalendarConnected ? (
+                <div className="mt-4 flex items-center justify-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-600">
+                  <CalendarCheck className="h-4 w-4" /> Connected
+                </div>
+              ) : (
+                <a
+                  href="/psychologist/settings/connect-calendar"
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-semibold transition hover:bg-muted"
+                >
+                  <CalendarPlus className="h-4 w-4" /> Connect Google Calendar
+                </a>
+              )}
             </section>
           </div>
 

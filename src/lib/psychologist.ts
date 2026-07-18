@@ -17,6 +17,9 @@ export interface Meeting {
   durationMin: number;
   status: MeetingStatus;
   notes?: string;
+  /** Google Meet join link. Undefined for confirmed sessions whose clinician
+   *  hasn't connected a calendar — those need a link added manually. */
+  meetLink?: string;
 }
 
 export interface PortalNotification {

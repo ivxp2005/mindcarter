@@ -21,6 +21,16 @@ import {
   DialogDescription,
   DialogFooter,
 } from "../../components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../../components/ui/alert-dialog";
 import { Badge } from "../../components/ui/badge";
 import { GradientAvatar } from "../../components/gradient-avatar";
 import { CountUp } from "../../components/count-up";
@@ -66,17 +76,10 @@ function statusBadge(status: SessionStatus) {
 function SessionsPage() {
   const { open } = Route.useSearch();
   const navigate = useNavigate();
-  const {
-    sessions,
-    upcoming,
-    past,
-    canceled,
-    openReschedule,
-    cancelSession,
-    completeSession,
-  } = usePatientData();
+  const { sessions, upcoming, past, canceled, openReschedule, cancelSession } = usePatientData();
   const [activeTab, setActiveTab] = useState<"upcoming" | "past" | "canceled">("upcoming");
   const [selected, setSelected] = useState<string | null>(open ?? null);
+  const [confirmCancel, setConfirmCancel] = useState(false);
   const [calendarDate, setCalendarDate] = useState<Date | undefined>(parseISODate(todayISO()));
 
   useEffect(() => {
@@ -99,22 +102,18 @@ function SessionsPage() {
   };
 
   const handleJoin = (s: PatientSession) => {
-    toast.success(`Joining session with ${s.psychologistName}…`, {
-      description: "Connecting to video room (mock).",
-    });
+    if (!s.meetLink) return;
+    window.open(s.meetLink, "_blank", "noopener,noreferrer");
   };
   const handleReschedule = (s: PatientSession) => {
     closeDialog();
     openReschedule(s);
   };
-  const handleCancel = (s: PatientSession) => {
-    cancelSession(s.id);
-    toast.success(`Your ${formatDate(s.date)} session was canceled.`);
-    closeDialog();
-  };
-  const handleComplete = (s: PatientSession) => {
-    completeSession(s.id);
-    toast.success(`Marked your ${formatDate(s.date)} session as complete.`);
+  const confirmCancelSession = () => {
+    if (!detail) return;
+    cancelSession(detail.id);
+    toast.success(`Your ${formatDate(detail.date)} session was canceled.`);
+    setConfirmCancel(false);
     closeDialog();
   };
 
@@ -365,16 +364,10 @@ function SessionsPage() {
               {effectiveStatus(detail) === "upcoming" && (
                 <DialogFooter>
                   <button
-                    onClick={() => handleCancel(detail)}
+                    onClick={() => setConfirmCancel(true)}
                     className="rounded-full border border-border px-4 py-2 text-sm font-semibold transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-muted active:translate-y-0 active:scale-95"
                   >
                     Cancel
-                  </button>
-                  <button
-                    onClick={() => handleComplete(detail)}
-                    className="rounded-full border border-border px-4 py-2 text-sm font-semibold transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-muted active:translate-y-0 active:scale-95"
-                  >
-                    Mark complete
                   </button>
                   <button
                     onClick={() => handleReschedule(detail)}
@@ -384,9 +377,11 @@ function SessionsPage() {
                   </button>
                   <button
                     onClick={() => handleJoin(detail)}
-                    className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-95"
+                    disabled={!detail.meetLink}
+                    title={detail.meetLink ? undefined : "Join link isn't ready yet"}
+                    className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none"
                   >
-                    Join session
+                    {detail.meetLink ? "Join session" : "Link not ready yet"}
                   </button>
                 </DialogFooter>
               )}
@@ -394,6 +389,22 @@ function SessionsPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={confirmCancel} onOpenChange={setConfirmCancel}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Cancel this session with {detail?.psychologistName}
+              {detail ? ` on ${formatDate(detail.date)} at ${detail.time}` : ""}?
+            </AlertDialogTitle>
+            <AlertDialogDescription>Your payment will be refunded.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Never mind</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmCancelSession}>Cancel session</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

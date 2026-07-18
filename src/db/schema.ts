@@ -183,6 +183,16 @@ export const psychologistProfiles = pgTable("psychologist_profiles", {
   // Psychologist portal profile page notification toggles — mirrors
   // patient_profiles.notificationPrefs.
   notificationPrefs: jsonb("notification_prefs"),
+  // Google Calendar connection (separate from the patient-login Google OAuth) —
+  // lets this clinician's confirmed bookings auto-create a Meet-enabled event.
+  // The refresh token is stored AES-256-GCM-encrypted at rest (see
+  // src/lib/crypto.server.ts), never as plaintext.
+  googleCalendarAccessToken: text("google_calendar_access_token"),
+  googleCalendarRefreshToken: text("google_calendar_refresh_token"),
+  googleCalendarTokenExpiresAt: timestamp("google_calendar_token_expires_at", {
+    withTimezone: true,
+  }),
+  googleCalendarConnected: boolean("google_calendar_connected").notNull().default(false),
 });
 
 // ─── availability_slots ─────────────────────────────────────────────────────
@@ -217,6 +227,17 @@ export const bookings = pgTable("bookings", {
   amount: numeric("amount", { precision: 10, scale: 2 }),
   notes: text("notes"),
   videoRoomUrl: text("video_room_url"),
+  // Google Meet link + the Calendar event it belongs to, created on the
+  // psychologist's connected calendar when the booking is confirmed. Nullable:
+  // stays null if the clinician hasn't connected a calendar (flagged for manual
+  // entry) — the booking is still valid.
+  meetLink: text("meet_link"),
+  googleCalendarEventId: text("google_calendar_event_id"),
+  // Set to "pending_manual" on cancellation — Razorpay isn't integrated yet, so
+  // refunds are handled manually. Null until/unless the booking is canceled.
+  refundStatus: text("refund_status"),
+  canceledAt: timestamp("canceled_at", { withTimezone: true }),
+  cancellationReason: text("cancellation_reason"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

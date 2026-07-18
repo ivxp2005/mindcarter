@@ -21,6 +21,8 @@ import {
 } from "../db/schema";
 import { getSessionUser } from "./auth.server";
 import { phoneSchema } from "./auth-schemas";
+import { sendBookingConfirmedEmail } from "./email.server";
+import { createMeetEventForBooking, istInstant } from "./google-calendar.server";
 import type {
   JournalEntry,
   Mood,
@@ -213,6 +215,7 @@ export const getPortalDataFn = createServerFn({ method: "GET" }).handler(
           durationMin: bookings.durationMinutes,
           status: bookings.status,
           notes: bookings.notes,
+          meetLink: bookings.meetLink,
         })
         .from(bookings)
         .innerJoin(users, eq(bookings.psychologistId, users.id))
@@ -259,6 +262,7 @@ export const getPortalDataFn = createServerFn({ method: "GET" }).handler(
       durationMin: r.durationMin,
       status: toPortalStatus(r.status as BookingStatus),
       notes: r.notes ?? undefined,
+      meetLink: r.meetLink ?? undefined,
     }));
 
     const careTeam: CareTeamMemberDTO[] = careRows.map((r) => ({
@@ -520,6 +524,50 @@ export const bookSessionFn = createServerFn({ method: "POST" })
       actionParams: { open: inserted.id },
     });
 
+    // Best-effort confirmation side-effects: create a Google Meet event on the
+    // clinician's connected calendar and email the patient the join link. A
+    // failure here (no calendar connected, Google/Resend hiccup) must never fail
+    // the booking — it stays confirmed; the Meet link is just left blank for
+    // manual entry (surfaced in the psychologist portal).
+    try {
+      const [patient] = await db
+        .select({ email: users.email, name: users.name })
+        .from(users)
+        .where(eq(users.id, meId))
+        .limit(1);
+      if (patient) {
+        const startInstant = istInstant(data.date, sqlTime);
+        const endInstant = new Date(startInstant.getTime() + data.durationMin * 60_000);
+        let meetLink: string | null = null;
+        try {
+          const event = await createMeetEventForBooking({
+            psychologistId: data.psychologistId,
+            patientEmail: patient.email,
+            patientName: patient.name,
+            startInstant,
+            endInstant,
+            summary: `Mindcarter ${data.kind} with ${patient.name}`,
+          });
+          meetLink = event.meetLink;
+          await db
+            .update(bookings)
+            .set({ meetLink: event.meetLink, googleCalendarEventId: event.eventId })
+            .where(eq(bookings.id, inserted.id));
+        } catch (calErr) {
+          console.error("[bookSessionFn] Meet event creation failed:", calErr);
+        }
+        await sendBookingConfirmedEmail({
+          to: patient.email,
+          patientName: patient.name,
+          psychologistName: psychName,
+          startInstant,
+          meetLink,
+        });
+      }
+    } catch (err) {
+      console.error("[bookSessionFn] booking confirmation side-effects failed:", err);
+    }
+
     return { ok: true as const, id: inserted.id };
   });
 
@@ -541,7 +589,14 @@ export const cancelSessionFn = createServerFn({ method: "POST" })
 
     await db
       .update(bookings)
-      .set({ status: "canceled", updatedAt: new Date() })
+      .set({
+        status: "canceled",
+        // Razorpay isn't integrated yet, so refunds are processed manually.
+        refundStatus: "pending_manual",
+        canceledAt: new Date(),
+        cancellationReason: "Canceled by patient",
+        updatedAt: new Date(),
+      })
       .where(and(eq(bookings.id, data.id), eq(bookings.patientId, meId)));
 
     const psychRow = await db

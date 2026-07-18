@@ -40,8 +40,10 @@ import { Route as EmployeeJournalRouteImport } from './routes/employee/journal'
 import { Route as EmployeeCareTeamRouteImport } from './routes/employee/care-team'
 import { Route as AuthGoogleRouteImport } from './routes/auth/google'
 import { Route as EmployeeBookIndexRouteImport } from './routes/employee/book/index'
+import { Route as PsychologistSettingsConnectCalendarRouteImport } from './routes/psychologist/settings/connect-calendar'
 import { Route as EmployeeBookClinicianIdRouteImport } from './routes/employee/book/$clinicianId'
 import { Route as AuthGoogleCallbackRouteImport } from './routes/auth/google.callback'
+import { Route as PsychologistSettingsConnectCalendarCallbackRouteImport } from './routes/psychologist/settings/connect-calendar.callback'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
@@ -199,6 +201,12 @@ const EmployeeBookIndexRoute = EmployeeBookIndexRouteImport.update({
   path: '/book/',
   getParentRoute: () => EmployeeRouteRoute,
 } as any)
+const PsychologistSettingsConnectCalendarRoute =
+  PsychologistSettingsConnectCalendarRouteImport.update({
+    id: '/settings/connect-calendar',
+    path: '/settings/connect-calendar',
+    getParentRoute: () => PsychologistRouteRoute,
+  } as any)
 const EmployeeBookClinicianIdRoute = EmployeeBookClinicianIdRouteImport.update({
   id: '/book/$clinicianId',
   path: '/book/$clinicianId',
@@ -209,6 +217,12 @@ const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
   path: '/callback',
   getParentRoute: () => AuthGoogleRoute,
 } as any)
+const PsychologistSettingsConnectCalendarCallbackRoute =
+  PsychologistSettingsConnectCalendarCallbackRouteImport.update({
+    id: '/callback',
+    path: '/callback',
+    getParentRoute: () => PsychologistSettingsConnectCalendarRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -243,7 +257,9 @@ export interface FileRoutesByFullPath {
   '/psychologist/': typeof PsychologistIndexRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
   '/employee/book/$clinicianId': typeof EmployeeBookClinicianIdRoute
+  '/psychologist/settings/connect-calendar': typeof PsychologistSettingsConnectCalendarRouteWithChildren
   '/employee/book/': typeof EmployeeBookIndexRoute
+  '/psychologist/settings/connect-calendar/callback': typeof PsychologistSettingsConnectCalendarCallbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -276,7 +292,9 @@ export interface FileRoutesByTo {
   '/psychologist': typeof PsychologistIndexRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
   '/employee/book/$clinicianId': typeof EmployeeBookClinicianIdRoute
+  '/psychologist/settings/connect-calendar': typeof PsychologistSettingsConnectCalendarRouteWithChildren
   '/employee/book': typeof EmployeeBookIndexRoute
+  '/psychologist/settings/connect-calendar/callback': typeof PsychologistSettingsConnectCalendarCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -312,7 +330,9 @@ export interface FileRoutesById {
   '/psychologist/': typeof PsychologistIndexRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
   '/employee/book/$clinicianId': typeof EmployeeBookClinicianIdRoute
+  '/psychologist/settings/connect-calendar': typeof PsychologistSettingsConnectCalendarRouteWithChildren
   '/employee/book/': typeof EmployeeBookIndexRoute
+  '/psychologist/settings/connect-calendar/callback': typeof PsychologistSettingsConnectCalendarCallbackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -349,7 +369,9 @@ export interface FileRouteTypes {
     | '/psychologist/'
     | '/auth/google/callback'
     | '/employee/book/$clinicianId'
+    | '/psychologist/settings/connect-calendar'
     | '/employee/book/'
+    | '/psychologist/settings/connect-calendar/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -382,7 +404,9 @@ export interface FileRouteTypes {
     | '/psychologist'
     | '/auth/google/callback'
     | '/employee/book/$clinicianId'
+    | '/psychologist/settings/connect-calendar'
     | '/employee/book'
+    | '/psychologist/settings/connect-calendar/callback'
   id:
     | '__root__'
     | '/'
@@ -417,7 +441,9 @@ export interface FileRouteTypes {
     | '/psychologist/'
     | '/auth/google/callback'
     | '/employee/book/$clinicianId'
+    | '/psychologist/settings/connect-calendar'
     | '/employee/book/'
+    | '/psychologist/settings/connect-calendar/callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -657,6 +683,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmployeeBookIndexRouteImport
       parentRoute: typeof EmployeeRouteRoute
     }
+    '/psychologist/settings/connect-calendar': {
+      id: '/psychologist/settings/connect-calendar'
+      path: '/settings/connect-calendar'
+      fullPath: '/psychologist/settings/connect-calendar'
+      preLoaderRoute: typeof PsychologistSettingsConnectCalendarRouteImport
+      parentRoute: typeof PsychologistRouteRoute
+    }
     '/employee/book/$clinicianId': {
       id: '/employee/book/$clinicianId'
       path: '/book/$clinicianId'
@@ -670,6 +703,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/google/callback'
       preLoaderRoute: typeof AuthGoogleCallbackRouteImport
       parentRoute: typeof AuthGoogleRoute
+    }
+    '/psychologist/settings/connect-calendar/callback': {
+      id: '/psychologist/settings/connect-calendar/callback'
+      path: '/callback'
+      fullPath: '/psychologist/settings/connect-calendar/callback'
+      preLoaderRoute: typeof PsychologistSettingsConnectCalendarCallbackRouteImport
+      parentRoute: typeof PsychologistSettingsConnectCalendarRoute
     }
   }
 }
@@ -702,6 +742,21 @@ const EmployeeRouteRouteWithChildren = EmployeeRouteRoute._addFileChildren(
   EmployeeRouteRouteChildren,
 )
 
+interface PsychologistSettingsConnectCalendarRouteChildren {
+  PsychologistSettingsConnectCalendarCallbackRoute: typeof PsychologistSettingsConnectCalendarCallbackRoute
+}
+
+const PsychologistSettingsConnectCalendarRouteChildren: PsychologistSettingsConnectCalendarRouteChildren =
+  {
+    PsychologistSettingsConnectCalendarCallbackRoute:
+      PsychologistSettingsConnectCalendarCallbackRoute,
+  }
+
+const PsychologistSettingsConnectCalendarRouteWithChildren =
+  PsychologistSettingsConnectCalendarRoute._addFileChildren(
+    PsychologistSettingsConnectCalendarRouteChildren,
+  )
+
 interface PsychologistRouteRouteChildren {
   PsychologistAnalyticsRoute: typeof PsychologistAnalyticsRoute
   PsychologistDiariesRoute: typeof PsychologistDiariesRoute
@@ -711,6 +766,7 @@ interface PsychologistRouteRouteChildren {
   PsychologistProfileRoute: typeof PsychologistProfileRoute
   PsychologistSupportRoute: typeof PsychologistSupportRoute
   PsychologistIndexRoute: typeof PsychologistIndexRoute
+  PsychologistSettingsConnectCalendarRoute: typeof PsychologistSettingsConnectCalendarRouteWithChildren
 }
 
 const PsychologistRouteRouteChildren: PsychologistRouteRouteChildren = {
@@ -722,6 +778,8 @@ const PsychologistRouteRouteChildren: PsychologistRouteRouteChildren = {
   PsychologistProfileRoute: PsychologistProfileRoute,
   PsychologistSupportRoute: PsychologistSupportRoute,
   PsychologistIndexRoute: PsychologistIndexRoute,
+  PsychologistSettingsConnectCalendarRoute:
+    PsychologistSettingsConnectCalendarRouteWithChildren,
 }
 
 const PsychologistRouteRouteWithChildren =

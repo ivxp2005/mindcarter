@@ -29,6 +29,9 @@ export interface PatientSession {
   durationMin: number;
   status: SessionStatus;
   notes?: string;
+  /** Google Meet join link, present once the session is confirmed and the
+   *  clinician's calendar is connected. Undefined ⇒ "not ready yet". */
+  meetLink?: string;
 }
 
 export interface JournalEntry {
