@@ -58,6 +58,7 @@ export interface BookSessionInput {
   kind: string;
   mode: PatientSession["mode"];
   durationMin: number;
+  notes?: string;
 }
 
 export function parseISODate(dateStr: string): Date {
@@ -132,8 +133,8 @@ interface PatientDataValue {
   past: PatientSession[];
   canceled: PatientSession[];
   careTeam: EnrichedCareMember[];
-  /** Every active clinician in the system — for the booking dialog, which
-   *  isn't limited to the patient's existing care team. */
+  /** Every active clinician in the system — for the /employee/book pages,
+   *  which aren't limited to the patient's existing care team. */
   clinicians: CareTeamMemberDTO[];
   stats: {
     streakDays: number;
@@ -142,12 +143,10 @@ interface PatientDataValue {
     unreadCount: number;
   };
   moodTrend: { day: string; mood: number }[];
-  // Booking dialog state
+  // Reschedule dialog state
   bookingOpen: boolean;
-  bookingPresetId: string | null;
   rescheduleSessionId: string | null;
   // Actions
-  openBooking: (psychologistId?: string) => void;
   openReschedule: (session: PatientSession) => void;
   closeBooking: () => void;
   bookSession: (input: BookSessionInput) => Promise<{ ok: boolean; error?: string }>;
@@ -203,7 +202,6 @@ export function PatientDataProvider({ children }: { children: ReactNode }) {
   });
 
   const [bookingOpen, setBookingOpen] = useState(false);
-  const [bookingPresetId, setBookingPresetId] = useState<string | null>(null);
   const [rescheduleSessionId, setRescheduleSessionId] = useState<string | null>(null);
 
   const sessions = useMemo(() => data?.sessions ?? [], [data]);
@@ -293,22 +291,14 @@ export function PatientDataProvider({ children }: { children: ReactNode }) {
       ...derived,
       clinicians,
       bookingOpen,
-      bookingPresetId,
       rescheduleSessionId,
-      openBooking: (psychologistId) => {
-        setRescheduleSessionId(null);
-        setBookingPresetId(psychologistId ?? null);
-        setBookingOpen(true);
-      },
       openReschedule: (session) => {
         setRescheduleSessionId(session.id);
-        setBookingPresetId(session.psychologistId);
         setBookingOpen(true);
       },
       closeBooking: () => {
         setBookingOpen(false);
         setRescheduleSessionId(null);
-        setBookingPresetId(null);
       },
       bookSession: async (input) => {
         // Client-side guards for instant feedback; the server re-validates and
@@ -380,7 +370,6 @@ export function PatientDataProvider({ children }: { children: ReactNode }) {
     derived,
     clinicians,
     bookingOpen,
-    bookingPresetId,
     rescheduleSessionId,
     tickets,
   ]);

@@ -6,6 +6,7 @@ import { motion, MotionConfig } from "framer-motion";
 import {
   LayoutDashboard,
   CalendarHeart,
+  CalendarPlus,
   Users,
   BookOpen,
   Bell,
@@ -28,6 +29,7 @@ type NavItem = { label: string; to: string; exact?: boolean; icon: React.Element
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", to: "/employee", exact: true, icon: LayoutDashboard },
   { label: "Sessions", to: "/employee/sessions", icon: CalendarHeart },
+  { label: "Book a Session", to: "/employee/book", icon: CalendarPlus },
   { label: "Care Team", to: "/employee/care-team", icon: Users },
   { label: "Wellness Journal", to: "/employee/journal", icon: BookOpen },
   { label: "Notifications", to: "/employee/notifications", icon: Bell },

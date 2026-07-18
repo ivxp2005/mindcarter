@@ -23,7 +23,7 @@ function formatDate(dateStr: string) {
 }
 
 function CareTeamPage() {
-  const { careTeam, sessions, openBooking } = usePatientData();
+  const { careTeam, sessions } = usePatientData();
   const totalSessions = careTeam.reduce((sum, m) => sum + m.sessionCount, 0);
 
   return (
@@ -186,12 +186,13 @@ function CareTeamPage() {
                   >
                     <MessageCircle className="h-4 w-4" /> Message
                   </button>
-                  <button
-                    onClick={() => openBooking(member.id)}
+                  <Link
+                    to="/employee/book/$clinicianId"
+                    params={{ clinicianId: member.id }}
                     className="rounded-full bg-brand px-4 py-2.5 text-sm font-semibold text-brand-foreground transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-95"
                   >
                     Book session
-                  </button>
+                  </Link>
                 </div>
               </section>
             </StaggerItem>

@@ -410,6 +410,7 @@ export const bookSessionFn = createServerFn({ method: "POST" })
         kind: string;
         mode: string;
         durationMin: number;
+        notes?: string;
       },
   )
   .handler(async ({ data }) => {
@@ -506,6 +507,7 @@ export const bookSessionFn = createServerFn({ method: "POST" })
         mode: MODE_TO_DB[data.mode] ?? "video",
         status: "scheduled",
         amount,
+        notes: data.notes?.trim() || null,
       })
       .returning({ id: bookings.id });
 

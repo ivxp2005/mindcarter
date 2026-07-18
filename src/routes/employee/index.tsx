@@ -60,15 +60,12 @@ function EmployeeDashboard() {
 
   const {
     upcoming: upcomingSessions,
-    careTeam,
     journal,
     stats,
     moodTrend,
     checkInMood,
-    openBooking,
   } = usePatientData();
   const nextSession = upcomingSessions[0];
-  const primaryCarer = careTeam.find((c) => c.primary) ?? careTeam[0];
   const recentEntries = journal.slice(0, 4);
   const unreadNotifications = stats.unreadCount;
 
@@ -146,12 +143,12 @@ function EmployeeDashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.32, ease: EASE_OUT }}
             >
-              <button
-                onClick={() => openBooking(primaryCarer?.id)}
+              <Link
+                to="/employee/book"
                 className="rounded-full bg-brand px-4 py-2.5 text-sm font-semibold text-brand-foreground shadow-lg transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:scale-95"
               >
                 Book a new session
-              </button>
+              </Link>
               <Link
                 to="/employee/sessions"
                 className="rounded-full border border-background/25 px-4 py-2.5 text-sm font-semibold transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-background/10 active:translate-y-0 active:scale-95"

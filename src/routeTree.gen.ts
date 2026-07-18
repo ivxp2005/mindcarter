@@ -39,6 +39,8 @@ import { Route as EmployeeNotificationsRouteImport } from './routes/employee/not
 import { Route as EmployeeJournalRouteImport } from './routes/employee/journal'
 import { Route as EmployeeCareTeamRouteImport } from './routes/employee/care-team'
 import { Route as AuthGoogleRouteImport } from './routes/auth/google'
+import { Route as EmployeeBookIndexRouteImport } from './routes/employee/book/index'
+import { Route as EmployeeBookClinicianIdRouteImport } from './routes/employee/book/$clinicianId'
 import { Route as AuthGoogleCallbackRouteImport } from './routes/auth/google.callback'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
@@ -192,6 +194,16 @@ const AuthGoogleRoute = AuthGoogleRouteImport.update({
   path: '/auth/google',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmployeeBookIndexRoute = EmployeeBookIndexRouteImport.update({
+  id: '/book/',
+  path: '/book/',
+  getParentRoute: () => EmployeeRouteRoute,
+} as any)
+const EmployeeBookClinicianIdRoute = EmployeeBookClinicianIdRouteImport.update({
+  id: '/book/$clinicianId',
+  path: '/book/$clinicianId',
+  getParentRoute: () => EmployeeRouteRoute,
+} as any)
 const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
   id: '/callback',
   path: '/callback',
@@ -230,6 +242,8 @@ export interface FileRoutesByFullPath {
   '/employee/': typeof EmployeeIndexRoute
   '/psychologist/': typeof PsychologistIndexRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
+  '/employee/book/$clinicianId': typeof EmployeeBookClinicianIdRoute
+  '/employee/book/': typeof EmployeeBookIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -261,6 +275,8 @@ export interface FileRoutesByTo {
   '/employee': typeof EmployeeIndexRoute
   '/psychologist': typeof PsychologistIndexRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
+  '/employee/book/$clinicianId': typeof EmployeeBookClinicianIdRoute
+  '/employee/book': typeof EmployeeBookIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -295,6 +311,8 @@ export interface FileRoutesById {
   '/employee/': typeof EmployeeIndexRoute
   '/psychologist/': typeof PsychologistIndexRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
+  '/employee/book/$clinicianId': typeof EmployeeBookClinicianIdRoute
+  '/employee/book/': typeof EmployeeBookIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -330,6 +348,8 @@ export interface FileRouteTypes {
     | '/employee/'
     | '/psychologist/'
     | '/auth/google/callback'
+    | '/employee/book/$clinicianId'
+    | '/employee/book/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -361,6 +381,8 @@ export interface FileRouteTypes {
     | '/employee'
     | '/psychologist'
     | '/auth/google/callback'
+    | '/employee/book/$clinicianId'
+    | '/employee/book'
   id:
     | '__root__'
     | '/'
@@ -394,6 +416,8 @@ export interface FileRouteTypes {
     | '/employee/'
     | '/psychologist/'
     | '/auth/google/callback'
+    | '/employee/book/$clinicianId'
+    | '/employee/book/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -626,6 +650,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthGoogleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/employee/book/': {
+      id: '/employee/book/'
+      path: '/book'
+      fullPath: '/employee/book/'
+      preLoaderRoute: typeof EmployeeBookIndexRouteImport
+      parentRoute: typeof EmployeeRouteRoute
+    }
+    '/employee/book/$clinicianId': {
+      id: '/employee/book/$clinicianId'
+      path: '/book/$clinicianId'
+      fullPath: '/employee/book/$clinicianId'
+      preLoaderRoute: typeof EmployeeBookClinicianIdRouteImport
+      parentRoute: typeof EmployeeRouteRoute
+    }
     '/auth/google/callback': {
       id: '/auth/google/callback'
       path: '/callback'
@@ -644,6 +682,8 @@ interface EmployeeRouteRouteChildren {
   EmployeeSessionsRoute: typeof EmployeeSessionsRoute
   EmployeeSupportRoute: typeof EmployeeSupportRoute
   EmployeeIndexRoute: typeof EmployeeIndexRoute
+  EmployeeBookClinicianIdRoute: typeof EmployeeBookClinicianIdRoute
+  EmployeeBookIndexRoute: typeof EmployeeBookIndexRoute
 }
 
 const EmployeeRouteRouteChildren: EmployeeRouteRouteChildren = {
@@ -654,6 +694,8 @@ const EmployeeRouteRouteChildren: EmployeeRouteRouteChildren = {
   EmployeeSessionsRoute: EmployeeSessionsRoute,
   EmployeeSupportRoute: EmployeeSupportRoute,
   EmployeeIndexRoute: EmployeeIndexRoute,
+  EmployeeBookClinicianIdRoute: EmployeeBookClinicianIdRoute,
+  EmployeeBookIndexRoute: EmployeeBookIndexRoute,
 }
 
 const EmployeeRouteRouteWithChildren = EmployeeRouteRoute._addFileChildren(

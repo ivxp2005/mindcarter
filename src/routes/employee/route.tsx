@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { WellnessShell } from "../../components/wellness-shell";
-import { BookSessionDialog } from "../../components/book-session-dialog";
+import { RescheduleSessionDialog } from "../../components/reschedule-session-dialog";
 import { PatientDataProvider } from "../../lib/patient-store";
 import { meFn } from "../../lib/auth.server";
 import { getOnboardingStatusFn } from "../../lib/patient-data.server";
@@ -28,7 +28,7 @@ function EmployeeLayout() {
       <WellnessShell>
         <Outlet />
       </WellnessShell>
-      <BookSessionDialog />
+      <RescheduleSessionDialog />
     </PatientDataProvider>
   );
 }

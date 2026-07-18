@@ -71,8 +71,6 @@ function SessionsPage() {
     upcoming,
     past,
     canceled,
-    careTeam,
-    openBooking,
     openReschedule,
     cancelSession,
     completeSession,
@@ -129,7 +127,6 @@ function SessionsPage() {
   }
 
   const sessionDates = sessions.map((s) => parseISODate(s.date));
-  const primaryCarer = careTeam.find((c) => c.primary) ?? careTeam[0];
 
   const stats = [
     { label: "Total sessions", value: totalSessions, suffix: "" },
@@ -187,12 +184,12 @@ function SessionsPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.32, ease: EASE_OUT }}
             >
-              <button
-                onClick={() => openBooking(primaryCarer?.id)}
+              <Link
+                to="/employee/book"
                 className="inline-flex rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-foreground shadow-lg transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:scale-95"
               >
                 Book a new session
-              </button>
+              </Link>
             </motion.div>
           </div>
 
