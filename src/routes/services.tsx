@@ -19,8 +19,8 @@ import {
   Quote,
   type LucideIcon,
 } from "lucide-react";
-import teamImg from "../assets/team.png";
 import amarRajanImg from "../assets/amar-rajan.png";
+import servicesBannerImg from "../assets/image copy 6.png";
 
 export const Route = createFileRoute("/services")({
   head: () => ({
@@ -113,15 +113,30 @@ function Eyebrow({ label, dark }: { label: string; dark?: boolean }) {
 // ─── 1. Hero ──────────────────────────────────────────────────────────────
 function ServicesHero() {
   return (
-    <section className="relative overflow-hidden" style={{ backgroundColor: INK }}>
-      <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 py-24 sm:py-28 lg:grid-cols-2 lg:gap-10 lg:py-32">
+    <section className="relative overflow-hidden">
+      <img
+        src={servicesBannerImg}
+        alt=""
+        aria-hidden
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <div aria-hidden className="absolute inset-0 bg-foreground/15" />
+
+      <div className="relative mx-auto max-w-3xl px-6 py-20 text-center sm:py-28">
         <ScrollReveal>
           <Eyebrow label="Services" dark />
-          <h1 className="font-display mt-4 max-w-xl text-5xl font-black leading-[1.02] tracking-tight text-white sm:text-6xl">
+          <h1
+            className="font-display mt-4 text-4xl font-black leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl"
+            style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}
+          >
             Organizational Psychology Solutions, Designed for Impact.
           </h1>
-          <p className="mt-6 max-w-lg text-base leading-relaxed text-white/70">
-            An integrated portfolio of evidence-based solutions spanning psychometric assessments, employee assistance, leadership development, behavioral interviewing, and organizational consulting—helping organizations make better people decisions and build workplaces where people and performance thrive.
+          <p
+            className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-white/85"
+            style={{ textShadow: "0 2px 10px rgba(0,0,0,0.45)" }}
+          >
+            Evidence-based assessments, coaching and consulting that help organizations make
+            better people decisions.
           </p>
           <Link
             to="/contact"
@@ -131,33 +146,7 @@ function ServicesHero() {
             Book Consultation <ArrowRight className="h-4 w-4" />
           </Link>
         </ScrollReveal>
-
-        <ScrollReveal delay={0.15} className="relative hidden lg:block">
-          <div
-            aria-hidden
-            className="absolute inset-0 scale-110"
-            style={{ background: `radial-gradient(circle, ${GOLD}22 0%, transparent 70%)` }}
-          />
-          <div
-            className="relative aspect-[4/5] w-full overflow-hidden shadow-2xl"
-            style={{ clipPath: "polygon(18% 0, 100% 0, 100% 100%, 0% 100%)" }}
-          >
-            <img src={teamImg} alt="" aria-hidden className="h-full w-full object-cover" />
-            <div
-              aria-hidden
-              className="absolute inset-0"
-              style={{ background: `linear-gradient(160deg, ${GOLD}33 0%, transparent 55%)` }}
-            />
-          </div>
-        </ScrollReveal>
       </div>
-
-      {/* Diagonal cut into the next (light) section */}
-      <div
-        aria-hidden
-        className="h-12 w-full sm:h-20"
-        style={{ backgroundColor: "var(--background)", clipPath: "polygon(0 100%, 100% 0, 100% 100%)" }}
-      />
     </section>
   );
 }
