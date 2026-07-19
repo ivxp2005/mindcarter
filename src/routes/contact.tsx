@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteShell } from "../components/site-shell";
 import { PageHero } from "../components/page-hero";
-import { Mail, MapPin, Phone, Facebook, Instagram, Twitter } from "lucide-react";
+import { Facebook, Instagram, Twitter } from "lucide-react";
 import { ScrollReveal } from "../components/scroll-reveal";
 
 export const Route = createFileRoute("/contact")({
@@ -74,11 +74,11 @@ function ContactPage() {
               <div className="relative z-10 mt-6">
                 <h3 className="font-display text-2xl font-black tracking-tight">Info</h3>
                 <div className="mt-8 space-y-5">
-                  <InfoRow icon={Phone} label="+1 (415) 555-0139" href="tel:+14155550139" />
-                  <InfoRow icon={Mail} label="hello@mindcarter.co" href="mailto:hello@mindcarter.co" />
+                  <InfoRow icon={WhatsAppIcon} label="+91 75940 71071" href="tel:+917594071071" />
+                  <InfoRow icon={GmailIcon} label="info@mindcarter.com" href="mailto:info@mindcarter.com" />
                   <InfoRow
-                    icon={MapPin}
-                    label="200 Market Street, Suite 1400, San Francisco, CA 94111"
+                    icon={GoogleMapsIcon}
+                    label="Module no: A, Tejaswini, Technopark, Trivandrum"
                   />
                 </div>
               </div>
@@ -143,18 +143,49 @@ function TextField({
   );
 }
 
+function GmailIcon() {
+  return (
+    <svg className="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4Z" fill="#F2F2F2" />
+      <path d="M22 6V18C22 19.1 21.1 20 20 20H18V8L12 13L6 8V20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4H20C21.1 4 22 4.9 22 6Z" fill="#EA4335" />
+      <path d="M18 8L12 13L6 8V4H18V8Z" fill="#FBBC05" />
+      <path d="M2 6V18C2 19.1 2.9 20 4 20H6V8L12 13L18 8V20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4H4C2.9 4 2 4.9 2 6Z" fill="#34A853" />
+      <path d="M2 6V14L8 9L2 6Z" fill="#4285F4" />
+    </svg>
+  );
+}
+
+function WhatsAppIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fillRule="evenodd" clipRule="evenodd" d="M12.004 2C6.48 2 2 6.48 2 12.004c0 1.762.455 3.486 1.32 5.011l-1.4 5.115 5.234-1.372c1.472.802 3.125 1.25 4.85 1.25 5.524 0 10.004-4.48 10.004-10.004C22.008 6.48 17.528 2 12.004 2zM12 20.136c-1.576 0-3.12-.418-4.484-1.21l-.321-.19-3.33.873.889-3.242-.209-.333a8.106 8.106 0 01-1.246-4.22c0-4.492 3.655-8.147 8.147-8.147 2.176 0 4.222.847 5.76 2.387A8.09 8.09 0 0120.147 12c0 4.492-3.656 8.136-8.147 8.136zm4.568-6.195c-.25-.125-1.482-.731-1.712-.815-.23-.083-.397-.125-.564.125-.167.25-.647.815-.793.982-.146.167-.292.187-.542.062a6.837 6.837 0 01-2.013-1.242 7.534 7.534 0 01-1.392-1.733c-.146-.25-.016-.386.11-.51.112-.11.25-.292.375-.438.125-.146.167-.25.25-.417.083-.167.042-.313-.02-.438-.063-.125-.564-1.358-.773-1.859-.203-.489-.41-.422-.564-.43-.146-.007-.313-.008-.48-.008s-.438.062-.667.313c-.23.25-.877.855-.877 2.087s.898 2.42 1.023 2.587c.125.167 1.767 2.7 4.282 3.785.598.258 1.065.412 1.43.528.601.191 1.147.164 1.58.1.482-.072 1.483-.605 1.692-1.19.209-.584.209-1.085.146-1.19-.063-.105-.23-.167-.48-.292z" fill="#25D366" />
+    </svg>
+  );
+}
+
+function GoogleMapsIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19.5 9.5C19.5 14.5 12 21.5 12 21.5C12 21.5 4.5 14.5 4.5 9.5C4.5 5.35786 7.85786 2 12 2C16.1421 2 19.5 5.35786 19.5 9.5Z" fill="#EA4335" />
+      <path d="M12 12C13.3807 12 14.5 10.8807 14.5 9.5C14.5 8.11929 13.3807 7 12 7C10.6193 7 9.5 8.11929 9.5 9.5C9.5 10.8807 10.6193 12 12 12Z" fill="#FFFFFF" />
+    </svg>
+  );
+}
+
 function InfoRow({
   icon: Icon,
   label,
   href,
 }: {
-  icon: typeof Phone;
+  icon: React.ComponentType;
   label: string;
   href?: string;
 }) {
   const content = (
     <div className="flex items-start gap-3 text-sm text-background/85 transition-colors group-hover:text-brand">
-      <Icon className="mt-0.5 h-4 w-4 shrink-0" />
+      <div className="mt-0.5 shrink-0">
+        <Icon />
+      </div>
       <span className="leading-relaxed">{label}</span>
     </div>
   );

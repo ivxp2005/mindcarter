@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { Linkedin, Instagram, Facebook, Youtube } from "lucide-react";
 import logoImg from "../assets/mindcarter-logo.avif";
 
 export function SiteFooter() {
@@ -42,17 +43,33 @@ export function SiteFooter() {
               <li>+91 75940 71071</li>
               <li>Module no: A, Tejaswini, Technopark,<br />Trivandrum</li>
             </ul>
-            <div className="mt-6 flex gap-2">
-              {["LN", "IG", "TW", "YT"].map((s) => (
-                <a
-                  key={s}
-                  href="#"
-                  aria-label={s}
-                  className="grid h-9 w-9 place-items-center rounded-full border border-background/20 text-[11px] font-semibold text-background/80 transition hover:border-brand hover:text-brand"
-                >
-                  {s}
-                </a>
-              ))}
+            <div className="mt-6 flex gap-3">
+              {[
+                { icon: Linkedin, label: "LinkedIn", href: "#", hoverColor: "#0A66C2" },
+                { icon: Instagram, label: "Instagram", href: "#", hoverColor: "#E1306C" },
+                { icon: Facebook, label: "Facebook", href: "#", hoverColor: "#1877F2" },
+                { icon: Youtube, label: "YouTube", href: "#", hoverColor: "#FF0000" },
+              ].map((s) => {
+                const Icon = s.icon;
+                return (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    aria-label={s.label}
+                    className="grid h-9 w-9 place-items-center rounded-full border border-background/20 text-background/85 transition-all duration-200 hover:-translate-y-0.5 hover:text-white"
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = s.hoverColor;
+                      e.currentTarget.style.backgroundColor = s.hoverColor;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </a>
+                );
+              })}
             </div>
           </div>
         </div>
