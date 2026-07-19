@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteShell } from "../components/site-shell";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "../components/scroll-reveal";
-import { ArrowRight, Mail, Phone, MapPin, Quote } from "lucide-react";
+import { ArrowRight, Mail, Phone, MapPin } from "lucide-react";
 import { AngularCornerBackground } from "../components/angular-background";
 import servicesBannerImg from "../assets/image copy 6.png";
 import imageImg from "../assets/image.png";
@@ -225,30 +225,6 @@ function HowWeWork() {
   );
 }
 
-// ─── 5. Testimonial ──────────────────────────────────────────────────────────
-function Testimonial() {
-  return (
-    <section className="bg-background py-20 sm:py-28">
-      <ScrollReveal variant="flip-up" className="mx-auto flex max-w-4xl flex-col items-center gap-8 px-6 text-center sm:flex-row sm:text-left">
-        <div
-          className="grid h-24 w-24 shrink-0 rotate-45 place-items-center rounded-2xl shadow-xl"
-          style={{ backgroundColor: GOLD }}
-        >
-          <Quote className="-rotate-45 h-8 w-8" style={{ color: INK }} strokeWidth={2.5} />
-        </div>
-        <div>
-          <p className="font-display text-2xl font-black italic leading-snug tracking-tight text-foreground sm:text-3xl">
-            &ldquo;Every breakthrough begins with being understood.&rdquo;
-          </p>
-          <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            — The Mindcarter Team
-          </p>
-        </div>
-      </ScrollReveal>
-    </section>
-  );
-}
-
 // ─── 6. Get in touch ─────────────────────────────────────────────────────────
 function GetInTouch() {
   return (
@@ -298,7 +274,6 @@ function ServicesPage() {
       <ServicesHero />
       <WhatWeDo />
       <HowWeWork />
-      <Testimonial />
       <GetInTouch />
     </SiteShell>
   );

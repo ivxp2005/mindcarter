@@ -4,6 +4,8 @@ import { useState } from "react";
 import { loginFn, resendOtpFn } from "../lib/auth.server";
 import type { UserRole } from "../lib/auth-types";
 import { PasswordInput } from "../components/password-input";
+import logoImg from "../assets/mindcarter-logo.avif";
+import panelBgImg from "../assets/890.png";
 
 const OAUTH_ERROR_MESSAGES: Record<string, string> = {
   oauth_state: "Google sign-in expired or was tampered with. Please try again.",
@@ -121,6 +123,13 @@ function LoginPage() {
     <div className="grid min-h-screen bg-background lg:grid-cols-2">
       {/* Left panel */}
       <div className="relative hidden overflow-hidden bg-foreground text-background lg:flex lg:flex-col">
+        <img
+          src={panelBgImg}
+          alt=""
+          aria-hidden
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div aria-hidden className="absolute inset-0 bg-foreground/75" />
         <div
           className="absolute inset-0 opacity-[0.06]"
           style={{
@@ -130,11 +139,12 @@ function LoginPage() {
           }}
         />
         <div className="relative flex h-full flex-col justify-between p-12">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="grid h-8 w-8 place-items-center rounded-md bg-brand text-brand-foreground">
-              <span className="text-sm font-black">M</span>
-            </span>
-            <span className="text-[15px] font-semibold tracking-tight">Mindcarter.</span>
+          <Link to="/">
+            <img
+              src={logoImg}
+              alt="Mindcarter"
+              className="h-12 w-auto brightness-0 invert"
+            />
           </Link>
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand">
