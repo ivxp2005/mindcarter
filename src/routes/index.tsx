@@ -8,7 +8,13 @@ import {
   Phone,
   Quote,
   Search,
+  Star,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  getPublicPsychologistsFn,
+  type PublicPsychologistDTO,
+} from "../lib/patient-data.server";
 import heroBgImg from "../assets/890.png";
 import amarRajanImg from "../assets/amar-rajan.png";
 import teamImg from "../assets/team.png";
@@ -214,7 +220,7 @@ function Hero() {
           className="mt-8 flex flex-wrap items-center justify-center gap-3"
         >
           <Link
-            to="/contact"
+            to="/employee/book"
             className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-bold shadow-lg transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:scale-95"
             style={{ backgroundColor: "#F4C430", color: "#111111" }}
           >
@@ -422,72 +428,29 @@ function SectionHeading({
   );
 }
 
-const PSYCHOLOGISTS: {
-  name: string;
-  role: string;
-  tags: string[];
-  hours: number;
-  languages: string[];
-  price: number;
-  nextAvailable: string;
-  photo?: string;
-}[] = [
-  {
-    name: "Dr. Aditi Carter",
-    role: "Clinical Psychologist",
-    tags: ["CBT", "Trauma"],
-    hours: 250,
-    languages: ["Malayalam", "English"],
-    price: 1000,
-    nextAvailable: "15 mins",
-  },
-  {
-    name: "Dr. Marcus Vale",
-    role: "Organizational Psychologist",
-    tags: ["Leadership", "Culture"],
-    hours: 500,
-    languages: ["Malayalam", "Tamil"],
-    price: 1200,
-    nextAvailable: "20 mins",
-  },
-  {
-    name: "Dr. Lena Ortiz",
-    role: "Neuropsychologist",
-    tags: ["Cognition", "Assessment"],
-    hours: 800,
-    languages: ["English", "Hindi"],
-    price: 1500,
-    nextAvailable: "30 mins",
-  },
-  {
-    name: "Dr. Rohan Mehra",
-    role: "Executive Coach",
-    tags: ["C-suite", "Founders"],
-    hours: 650,
-    languages: ["English", "Hindi"],
-    price: 1400,
-    nextAvailable: "45 mins",
-  },
-];
-
 function Psychologists() {
   const [query, setQuery] = useState("");
+  const { data: psychologists = [], isLoading } = useQuery({
+    queryKey: ["public-psychologists"],
+    queryFn: () => getPublicPsychologistsFn(),
+    staleTime: 5 * 60_000,
+  });
 
-  const matchesQuery = (p: (typeof PSYCHOLOGISTS)[number]) => {
+  const matchesQuery = (p: PublicPsychologistDTO) => {
     const q = query.trim().toLowerCase();
     if (!q) return true;
     return (
       p.name.toLowerCase().includes(q) ||
-      p.role.toLowerCase().includes(q) ||
-      p.languages.some((l) => l.toLowerCase().includes(q)) ||
-      p.tags.some((t) => t.toLowerCase().includes(q))
+      p.title.toLowerCase().includes(q) ||
+      p.specialties.some((t) => t.toLowerCase().includes(q))
     );
   };
 
-  const hasMatches = PSYCHOLOGISTS.some(matchesQuery);
+  const hasMatches = psychologists.some(matchesQuery);
 
   return (
     <section
+      id="psychologists"
       className="relative overflow-hidden border-b border-border py-16 sm:py-20"
       style={{ backgroundColor: "#F4C430" }}
     >
@@ -526,18 +489,35 @@ function Psychologists() {
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by name, specialty, language, or tags…"
+                placeholder="Search by name, title, or specialty…"
                 className="w-full rounded-full border border-border bg-background py-3 pl-12 pr-5 text-sm shadow-sm outline-none transition focus:border-foreground"
               />
             </div>
 
+            {isLoading && (
+              <div className="relative mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-80 animate-pulse rounded-2xl border border-border bg-background/60"
+                    aria-hidden
+                  />
+                ))}
+              </div>
+            )}
+            {!isLoading && (
             <StaggerContainer className="relative mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {!hasMatches && (
+          {psychologists.length === 0 && (
+            <p className="col-span-full py-10 text-center text-sm text-foreground/70">
+              Our clinician directory is being updated. Please check back soon.
+            </p>
+          )}
+          {psychologists.length > 0 && !hasMatches && (
             <p className="col-span-full py-10 text-center text-sm text-foreground/70">
               No psychologists match your search.
             </p>
           )}
-          {PSYCHOLOGISTS.map((p) => {
+          {psychologists.map((p) => {
             const initials = p.name
               .replace(/^Dr\.\s*/, "")
               .split(" ")
@@ -545,40 +525,31 @@ function Psychologists() {
               .join("")
               .slice(0, 2);
             return (
-              <StaggerItem key={p.name} className={matchesQuery(p) ? "" : "hidden"}>
+              <StaggerItem key={p.id} className={matchesQuery(p) ? "" : "hidden"}>
                 <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-background transition-all duration-[400ms] ease-out hover:-translate-y-1 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]">
                   <div className="relative aspect-[16/9] overflow-hidden bg-muted">
-                    {p.photo ? (
-                      <img
-                        src={p.photo}
-                        alt={p.name}
-                        className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div
-                        className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand/25 to-brand/5 text-3xl font-black text-foreground/20 transition duration-700 group-hover:scale-105"
-                        aria-hidden
-                      >
-                        {initials}
-                      </div>
-                    )}
-                    <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-background/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest">
-                      <span className="relative flex h-1.5 w-1.5">
-                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75 motion-reduce:animate-none" />
-                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-brand" />
+                    <div
+                      className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand/25 to-brand/5 text-3xl font-black text-foreground/20 transition duration-700 group-hover:scale-105"
+                      aria-hidden
+                    >
+                      {initials}
+                    </div>
+                    {p.rating != null && p.rating > 0 && (
+                      <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-background/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest">
+                        <Star className="h-3 w-3 fill-brand text-brand" />
+                        {p.rating.toFixed(1)} rating
                       </span>
-                      Available in {p.nextAvailable}
-                    </span>
+                    )}
                   </div>
 
                   <div className="flex flex-1 flex-col p-5">
                     <h3 className="text-lg font-bold leading-tight">{p.name}</h3>
                     <p className="mt-1 text-[11px] uppercase leading-snug tracking-[0.16em] text-muted-foreground">
-                      {p.role}
+                      {p.title}
                     </p>
 
                     <div className="mt-2.5 flex flex-wrap gap-1.5">
-                      {p.tags.map((t) => (
+                      {p.specialties.map((t) => (
                         <span
                           key={t}
                           className="rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
@@ -588,24 +559,18 @@ function Psychologists() {
                       ))}
                     </div>
 
-                    <div className="mt-4 grid grid-cols-3 gap-2 border-y border-border py-3 text-center">
+                    <div className="mt-4 grid grid-cols-2 gap-2 border-y border-border py-3 text-center">
                       <div>
-                        <p className="text-base font-bold text-foreground">{p.hours}+</p>
-                        <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">
-                          Therapy hrs
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs font-semibold leading-snug">
-                          {p.languages.join(", ")}
+                        <p className="text-base font-bold text-foreground">
+                          {p.yearsExperience != null ? `${p.yearsExperience}+` : "—"}
                         </p>
                         <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">
-                          Languages
+                          Years exp
                         </p>
                       </div>
                       <div>
                         <p className="text-base font-bold text-foreground">
-                          ₹{p.price.toLocaleString("en-IN")}
+                          {p.price != null ? `₹${p.price.toLocaleString("en-IN")}` : "—"}
                         </p>
                         <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">
                           Per session
@@ -615,8 +580,8 @@ function Psychologists() {
 
                     <div className="mt-auto flex flex-col gap-2 pt-4">
                       <Link
-                        to="/booking"
-                        search={{ name: p.name, role: p.role, price: p.price }}
+                        to="/employee/book/$clinicianId"
+                        params={{ clinicianId: p.id }}
                         className="w-full rounded-full bg-brand py-2.5 text-center text-[11px] font-bold uppercase tracking-wide text-brand-foreground transition-transform duration-200 ease-out group-hover:scale-[1.02]"
                       >
                         Book now
@@ -634,6 +599,7 @@ function Psychologists() {
             );
           })}
         </StaggerContainer>
+            )}
 
             <div className="relative mt-8 flex justify-center">
               <Link
@@ -761,7 +727,7 @@ function FinalCTA() {
             </div>
             <div className="flex flex-wrap gap-3 md:justify-end">
               <Link
-                to="/contact"
+                to="/employee/book"
                 className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-3 text-sm font-semibold text-background shadow-md transition-all duration-200 ease-out hover:-translate-y-0.5 hover:opacity-90 active:translate-y-0 active:scale-95"
               >
                 Book Consultation <ArrowRight className="h-4 w-4" />

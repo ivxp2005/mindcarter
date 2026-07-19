@@ -22,7 +22,7 @@ export function SiteFooter() {
               { label: "About Us", to: "/about" },
               { label: "Services", to: "/services" },
               { label: "Contact", to: "/contact" },
-              { label: "Book Consultation", to: "/contact" },
+              { label: "Book Consultation", to: "/employee/book" },
             ]}
           />
           <FooterCol

@@ -471,7 +471,7 @@ function FinalCTA() {
             </div>
             <div className="flex flex-wrap gap-3 md:justify-end">
               <Link
-                to="/contact"
+                to="/employee/book"
                 className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-3 text-sm font-semibold text-background shadow-md transition-all duration-200 ease-out hover:-translate-y-0.5 hover:opacity-90 active:translate-y-0 active:scale-95"
               >
                 Book Consultation <ArrowRight className="h-4 w-4" />

@@ -161,7 +161,7 @@ function WhatWeDo() {
                       {s.desc}
                     </p>
                     <Link
-                      to="/contact"
+                      to="/employee/book"
                       className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-xs font-bold uppercase tracking-wide text-background transition hover:opacity-90"
                     >
                       Book Consultation <ArrowRight className="h-3.5 w-3.5" />
@@ -236,7 +236,7 @@ function GetInTouch() {
             Ready to evolve? Book a confidential consultation.
           </h2>
           <Link
-            to="/contact"
+            to="/employee/book"
             className="mt-8 inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-bold shadow-lg transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:scale-95"
             style={{ backgroundColor: GOLD, color: INK }}
           >

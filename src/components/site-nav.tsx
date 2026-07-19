@@ -237,7 +237,7 @@ export function SiteNav() {
                 Login
               </Link>
               <Link
-                to="/contact"
+                to="/employee/book"
                 className="inline-flex items-center gap-2 rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground shadow-[0_1px_0_rgba(0,0,0,0.08)] transition hover:translate-y-[-1px] hover:shadow-md"
               >
                 Book Consultation <span aria-hidden>→</span>
@@ -352,7 +352,7 @@ export function SiteNav() {
                   Login
                 </Link>
                 <Link
-                  to="/contact"
+                  to="/employee/book"
                   onClick={() => setMobileOpen(false)}
                   className="mt-2 inline-flex items-center justify-center rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground"
                 >

@@ -343,6 +343,50 @@ export const getOnboardingStatusFn = createServerFn({ method: "GET" }).handler(
 /** Every active psychologist in the system — used to populate the booking
  *  dialog, which lets a patient book any clinician, not just their existing
  *  care team (booking auto-adds the clinician to their care team). */
+export interface PublicPsychologistDTO {
+  id: string;
+  name: string;
+  title: string;
+  specialties: string[];
+  bio: string;
+  yearsExperience: number | null;
+  rating: number | null;
+  price: number | null;
+}
+
+/** Public directory of active psychologists for the marketing site. Unlike the
+ *  other handlers in this file it is intentionally NOT session-gated, so it
+ *  must only ever expose public profile fields — never email or phone. */
+export const getPublicPsychologistsFn = createServerFn({ method: "GET" }).handler(
+  async (): Promise<PublicPsychologistDTO[]> => {
+    const rows = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        title: psychologistProfiles.title,
+        specialties: psychologistProfiles.specialties,
+        bio: psychologistProfiles.bio,
+        yearsExperience: psychologistProfiles.yearsExperience,
+        rating: psychologistProfiles.rating,
+        price: psychologistProfiles.price,
+      })
+      .from(users)
+      .leftJoin(psychologistProfiles, eq(psychologistProfiles.userId, users.id))
+      .where(and(eq(users.role, "psychologist"), eq(users.status, "active")));
+
+    return rows.map((r) => ({
+      id: r.id,
+      name: r.name,
+      title: r.title ?? "Clinician",
+      specialties: r.specialties ?? [],
+      bio: r.bio ?? "",
+      yearsExperience: r.yearsExperience,
+      rating: r.rating ? Number(r.rating) : null,
+      price: r.price ? Number(r.price) : null,
+    }));
+  },
+);
+
 export const getAllCliniciansFn = createServerFn({ method: "GET" }).handler(
   async (): Promise<CareTeamMemberDTO[]> => {
     const meId = await requirePatientId();
