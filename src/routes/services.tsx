@@ -1,23 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteShell } from "../components/site-shell";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "../components/scroll-reveal";
-import {
-  Brain,
-  ClipboardCheck,
-  Sparkles,
-  HeartPulse,
-  Users,
-  ShieldCheck,
-  UserCheck,
-  ArrowRight,
-  Mail,
-  Phone,
-  MapPin,
-  Quote,
-  type LucideIcon,
-} from "lucide-react";
-import amarRajanImg from "../assets/amar-rajan.png";
+import { ArrowRight, Mail, Phone, MapPin, Quote } from "lucide-react";
+import { AngularCornerBackground } from "../components/angular-background";
 import servicesBannerImg from "../assets/image copy 6.png";
+import imageImg from "../assets/image.png";
+import imageCopy2Img from "../assets/image copy 2.png";
+import imageCopy3Img from "../assets/image copy 3.png";
+import imageCopy4Img from "../assets/image copy 4.png";
 
 export const Route = createFileRoute("/services")({
   head: () => ({
@@ -39,26 +29,37 @@ export const Route = createFileRoute("/services")({
 const GOLD = "#F4C430";
 const INK = "#111111";
 
-const SERVICES: { icon: LucideIcon; title: string; desc: string }[] = [
+const FLAGSHIP_SERVICES = [
   {
-    icon: ShieldCheck,
+    anchor: "eap",
     title: "Employee Assistance Program (EAP)",
-    desc: "Confidential EAP support for organizations of every size — counseling, crisis support and referrals.",
+    tag: "High ROI · Cost Effective · AI-Enabled · Human-Supported",
+    desc: "MindCarter's Employee Assistance Program (EAP) combines intelligent AI with qualified psychologists to deliver continuous, confidential, and accessible employee wellbeing support. Through 24/7 AI-powered emotional check-ins, evidence-based wellbeing guidance, and seamless access to psychologists by appointment, the program helps employees navigate workplace challenges such as burnout, stress, motivation, interpersonal conflicts, leadership demands, and work-life balance. Designed around prevention and early intervention rather than crisis response, our scalable EAP enables organizations to enhance employee wellbeing, strengthen engagement and resilience, and achieve a measurable return on their wellbeing investment.",
+    image: imageCopy4Img,
+    imageClassName: "h-[340px] w-[340px] sm:h-[430px] sm:w-[430px] -translate-y-8 sm:-translate-y-12 scale-[1.8]",
   },
   {
-    icon: Users,
-    title: "Personality-Based Leadership Development",
-    desc: "Cohort programs that build resilient leadership benches grounded in validated personality science.",
-  },
-  {
-    icon: UserCheck,
-    title: "Behavioral Interview Program",
-    desc: "Structured, evidence-based interview frameworks that improve hiring accuracy and consistency.",
-  },
-  {
-    icon: ClipboardCheck,
+    anchor: "psychometric-assessments",
     title: "Psychometric Assessments",
-    desc: "Validated instruments across personality, EI, cognition and workplace behavior.",
+    tag: "Scientific · Objective · Predictive · Actionable",
+    desc: "Make critical people decisions with confidence. Our scientifically validated psychometric assessments provide objective insights into personality, leadership potential, behavioural competencies, motivation, cognitive abilities, and team dynamics. Whether for recruitment, leadership development, succession planning, coaching, or team effectiveness, our assessments transform psychological data into practical business decisions.",
+    image: imageCopy2Img,
+  },
+  {
+    anchor: "leadership-development",
+    title: "Personality-Based Leadership Development",
+    tag: "Self-Aware · Evidence Based · Personalised · Transformational",
+    desc: "Exceptional leadership begins with understanding oneself. Our personality-based leadership development programmes help leaders recognise how their personality shapes communication, decision-making, motivation, conflict management, and influence. Using behavioural science and psychometric insights, we create personalised development journeys that strengthen leadership effectiveness and build high-performing teams.",
+    image: imageCopy3Img,
+    imageClassName: "h-[340px] w-[340px] sm:h-[430px] sm:w-[430px] -translate-y-8 sm:-translate-y-12 scale-[1.5]",
+  },
+  {
+    anchor: "behavioral-interview",
+    title: "Behavioral Interview Program",
+    tag: "Structured · Bias Aware · Competency-Based · Evidence Driven",
+    desc: "Hiring decisions should be guided by evidence, not intuition. Our Behavioral Interview Program equips organizations with structured interview frameworks, competency-based questioning techniques, and standardized evaluation methods that improve hiring quality, reduce bias, and enhance the prediction of future job performance. We help organizations build fair, consistent, and scientifically informed recruitment processes.",
+    image: imageImg,
+    imageClassName: "h-[340px] w-[340px] sm:h-[430px] sm:w-[430px] -translate-y-8 sm:-translate-y-12 scale-[1.4]",
   },
 ];
 
@@ -96,8 +97,8 @@ function ServicesHero() {
       />
       <div aria-hidden className="absolute inset-0 bg-foreground/15" />
 
-      <div className="relative mx-auto max-w-3xl px-6 py-14 text-center sm:py-20">
-        <ScrollReveal>
+      <div className="relative mx-auto max-w-4xl px-6 py-20 text-center sm:py-28">
+        <ScrollReveal variant="blur-in">
           <h1
             className="font-display mt-4 text-3xl font-black leading-[1.15] tracking-tight text-white sm:text-4xl lg:text-5xl"
             style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}
@@ -110,89 +111,67 @@ function ServicesHero() {
   );
 }
 
-// ─── 2. Who we are ──────────────────────────────────────────────────────────
-function WhoWeAre() {
-  return (
-    <section className="relative overflow-hidden bg-background py-20 sm:py-28">
-      <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 lg:grid-cols-2 lg:gap-10">
-        <ScrollReveal>
-          <Eyebrow label="Who we are" />
-          <h2 className="font-display mt-4 text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-5xl">
-            A premier authority in organizational behavior.
-          </h2>
-          <p className="mt-6 max-w-lg text-lg font-semibold leading-snug text-foreground">
-            MindCarter is an organizational psychology consulting firm that helps organizations
-            make better people decisions through the science of human behavior.
-          </p>
-          <p className="mt-4 max-w-lg text-base leading-relaxed text-muted-foreground">
-            We partner with organizations to strengthen leadership, enhance employee wellbeing,
-            improve talent decisions, and build high-performing workplaces using evidence-based
-            organizational psychology. Our work is grounded in rigorous psychological science,
-            informed by contemporary research, and translated into practical solutions that
-            create lasting organizational impact.
-          </p>
-          <Link
-            to="/"
-            className="mt-8 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-white transition-all duration-200 ease-out hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
-            style={{ backgroundColor: INK }}
-          >
-            Read More <ArrowRight className="h-4 w-4" />
-          </Link>
-        </ScrollReveal>
-
-        <ScrollReveal delay={0.15} className="relative">
-          <div
-            aria-hidden
-            className="absolute -right-10 -top-10 h-[110%] w-[85%]"
-            style={{ backgroundColor: INK, clipPath: "polygon(20% 0, 100% 0, 80% 100%, 0% 100%)" }}
-          />
-          <div className="relative mx-auto aspect-[4/3] w-full max-w-md overflow-hidden rounded-2xl shadow-2xl sm:w-4/5">
-            <img src={amarRajanImg} alt="Amar Rajan — CEO, Mindcarter" className="h-full w-full object-cover object-top" />
-          </div>
-        </ScrollReveal>
-      </div>
-    </section>
-  );
-}
-
 // ─── 3. What we do ──────────────────────────────────────────────────────────
 function WhatWeDo() {
   return (
-    <section className="border-t border-border bg-muted/40 py-20 sm:py-28">
-      <div className="mx-auto max-w-7xl px-6">
-        <ScrollReveal className="text-center">
-          <Eyebrow label="What we do" />
-          <h2 className="font-display mx-auto mt-4 max-w-2xl text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-5xl">
-            How we help you
-          </h2>
+    <section className="relative overflow-hidden border-b border-border bg-background py-24">
+      <AngularCornerBackground />
+      <div className="relative mx-auto max-w-7xl px-6">
+        <ScrollReveal variant="fade-down">
+          <div className="mx-auto max-w-2xl text-center">
+            <Eyebrow label="Services" />
+            <h2 className="font-display mt-3 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl">
+              How We Help Organizations
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+              Evidence-based organizational psychology solutions that strengthen people,
+              leadership, and organizational performance.
+            </p>
+          </div>
         </ScrollReveal>
 
-        <StaggerContainer className="mx-auto mt-16 grid max-w-4xl gap-x-12 gap-y-12 sm:grid-cols-2">
-          {SERVICES.map((s) => (
-            <StaggerItem key={s.title} className="flex gap-4">
-              <span
-                className="grid h-14 w-14 shrink-0 place-items-center rounded-full"
-                style={{ backgroundColor: GOLD }}
-              >
-                <s.icon className="h-6 w-6" style={{ color: INK }} />
-              </span>
-              <div>
-                <h3 className="text-base font-bold tracking-tight text-foreground">{s.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
-              </div>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
-
-        <ScrollReveal className="mt-16 text-center">
-          <Link
-            to="/contact"
-            className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-bold shadow-lg transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:scale-95"
-            style={{ backgroundColor: GOLD, color: INK }}
-          >
-            Book Consultation <ArrowRight className="h-4 w-4" />
-          </Link>
-        </ScrollReveal>
+        <div className="mt-20 space-y-20">
+          {FLAGSHIP_SERVICES.map((s, i) => {
+            const reversed = i % 2 === 1;
+            return (
+              <ScrollReveal key={s.title} variant={reversed ? "slide-right" : "slide-left"}>
+                <div
+                  id={s.anchor}
+                  className="grid scroll-mt-28 items-center gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16"
+                >
+                  <div className={reversed ? "md:order-2" : ""}>
+                    <div className="relative mx-auto grid h-[300px] w-[300px] place-items-center sm:h-[380px] sm:w-[380px]">
+                      <div
+                        aria-hidden
+                        className="absolute h-[200px] w-[200px] sm:h-[240px] sm:w-[240px] rounded-[60%_40%_30%_70%/60%_30%_70%_40%] bg-brand/15"
+                      />
+                      <img
+                        src={s.image}
+                        alt={s.title}
+                        className={`relative z-10 object-contain ${s.imageClassName || "h-[310px] w-[310px] sm:h-[390px] sm:w-[390px] -translate-y-5 sm:-translate-y-8"}`}
+                      />
+                    </div>
+                  </div>
+                  <div className={reversed ? "md:order-1" : ""}>
+                    <h3 className="text-2xl font-bold tracking-tight sm:text-3xl">{s.title}</h3>
+                    <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-brand">
+                      {s.tag}
+                    </p>
+                    <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground">
+                      {s.desc}
+                    </p>
+                    <Link
+                      to="/contact"
+                      className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-xs font-bold uppercase tracking-wide text-background transition hover:opacity-90"
+                    >
+                      Book Consultation <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+                </div>
+              </ScrollReveal>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
@@ -203,7 +182,7 @@ function HowWeWork() {
   return (
     <section className="bg-background py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-6">
-        <ScrollReveal>
+        <ScrollReveal variant="slide-left">
           <Eyebrow label="How we work" />
           <h2 className="font-display mt-4 text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-5xl">
             Discover. Enable. Evolve.
@@ -212,7 +191,7 @@ function HowWeWork() {
 
         <div className="mt-16 flex flex-col gap-3 sm:flex-row sm:gap-0">
           {PROCESS.map((step, i) => (
-            <ScrollReveal key={step.word} delay={i * 0.1} className="relative flex-1">
+            <ScrollReveal key={step.word} variant="zoom-in" delay={i * 0.1} className="relative flex-1">
               <div
                 className="relative flex h-56 flex-col items-center justify-center gap-3 sm:mx-[-1.5rem]"
                 style={{
@@ -250,7 +229,7 @@ function HowWeWork() {
 function Testimonial() {
   return (
     <section className="bg-background py-20 sm:py-28">
-      <ScrollReveal className="mx-auto flex max-w-4xl flex-col items-center gap-8 px-6 text-center sm:flex-row sm:text-left">
+      <ScrollReveal variant="flip-up" className="mx-auto flex max-w-4xl flex-col items-center gap-8 px-6 text-center sm:flex-row sm:text-left">
         <div
           className="grid h-24 w-24 shrink-0 rotate-45 place-items-center rounded-2xl shadow-xl"
           style={{ backgroundColor: GOLD }}
@@ -275,7 +254,7 @@ function GetInTouch() {
   return (
     <section className="border-t border-border py-20 sm:py-24" style={{ backgroundColor: INK }}>
       <div className="mx-auto max-w-7xl px-6">
-        <ScrollReveal className="text-center">
+        <ScrollReveal variant="zoom-in" className="text-center">
           <Eyebrow label="Get in touch" dark />
           <h2 className="font-display mx-auto mt-4 max-w-2xl text-4xl font-black leading-[1.05] tracking-tight text-white sm:text-5xl">
             Ready to evolve? Book a confidential consultation.
@@ -317,7 +296,6 @@ function ServicesPage() {
   return (
     <SiteShell>
       <ServicesHero />
-      <WhoWeAre />
       <WhatWeDo />
       <HowWeWork />
       <Testimonial />

@@ -50,7 +50,7 @@ function AboutHero() {
       <div aria-hidden className="absolute inset-0 bg-foreground/15" />
 
       <div className="relative mx-auto max-w-3xl px-6 py-14 text-center sm:py-20">
-        <ScrollReveal>
+        <ScrollReveal variant="zoom-out">
           <h1
             className="font-display mt-4 text-3xl font-black leading-[1.15] tracking-tight text-white sm:text-4xl lg:text-5xl"
             style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}
@@ -93,7 +93,7 @@ function AboutUs() {
       </svg>
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-16 px-6 lg:grid-cols-[1.05fr_1fr] lg:gap-20">
-        <ScrollReveal>
+        <ScrollReveal variant="slide-left">
           <Eyebrow>About us</Eyebrow>
           <h2 className="font-display mt-4 text-3xl font-black tracking-tight sm:text-4xl">
             Better people decisions, through the science of human behavior.
@@ -152,7 +152,7 @@ function AboutUs() {
         </ScrollReveal>
 
         {/* Right — team photo with triangle corner accents */}
-        <ScrollReveal delay={0.15} className="relative">
+        <ScrollReveal variant="slide-right" delay={0.15} className="relative">
           <div className="relative overflow-hidden">
             <img
               src={aboutUsImg}
@@ -208,7 +208,7 @@ function OurStory() {
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-16 px-6 py-20 sm:py-28 lg:grid-cols-[1.1fr_1fr] lg:gap-10">
         {/* Left — copy */}
-        <ScrollReveal className="lg:pr-10">
+        <ScrollReveal variant="slide-right" className="lg:pr-10">
           <Eyebrow>Our story</Eyebrow>
           <h2 className="font-display mt-4 text-3xl font-black tracking-tight sm:text-4xl">
             Built on the Science of Human Behavior. Designed for the Future of Work.
@@ -233,7 +233,7 @@ function OurStory() {
         </ScrollReveal>
 
         {/* Right — portrait straddling the panel edge */}
-        <ScrollReveal delay={0.15} className="relative lg:-translate-x-10">
+        <ScrollReveal variant="slide-left" delay={0.15} className="relative lg:-translate-x-10">
           <div className="relative flex items-end justify-center overflow-hidden shadow-2xl">
             {/* split backdrop — gold left half, opaque cream right half */}
             <div aria-hidden className="absolute inset-y-0 left-0 w-1/2 bg-brand" />
@@ -278,7 +278,7 @@ function MissionVision() {
   return (
     <section className="relative border-t border-border bg-background pt-20 sm:pt-28">
       {/* section heading */}
-      <ScrollReveal>
+      <ScrollReveal variant="fade-down">
         <div className="mx-auto max-w-3xl px-6 text-center">
           <Eyebrow>What drives us</Eyebrow>
           <h2 className="font-display mt-4 text-3xl font-black tracking-tight sm:text-4xl">
@@ -293,7 +293,7 @@ function MissionVision() {
 
       <div className="mt-14 grid lg:grid-cols-3">
         {/* Vision — cream panel */}
-        <ScrollReveal className="flex flex-col items-center justify-center bg-[#fdf6e0] px-8 py-16 text-center text-foreground sm:px-12 lg:py-24">
+        <ScrollReveal variant="slide-left" className="flex flex-col items-center justify-center bg-[#fdf6e0] px-8 py-16 text-center text-foreground sm:px-12 lg:py-24">
           <h2 className="font-display text-3xl font-black uppercase leading-tight tracking-wide">
             Our
             <br />
@@ -310,6 +310,7 @@ function MissionVision() {
 
         {/* Middle — team photo on white */}
         <ScrollReveal
+          variant="zoom-in"
           delay={0.1}
           className="flex items-center justify-center bg-background px-8 py-10 sm:px-12"
         >
@@ -323,6 +324,7 @@ function MissionVision() {
 
         {/* Mission — gold panel */}
         <ScrollReveal
+          variant="slide-right"
           delay={0.2}
           className="flex flex-col items-center justify-center bg-brand px-8 py-16 text-center text-brand-foreground sm:px-12 lg:py-24"
         >
@@ -391,7 +393,7 @@ function WhyChoose() {
   return (
     <section className="border-b border-border bg-foreground py-24 text-background">
       <div className="mx-auto max-w-7xl px-6">
-        <ScrollReveal>
+        <ScrollReveal variant="blur-in">
           <div className="text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-background/60">
               <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
@@ -445,7 +447,7 @@ function WhyChoose() {
 function FinalCTA() {
   return (
     <section className="bg-background">
-      <ScrollReveal className="mx-auto max-w-7xl px-6 py-24">
+      <ScrollReveal variant="flip-up" className="mx-auto max-w-7xl px-6 py-24">
         <div
           className="relative overflow-hidden rounded-3xl bg-brand bg-cover bg-center p-10 sm:p-16"
           style={{ backgroundImage: `url(${aboutBannerImg})` }}

@@ -22,7 +22,7 @@ function ContactPage() {
   const [sent, setSent] = useState(false);
   return (
     <SiteShell>
-      <ScrollReveal yOffset={40}>
+      <ScrollReveal variant="fade-down">
         <PageHero
           eyebrow="Contact"
           title="Book a consultation or say hello."
@@ -31,7 +31,7 @@ function ContactPage() {
       </ScrollReveal>
 
       <section className="border-b border-border bg-background py-20">
-        <ScrollReveal className="mx-auto max-w-6xl px-6">
+        <ScrollReveal variant="zoom-in" className="mx-auto max-w-6xl px-6">
           <div className="grid overflow-hidden rounded-2xl border border-border shadow-sm lg:grid-cols-[3fr_2fr]">
             <form
               onSubmit={(e) => {
@@ -99,7 +99,7 @@ function ContactPage() {
           </div>
         </ScrollReveal>
 
-        <ScrollReveal className="mx-auto mt-8 max-w-6xl px-6">
+        <ScrollReveal variant="slide-right" className="mx-auto mt-8 max-w-6xl px-6">
           <div className="overflow-hidden rounded-2xl border border-border transition-transform duration-300 hover:scale-[1.01]">
             <iframe
               title="Mindcarter location"

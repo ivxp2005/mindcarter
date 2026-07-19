@@ -6,10 +6,6 @@ import { motion, MotionConfig } from "framer-motion";
 import {
   ArrowRight,
   Phone,
-  ClipboardCheck,
-  Compass,
-  HeartPulse,
-  MessageSquare,
   Quote,
   Search,
 } from "lucide-react";
@@ -246,7 +242,7 @@ function HomeAbout() {
       <div className="relative mx-auto max-w-7xl px-6">
         <div className="grid items-center gap-16 lg:grid-cols-2 lg:gap-12">
           {/* ── Left — photo mosaic ──────────────────────────────── */}
-          <ScrollReveal className="relative hidden lg:block">
+          <ScrollReveal variant="slide-left" className="relative hidden lg:block">
             <div className="grid aspect-square grid-cols-4 grid-rows-4 gap-[3px] bg-border">
               {Array.from({ length: 16 }).map((_, i) => {
                 const row = Math.floor(i / 4);
@@ -276,7 +272,7 @@ function HomeAbout() {
           </ScrollReveal>
 
           {/* ── Right — headline + lead line ──────────────────────── */}
-          <ScrollReveal delay={0.15}>
+          <ScrollReveal variant="slide-right" delay={0.15}>
             <h2 className="font-display text-5xl font-black leading-[1.0] tracking-tight sm:text-6xl lg:text-7xl">
               <span className="text-foreground">About</span> <span className="text-brand">Us</span>
             </h2>
@@ -307,35 +303,32 @@ function HomeAbout() {
 
 const FLAGSHIP_SERVICES = [
   {
-    icon: HeartPulse,
+    image: imageCopy4Img,
     title: "Employee Assistance Program (EAP)",
     tag: "High ROI · Cost Effective · AI-Enabled · Human-Supported",
-    desc: "MindCarter's Employee Assistance Program (EAP) combines intelligent AI with qualified psychologists to deliver continuous, confidential, and accessible employee wellbeing support. Through 24/7 AI-powered emotional check-ins, evidence-based wellbeing guidance, and seamless access to psychologists by appointment, the program helps employees navigate workplace challenges such as burnout, stress, motivation, interpersonal conflicts, leadership demands, and work-life balance. Designed around prevention and early intervention rather than crisis response, our scalable EAP enables organizations to enhance employee wellbeing, strengthen engagement and resilience, and achieve a measurable return on their wellbeing investment.",
-    image: imageCopy4Img,
-    imageClassName: "h-[340px] w-[340px] sm:h-[430px] sm:w-[430px] -translate-y-8 sm:-translate-y-12 scale-[1.8]",
+    desc: "Confidential, AI-enabled employee wellbeing support with 24/7 check-ins and seamless access to qualified psychologists.",
+    anchor: "eap",
   },
   {
-    icon: ClipboardCheck,
+    image: imageCopy2Img,
     title: "Psychometric Assessments",
     tag: "Scientific · Objective · Predictive · Actionable",
-    desc: "Make critical people decisions with confidence. Our scientifically validated psychometric assessments provide objective insights into personality, leadership potential, behavioural competencies, motivation, cognitive abilities, and team dynamics. Whether for recruitment, leadership development, succession planning, coaching, or team effectiveness, our assessments transform psychological data into practical business decisions.",
-    image: imageCopy2Img,
+    desc: "Scientifically validated assessments that turn insights on personality, cognition and behavior into confident people decisions.",
+    anchor: "psychometric-assessments",
   },
   {
-    icon: Compass,
+    image: imageCopy3Img,
     title: "Personality-Based Leadership Development",
     tag: "Self-Aware · Evidence Based · Personalised · Transformational",
-    desc: "Exceptional leadership begins with understanding oneself. Our personality-based leadership development programmes help leaders recognise how their personality shapes communication, decision-making, motivation, conflict management, and influence. Using behavioural science and psychometric insights, we create personalised development journeys that strengthen leadership effectiveness and build high-performing teams.",
-    image: imageCopy3Img,
-    imageClassName: "h-[340px] w-[340px] sm:h-[430px] sm:w-[430px] -translate-y-8 sm:-translate-y-12 scale-[1.5]",
+    desc: "Personalised development journeys that help leaders understand how their personality shapes their leadership.",
+    anchor: "leadership-development",
   },
   {
-    icon: MessageSquare,
+    image: imageImg,
     title: "Behavioral Interview Program",
     tag: "Structured · Bias Aware · Competency-Based · Evidence Driven",
-    desc: "Hiring decisions should be guided by evidence, not intuition. Our Behavioral Interview Program equips organizations with structured interview frameworks, competency-based questioning techniques, and standardized evaluation methods that improve hiring quality, reduce bias, and enhance the prediction of future job performance. We help organizations build fair, consistent, and scientifically informed recruitment processes.",
-    image: imageImg,
-    imageClassName: "h-[340px] w-[340px] sm:h-[430px] sm:w-[430px] -translate-y-8 sm:-translate-y-12 scale-[1.4]",
+    desc: "Structured, evidence-based interview frameworks that improve hiring quality and reduce bias.",
+    anchor: "behavioral-interview",
   },
 ];
 
@@ -347,7 +340,7 @@ function Services() {
     >
       <AngularCornerBackground />
       <div className="relative mx-auto max-w-7xl px-6">
-        <ScrollReveal>
+        <ScrollReveal variant="fade-down">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
               <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
@@ -363,54 +356,40 @@ function Services() {
           </div>
         </ScrollReveal>
 
-        <div className="mt-20 space-y-20">
-          {FLAGSHIP_SERVICES.map((s, i) => {
-            const reversed = i % 2 === 1;
-            return (
-              <ScrollReveal key={s.title}>
-                <div className="grid items-center gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
-                  <div className={reversed ? "md:order-2" : ""}>
-                    <div className="relative mx-auto grid h-[300px] w-[300px] place-items-center sm:h-[380px] sm:w-[380px]">
-                      <div
-                        aria-hidden
-                        className="absolute h-[200px] w-[200px] sm:h-[240px] sm:w-[240px] rounded-[60%_40%_30%_70%/60%_30%_70%_40%] bg-brand/15"
-                      />
-                      <img
-                        src={s.image}
-                        alt={s.title}
-                        className={`relative z-10 object-contain ${s.imageClassName || "h-[310px] w-[310px] sm:h-[390px] sm:w-[390px] -translate-y-5 sm:-translate-y-8"}`}
-                      />
-                    </div>
-                  </div>
-                  <div className={reversed ? "md:order-1" : ""}>
-                    <h3 className="text-2xl font-bold tracking-tight sm:text-3xl">{s.title}</h3>
-                    <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-brand">
-                      {s.tag}
-                    </p>
-                    <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground">
-                      {s.desc}
-                    </p>
-                    <Link
-                      to="/services"
-                      className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-xs font-bold uppercase tracking-wide text-background transition hover:opacity-90"
-                    >
-                      Learn more <ArrowRight className="h-3.5 w-3.5" />
-                    </Link>
-                  </div>
+        <div className="mt-16 grid gap-8 sm:grid-cols-2">
+          {FLAGSHIP_SERVICES.map((s, i) => (
+            <ScrollReveal key={s.title} variant="zoom-in" delay={i * 0.08}>
+              <div className="flex h-full flex-col rounded-2xl border border-border bg-background p-8 shadow-sm transition-shadow hover:shadow-md">
+                <div className="relative grid h-28 w-28 place-items-center">
+                  <div
+                    aria-hidden
+                    className="absolute h-20 w-20 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] bg-brand/15"
+                  />
+                  <img
+                    src={s.image}
+                    alt=""
+                    aria-hidden
+                    className="relative z-10 h-28 w-28 object-contain"
+                  />
                 </div>
-              </ScrollReveal>
-            );
-          })}
+                <h3 className="mt-5 text-xl font-bold tracking-tight">{s.title}</h3>
+                <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-brand">
+                  {s.tag}
+                </p>
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
+                  {s.desc}
+                </p>
+                <Link
+                  to="/services"
+                  hash={s.anchor}
+                  className="mt-5 inline-flex items-center gap-2 self-start text-xs font-bold uppercase tracking-wide text-foreground underline decoration-brand decoration-2 underline-offset-4 transition hover:text-brand"
+                >
+                  Read more <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            </ScrollReveal>
+          ))}
         </div>
-
-        <ScrollReveal delay={0.1} className="mt-20 flex justify-center">
-          <Link
-            to="/services"
-            className="inline-flex items-center gap-2 rounded-full border border-foreground px-6 py-3 text-xs font-bold uppercase tracking-wide text-foreground transition hover:bg-foreground hover:text-background"
-          >
-            Read more <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </ScrollReveal>
       </div>
     </section>
   );
@@ -522,7 +501,7 @@ function Psychologists() {
       />
 
       <div className="relative mx-auto max-w-7xl px-6">
-        <ScrollReveal>
+        <ScrollReveal variant="blur-in">
           <div className="relative grid gap-6 md:grid-cols-[1fr_1.4fr] md:items-end">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/70">
@@ -730,7 +709,7 @@ function OurClients() {
         }
       `}</style>
       <div className="mx-auto max-w-7xl px-6">
-        <ScrollReveal>
+        <ScrollReveal variant="zoom-out">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
               <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
@@ -758,7 +737,7 @@ function OurClients() {
 function FinalCTA() {
   return (
     <section className="bg-background">
-      <ScrollReveal className="mx-auto max-w-7xl px-6 py-24">
+      <ScrollReveal variant="flip-up" className="mx-auto max-w-7xl px-6 py-24">
         <div
           className="relative overflow-hidden rounded-3xl bg-brand bg-cover bg-center p-10 sm:p-16"
           style={{ backgroundImage: `url(${imageCopyImg})` }}
