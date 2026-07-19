@@ -229,7 +229,7 @@ function HomeAbout() {
       <div className="relative mx-auto max-w-7xl px-6">
         <div className="grid items-center gap-16 lg:grid-cols-2 lg:gap-12">
           {/* ── Left — photo mosaic ──────────────────────────────── */}
-          <ScrollReveal variant="slide-left" className="relative hidden lg:block">
+          <ScrollReveal variant="slide-left" className="relative mx-auto hidden w-full max-w-md lg:block">
             <div className="grid aspect-square grid-cols-4 grid-rows-4 gap-[3px] bg-border">
               {Array.from({ length: 16 }).map((_, i) => {
                 const row = Math.floor(i / 4);
