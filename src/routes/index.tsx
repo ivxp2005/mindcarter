@@ -6,7 +6,6 @@ import { motion, MotionConfig } from "framer-motion";
 import {
   ArrowRight,
   Phone,
-  Quote,
   Search,
   Star,
 } from "lucide-react";
@@ -16,7 +15,6 @@ import {
   type PublicPsychologistDTO,
 } from "../lib/patient-data.server";
 import heroBgImg from "../assets/890.png";
-import amarRajanImg from "../assets/amar-rajan.png";
 import teamImg from "../assets/team.png";
 import imageImg from "../assets/image.png";
 import imageCopy2Img from "../assets/image copy 2.png";
@@ -77,23 +75,6 @@ function RoleWelcomeBanner() {
           Doctor Portal
         </Link>
       )}
-    </div>
-  );
-}
-
-function LiveClock() {
-  const [now, setNow] = useState(() => new Date());
-  useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(t);
-  }, []);
-  return (
-    <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-3 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur">
-      <span className="relative flex h-2 w-2">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
-      </span>
-      Live · {now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
     </div>
   );
 }
@@ -398,33 +379,6 @@ function Services() {
         </div>
       </div>
     </section>
-  );
-}
-
-function SectionHeading({
-  eyebrow,
-  title,
-  description,
-}: {
-  eyebrow: string;
-  title: string;
-  description?: string;
-}) {
-  return (
-    <div className="grid gap-6 md:grid-cols-[1fr_1.4fr] md:items-end">
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-          <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
-          {eyebrow}
-        </p>
-        <h2 className="font-display mt-3 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl">
-          {title}
-        </h2>
-      </div>
-      {description && (
-        <p className="max-w-xl text-base leading-relaxed text-muted-foreground">{description}</p>
-      )}
-    </div>
   );
 }
 

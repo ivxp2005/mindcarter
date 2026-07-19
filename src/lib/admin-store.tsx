@@ -2,14 +2,12 @@ import { createContext, useContext, useMemo, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   adminReplyFn,
-  approvePsychologistFn,
   cancelBookingFn,
   changeAdminPasswordFn,
   createPsychologistFn,
   getAdminDataFn,
   reactivatePsychologistFn,
   refundBookingFn,
-  rejectPsychologistFn,
   removePsychologistFn,
   resolveTicketFn,
   setUserStatusFn,
@@ -69,8 +67,6 @@ interface AdminDataValue {
   cancelBooking: (id: string) => void;
   refundBooking: (id: string) => void;
   setUserStatus: (id: string, status: "active" | "suspended") => void;
-  approvePsychologist: (id: string) => void;
-  rejectPsychologist: (id: string) => void;
   resetUserPassword: (email: string) => void;
   replyToTicket: (ticketId: string, body: string) => void;
   resolveTicket: (id: string) => void;
@@ -105,8 +101,6 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
   const cancelMut = useMutation({ mutationFn: cancelBookingFn, onSuccess: invalidate });
   const refundMut = useMutation({ mutationFn: refundBookingFn, onSuccess: invalidate });
   const setStatusMut = useMutation({ mutationFn: setUserStatusFn, onSuccess: invalidate });
-  const approveMut = useMutation({ mutationFn: approvePsychologistFn, onSuccess: invalidate });
-  const rejectMut = useMutation({ mutationFn: rejectPsychologistFn, onSuccess: invalidate });
   const resetPwMut = useMutation({ mutationFn: requestPasswordResetFn });
   const replyMut = useMutation({ mutationFn: adminReplyFn, onSuccess: invalidate });
   const resolveMut = useMutation({ mutationFn: resolveTicketFn, onSuccess: invalidate });
@@ -154,8 +148,6 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
       cancelBooking: (id) => cancelMut.mutate({ data: { id } }),
       refundBooking: (id) => refundMut.mutate({ data: { id } }),
       setUserStatus: (id, status) => setStatusMut.mutate({ data: { id, status } }),
-      approvePsychologist: (id) => approveMut.mutate({ data: { id } }),
-      rejectPsychologist: (id) => rejectMut.mutate({ data: { id } }),
       resetUserPassword: (email) => resetPwMut.mutate({ data: { email } }),
       replyToTicket: (ticketId, body) => replyMut.mutate({ data: { ticketId, body } }),
       resolveTicket: (id) => resolveMut.mutate({ data: { id } }),

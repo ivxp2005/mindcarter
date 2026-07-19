@@ -10,7 +10,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { and, asc, desc, eq } from "drizzle-orm";
 import { db } from "../db/client.server";
-import { supportTicketMessages, supportTickets, users } from "../db/schema";
+import { supportTicketMessages, supportTickets } from "../db/schema";
 import { getSessionUser } from "./auth.server";
 
 export interface TicketMessageDTO {

@@ -73,11 +73,14 @@ function BookListingPage() {
   /** Soonest-available clinician across the roster (real data only). */
   const quickPick = useMemo(() => {
     let best: { id: string; iso: string; label: string } | null = null;
-    clinicians.forEach((c, i) => {
+    for (let i = 0; i < clinicians.length; i++) {
+      const c = clinicians[i];
       const n = nextAvailable[i];
-      if (!n || n.loading || !n.value) return;
-      if (!best || n.iso < best.iso) best = { id: c.id, iso: n.iso, label: n.value };
-    });
+      if (!n || n.loading || !n.value) continue;
+      if (!best || n.iso < best.iso) {
+        best = { id: c.id, iso: n.iso, label: n.value };
+      }
+    }
     return best;
   }, [clinicians, nextAvailable]);
 

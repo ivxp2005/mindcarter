@@ -409,30 +409,6 @@ export const setUserStatusFn = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
-export const approvePsychologistFn = createServerFn({ method: "POST" })
-  .validator((data: unknown) => data as { id: string })
-  .handler(async ({ data }) => {
-    const admin = await requireAdmin();
-    if (!admin) return { ok: false as const, error: "Not authorized." };
-    await db.update(users).set({ status: "active" }).where(eq(users.id, data.id));
-    return { ok: true as const };
-  });
-
-export const rejectPsychologistFn = createServerFn({ method: "POST" })
-  .validator((data: unknown) => data as { id: string })
-  .handler(async ({ data }) => {
-    const admin = await requireAdmin();
-    if (!admin) return { ok: false as const, error: "Not authorized." };
-    await db.update(users).set({ status: "suspended" }).where(eq(users.id, data.id));
-    const target = await db
-      .select({ email: users.email })
-      .from(users)
-      .where(eq(users.id, data.id))
-      .limit(1);
-    await logAudit(admin.id, "Psychologist application rejected", target[0]?.email ?? data.id);
-    return { ok: true as const };
-  });
-
 export const adminReplyFn = createServerFn({ method: "POST" })
   .validator((data: unknown) => data as { ticketId: string; body: string })
   .handler(async ({ data }) => {

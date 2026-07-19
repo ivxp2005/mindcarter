@@ -26,7 +26,6 @@ import {
   EyeOff,
   CheckCircle,
   XCircle,
-  Clock,
   AlertTriangle,
   Lock,
   ChevronDown,
@@ -39,22 +38,14 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
-  RefreshCw,
   Ban,
   KeyRound,
-  MessageSquare,
   Send,
   Filter,
-  Download,
   MoreHorizontal,
   Stethoscope,
   User,
-  Phone,
-  Mail,
-  Calendar,
-  Tag,
   CheckCheck,
-  ArrowUpRight,
   UserPlus,
   Trash2,
   RotateCcw,
@@ -313,7 +304,6 @@ type NavId = (typeof NAV_ITEMS)[number]["id"];
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 type BookingStatus = "Scheduled" | "Completed" | "Canceled" | "Refunded";
-type VerifStatus = "pending" | "approved" | "rejected";
 type TicketStatus = "Open" | "In Progress" | "Resolved";
 
 const SYSTEM_HEALTH = [
@@ -959,258 +949,6 @@ function BookingMasterLog() {
   );
 }
 
-// ─── Verification Queue ───────────────────────────────────────────────────────
-function VerificationQueue() {
-  const { pendingPsychologists: items, approvePsychologist, rejectPsychologist } = useAdminData();
-  const [selected, setSelected] = useState<string | null>(null);
-  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("pending");
-
-  const filtered = items.filter((v) => filter === "all" || v.status === filter);
-  const detail = items.find((v) => v.id === selected) ?? filtered[0];
-
-  const act = (id: string, status: VerifStatus) => {
-    if (status === "approved") approvePsychologist(id);
-    if (status === "rejected") rejectPsychologist(id);
-  };
-
-  return (
-    <section>
-      <SectionHeader
-        eyebrow="Onboarding"
-        title="Psychologist Verification Queue"
-        sub="Review uploaded credentials before granting platform access."
-      />
-      <div className="flex gap-2 mb-5">
-        {(["pending", "approved", "rejected", "all"] as const).map((f) => {
-          const count = items.filter((v) => f === "all" || v.status === f).length;
-          return (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className="rounded-full px-3 py-1.5 text-[11px] font-semibold capitalize transition"
-              style={{
-                background: filter === f ? "#f4c430" : "rgba(255,255,255,0.06)",
-                color: filter === f ? "#0a0a0f" : C.muted,
-              }}
-            >
-              {f} ({count})
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-[340px_1fr]">
-        {/* List */}
-        <div className="space-y-2">
-          {filtered.map((v) => (
-            <button
-              key={v.id}
-              onClick={() => setSelected(v.id)}
-              className="w-full rounded-2xl p-4 text-left transition"
-              style={{
-                background: selected === v.id ? "rgba(244,196,48,0.08)" : "rgba(255,255,255,0.03)",
-                border: `1px solid ${selected === v.id ? "rgba(244,196,48,0.3)" : "rgba(255,255,255,0.07)"}`,
-              }}
-            >
-              <div className="flex items-center gap-3">
-                <div
-                  className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-sm font-black"
-                  style={{ background: "rgba(244,196,48,0.15)", color: "#f4c430" }}
-                >
-                  Dr
-                </div>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-bold text-white">{v.name}</p>
-                  <p className="truncate text-xs" style={{ color: C.muted }}>
-                    {v.specialty}
-                  </p>
-                </div>
-                <div className="ml-auto shrink-0">
-                  {statusBadge(v.status.charAt(0).toUpperCase() + v.status.slice(1))}
-                </div>
-              </div>
-              <div
-                className="mt-2 flex items-center gap-2 text-[11px]"
-                style={{ color: C.mutedLow }}
-              >
-                <Clock className="h-3 w-3" />
-                Submitted {v.submitted} · {v.docs.length} docs
-              </div>
-            </button>
-          ))}
-          {filtered.length === 0 && (
-            <p className="py-8 text-center text-sm" style={{ color: C.mutedLow }}>
-              No records in this category.
-            </p>
-          )}
-        </div>
-
-        {/* Detail Panel */}
-        {detail ? (
-          <div className="rounded-2xl p-6" style={C.card}>
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div
-                  className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl text-lg font-black"
-                  style={{ background: "rgba(244,196,48,0.15)", color: "#f4c430" }}
-                >
-                  Dr
-                </div>
-                <div>
-                  <h2 className="text-xl font-black text-white">{detail.name}</h2>
-                  <p className="text-sm" style={{ color: C.muted }}>
-                    {detail.specialty}
-                  </p>
-                </div>
-              </div>
-              {statusBadge(detail.status.charAt(0).toUpperCase() + detail.status.slice(1))}
-            </div>
-
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              {[
-                { icon: Mail, label: "Email", val: detail.email },
-                { icon: Tag, label: "License No.", val: detail.license },
-                { icon: Clock, label: "Experience", val: detail.experience },
-                { icon: Calendar, label: "Submitted", val: detail.submitted },
-              ].map((row) => (
-                <div
-                  key={row.label}
-                  className="flex items-center gap-3 rounded-xl px-4 py-3"
-                  style={{
-                    background: "rgba(255,255,255,0.03)",
-                    border: "1px solid rgba(255,255,255,0.05)",
-                  }}
-                >
-                  <row.icon className="h-4 w-4 shrink-0" style={{ color: C.muted }} />
-                  <div>
-                    <p
-                      className="text-[10px] font-semibold uppercase tracking-widest"
-                      style={{ color: C.mutedLow }}
-                    >
-                      {row.label}
-                    </p>
-                    <p className="text-sm text-white">{row.val}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Documents */}
-            <div className="mt-6">
-              <p
-                className="mb-3 text-xs font-bold uppercase tracking-widest"
-                style={{ color: C.muted }}
-              >
-                Uploaded Documents ({detail.docs.length})
-              </p>
-              <div className="space-y-2">
-                {detail.docs.map((doc, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between rounded-xl px-4 py-3"
-                    style={{
-                      background: "rgba(255,255,255,0.03)",
-                      border: "1px solid rgba(255,255,255,0.06)",
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="grid h-8 w-8 place-items-center rounded-lg text-[10px] font-black"
-                        style={{
-                          background:
-                            doc.type === "PDF" ? "rgba(239,68,68,0.15)" : "rgba(59,130,246,0.15)",
-                          color: doc.type === "PDF" ? "#ef4444" : "#60a5fa",
-                        }}
-                      >
-                        {doc.type}
-                      </div>
-                      <span className="text-sm text-white">{doc.name}</span>
-                    </div>
-                    <button
-                      className="flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-semibold transition"
-                      style={{ background: "rgba(255,255,255,0.05)", color: C.muted }}
-                    >
-                      <Download className="h-3 w-3" />
-                      View
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Actions */}
-            {detail.status === "pending" && (
-              <div className="mt-6 flex gap-3">
-                <button
-                  onClick={() => act(detail.id, "approved")}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-full py-3 text-sm font-bold transition"
-                  style={{
-                    background: "rgba(34,197,94,0.12)",
-                    border: "1px solid rgba(34,197,94,0.25)",
-                    color: "#22c55e",
-                  }}
-                >
-                  <CheckCircle className="h-4 w-4" />
-                  Approve Psychologist
-                </button>
-                <button
-                  onClick={() => act(detail.id, "rejected")}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-full py-3 text-sm font-bold transition"
-                  style={{
-                    background: "rgba(239,68,68,0.1)",
-                    border: "1px solid rgba(239,68,68,0.2)",
-                    color: "#ef4444",
-                  }}
-                >
-                  <XCircle className="h-4 w-4" />
-                  Reject Application
-                </button>
-              </div>
-            )}
-            {detail.status === "approved" && (
-              <div
-                className="mt-6 flex items-center gap-2 rounded-2xl px-4 py-3"
-                style={{
-                  background: "rgba(34,197,94,0.08)",
-                  border: "1px solid rgba(34,197,94,0.15)",
-                }}
-              >
-                <CheckCheck className="h-4 w-4" style={{ color: "#22c55e" }} />
-                <p className="text-sm font-semibold" style={{ color: "#22c55e" }}>
-                  This psychologist has been approved and granted platform access.
-                </p>
-              </div>
-            )}
-            {detail.status === "rejected" && (
-              <div
-                className="mt-6 flex items-center gap-2 rounded-2xl px-4 py-3"
-                style={{
-                  background: "rgba(239,68,68,0.08)",
-                  border: "1px solid rgba(239,68,68,0.15)",
-                }}
-              >
-                <XCircle className="h-4 w-4" style={{ color: "#ef4444" }} />
-                <p className="text-sm font-semibold" style={{ color: "#ef4444" }}>
-                  This application was rejected. The applicant has been notified.
-                </p>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div
-            className="flex h-64 items-center justify-center rounded-2xl"
-            style={{
-              background: "rgba(255,255,255,0.02)",
-              border: "1px dashed rgba(255,255,255,0.1)",
-            }}
-          >
-            <p style={{ color: C.mutedLow }}>Select a record to view details.</p>
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}
 
 // ─── User Management ──────────────────────────────────────────────────────────
 
