@@ -8,6 +8,7 @@
  * (booking status/mode/kind, notification kind) lives here.
  */
 import { createServerFn } from "@tanstack/react-start";
+import { getRequestHeader } from "@tanstack/react-start/server";
 import { and, desc, eq, gte, ne, sql } from "drizzle-orm";
 import { db } from "../db/client.server";
 import {
@@ -600,12 +601,18 @@ export const bookSessionFn = createServerFn({ method: "POST" })
         } catch (calErr) {
           console.error("[bookSessionFn] Meet event creation failed:", calErr);
         }
+        const origin =
+          getRequestHeader("origin") ?? process.env.APP_ORIGIN ?? "http://localhost:3000";
         await sendBookingConfirmedEmail({
           to: patient.email,
           patientName: patient.name,
           psychologistName: psychName,
           startInstant,
           meetLink,
+          durationMin: data.durationMin,
+          mode: MODE_TO_DB[data.mode] ?? "video",
+          sessionKind: data.kind,
+          portalUrl: `${origin}/employee/sessions`,
         });
       }
     } catch (err) {
