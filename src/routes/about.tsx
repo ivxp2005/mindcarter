@@ -99,21 +99,24 @@ function AboutUs() {
             Better people decisions, through the science of human behavior.
           </h2>
           <p className="mt-6 leading-relaxed text-muted-foreground">
-            MindCarter is an organizational psychology consulting firm that helps organizations
-            understand the people behind performance.
+            MINDCARTER is an organizational psychology consulting firm that helps organizations
+            build future-ready, high-performing, and resilient workplaces by strengthening the
+            human systems that drive performance.
           </p>
           <p className="mt-4 leading-relaxed text-muted-foreground">
-            We partner with organizations to strengthen leadership, enhance employee wellbeing,
-            improve talent decisions, and build high-performing workplaces using evidence-based
-            organizational psychology. Our work is grounded in rigorous psychological science,
-            informed by contemporary research, and translated into practical solutions that create
-            lasting organizational impact.
+            We partner with organizations to improve the quality of people decisions, develop
+            leadership capability, enhance workforce wellbeing, and build organizational cultures
+            that enable individuals, teams, and businesses to perform at their best. Our approach
+            combines evidence-based organizational psychology with practical business insight to
+            deliver measurable outcomes that support long-term organizational success.
           </p>
           <p className="mt-4 leading-relaxed text-muted-foreground">
-            Our expertise spans psychometric assessment, personality-based leadership development,
-            employee assistance programs, behavioral interviewing, executive coaching, and
-            organizational development — each solution designed to enable more effective hiring,
-            stronger leadership, healthier teams, and more resilient organizational cultures.
+            As organizations navigate rapid technological change and the increasing adoption of
+            artificial intelligence, sustainable performance depends not only on technology but
+            also on how people adapt, collaborate, exercise judgment, and lead. MINDCARTER helps
+            organizations prepare for this future by integrating organizational psychology with
+            Behavioral AI Governance, enabling organizations to build AI-ready workforces,
+            strengthen human oversight, and foster the responsible adoption of AI.
           </p>
 
           <motion.div
@@ -123,18 +126,16 @@ function AboutUs() {
             className="overflow-hidden"
           >
             <p className="mt-4 leading-relaxed text-muted-foreground">
-              Evidence is the foundation of every intervention. We integrate validated psychological
-              frameworks, internationally recognized assessment methodologies, and behavioral
-              science to deliver solutions that are scientifically robust, ethically grounded, and
-              relevant to the realities of today&rsquo;s workplaces — tailored to each
-              organization&rsquo;s strategic objectives, culture, and workforce rather than built on
-              generic management practices.
+              Every engagement is designed around the unique context, culture, and strategic
+              priorities of the organization. Rather than applying generic management solutions, we
+              deliver scientifically informed, ethically grounded, and business-focused
+              interventions that strengthen organizational capability and create lasting impact.
             </p>
             <p className="mt-4 leading-relaxed text-muted-foreground">
-              We believe sustainable organizational success begins with understanding people. By
-              combining scientific rigor with practical application, we help leaders make informed
-              decisions, unlock individual and team potential, and create workplaces where people
-              and organizations thrive together.
+              Whether supporting leadership development, employee wellbeing, talent decisions, or
+              the responsible integration of artificial intelligence, our focus remains the same:
+              helping organizations unlock human potential, strengthen performance, and thrive in a
+              changing world of work.
             </p>
           </motion.div>
 

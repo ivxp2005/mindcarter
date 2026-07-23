@@ -263,17 +263,15 @@ function HomeAbout() {
             <h2 className="font-display text-5xl font-black leading-[1.0] tracking-tight sm:text-6xl lg:text-7xl">
               <span className="text-foreground">About</span> <span className="text-brand">Us</span>
             </h2>
-            <p className="mt-6 max-w-lg text-xl font-semibold leading-snug text-foreground">
-              MindCarter is an organizational psychology consulting firm that helps organizations
-              make better people decisions through evidence-based behavioral science.
-            </p>
             <p className="mt-4 max-w-lg text-base leading-relaxed text-muted-foreground">
-              We partner with organizations to strengthen leadership, enhance employee wellbeing,
-              improve talent decisions, and build high-performing workplaces—drawing on psychometric
-              assessment, leadership development, employee assistance programs, behavioral interviewing,
-              executive coaching, and organizational development, all tailored to each organization's
-              unique culture and goals. By combining scientific rigor with practical application, we
-              help leaders unlock individual and team potential and build resilient, thriving workplaces.
+              MINDCARTER is an organizational psychology consulting firm dedicated to building
+              future-ready, high-performing workplaces by strengthening human systems.
+              By combining evidence-based psychology with practical business insight, Mindcarter
+              delivers tailored, ethically grounded interventions that enhance leadership, optimize
+              talent decisions, and foster employee wellbeing. Crucially, as companies navigate
+              rapid technological shifts, Mindcarter integrates behavioral AI governance to ensure
+              organizations build AI-ready workforces that balance advanced technology with strong
+              human oversight and responsible adoption.
             </p>
             <Link
               to="/about"
@@ -331,14 +329,13 @@ function Services() {
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
               <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
-              Services
+              Practice Areas
             </p>
             <h2 className="font-display mt-3 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl">
               How We Help Organizations
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Evidence-based organizational psychology solutions that strengthen people,
-              leadership, and organizational performance.
+              Organizations succeed when their people, leaders, and systems evolve together. Mindcarter provides evidence-based organizational psychology solutions that strengthen organizational capability, improve decision-making, and prepare organizations for the future of work.
             </p>
           </div>
         </ScrollReveal>
@@ -420,150 +417,150 @@ function Psychologists() {
       <div className="relative mx-auto max-w-7xl px-6">
         <ScrollReveal variant="blur-in">
           <div className="relative grid gap-6 md:grid-cols-[1fr_1.4fr] md:items-end">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/70">
-                  Our Team
-                </p>
-                <h2 className="font-display mt-3 text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-5xl">
-                  Evidence-based professionals committed to helping people thrive at work.
-                </h2>
-              </div>
-              <p className="max-w-xl text-base leading-relaxed text-foreground/70">
-                At Mindcarter we bring together psychologists with advanced academic training in
-                psychology, including Master's, M.Phil., and Ph.D. qualifications. Drawing on
-                organizational psychology and behavioral science, they help individuals and
-                organizations address workplace challenges, strengthen leadership, improve
-                performance, and foster healthier, more productive work environments.
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/70">
+                Our Team
               </p>
+              <h2 className="font-display mt-3 text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-5xl">
+                Evidence-based professionals committed to helping people thrive at work.
+              </h2>
             </div>
+            <p className="max-w-xl text-base leading-relaxed text-foreground/70">
+              At Mindcarter we bring together psychologists with advanced academic training in
+              psychology, including Master's, M.Phil., and Ph.D. qualifications. Drawing on
+              organizational psychology and behavioral science, they help individuals and
+              organizations address workplace challenges, strengthen leadership, improve
+              performance, and foster healthier, more productive work environments.
+            </p>
+          </div>
 
-            <div className="relative mx-auto mt-6 max-w-2xl">
-              <Search className="pointer-events-none absolute left-5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by name, title, or specialty…"
-                className="w-full rounded-full border border-border bg-background py-3 pl-12 pr-5 text-sm shadow-sm outline-none transition focus:border-foreground"
-              />
+          <div className="relative mx-auto mt-6 max-w-2xl">
+            <Search className="pointer-events-none absolute left-5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search by name, title, or specialty…"
+              className="w-full rounded-full border border-border bg-background py-3 pl-12 pr-5 text-sm shadow-sm outline-none transition focus:border-foreground"
+            />
+          </div>
+
+          {isLoading && (
+            <div className="relative mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-80 animate-pulse rounded-2xl border border-border bg-background/60"
+                  aria-hidden
+                />
+              ))}
             </div>
-
-            {isLoading && (
-              <div className="relative mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-80 animate-pulse rounded-2xl border border-border bg-background/60"
-                    aria-hidden
-                  />
-                ))}
-              </div>
-            )}
-            {!isLoading && (
+          )}
+          {!isLoading && (
             <StaggerContainer className="relative mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {psychologists.length === 0 && (
-            <p className="col-span-full py-10 text-center text-sm text-foreground/70">
-              Our clinician directory is being updated. Please check back soon.
-            </p>
-          )}
-          {psychologists.length > 0 && !hasMatches && (
-            <p className="col-span-full py-10 text-center text-sm text-foreground/70">
-              No psychologists match your search.
-            </p>
-          )}
-          {psychologists.map((p) => {
-            const initials = p.name
-              .replace(/^Dr\.\s*/, "")
-              .split(" ")
-              .map((w) => w[0])
-              .join("")
-              .slice(0, 2);
-            return (
-              <StaggerItem key={p.id} className={matchesQuery(p) ? "" : "hidden"}>
-                <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-background transition-all duration-[400ms] ease-out hover:-translate-y-1 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]">
-                  <div className="relative aspect-[16/9] overflow-hidden bg-muted">
-                    <div
-                      className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand/25 to-brand/5 text-3xl font-black text-foreground/20 transition duration-700 group-hover:scale-105"
-                      aria-hidden
-                    >
-                      {initials}
-                    </div>
-                    {p.rating != null && p.rating > 0 && (
-                      <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-background/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest">
-                        <Star className="h-3 w-3 fill-brand text-brand" />
-                        {p.rating.toFixed(1)} rating
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex flex-1 flex-col p-5">
-                    <h3 className="text-lg font-bold leading-tight">{p.name}</h3>
-                    <p className="mt-1 text-[11px] uppercase leading-snug tracking-[0.16em] text-muted-foreground">
-                      {p.title}
-                    </p>
-
-                    <div className="mt-2.5 flex flex-wrap gap-1.5">
-                      {p.specialties.map((t) => (
-                        <span
-                          key={t}
-                          className="rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
+              {psychologists.length === 0 && (
+                <p className="col-span-full py-10 text-center text-sm text-foreground/70">
+                  Our clinician directory is being updated. Please check back soon.
+                </p>
+              )}
+              {psychologists.length > 0 && !hasMatches && (
+                <p className="col-span-full py-10 text-center text-sm text-foreground/70">
+                  No psychologists match your search.
+                </p>
+              )}
+              {psychologists.map((p) => {
+                const initials = p.name
+                  .replace(/^Dr\.\s*/, "")
+                  .split(" ")
+                  .map((w) => w[0])
+                  .join("")
+                  .slice(0, 2);
+                return (
+                  <StaggerItem key={p.id} className={matchesQuery(p) ? "" : "hidden"}>
+                    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-background transition-all duration-[400ms] ease-out hover:-translate-y-1 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]">
+                      <div className="relative aspect-[16/9] overflow-hidden bg-muted">
+                        <div
+                          className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand/25 to-brand/5 text-3xl font-black text-foreground/20 transition duration-700 group-hover:scale-105"
+                          aria-hidden
                         >
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="mt-4 grid grid-cols-2 gap-2 border-y border-border py-3 text-center">
-                      <div>
-                        <p className="text-base font-bold text-foreground">
-                          {p.yearsExperience != null ? `${p.yearsExperience}+` : "—"}
-                        </p>
-                        <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">
-                          Years exp
-                        </p>
+                          {initials}
+                        </div>
+                        {p.rating != null && p.rating > 0 && (
+                          <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-background/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest">
+                            <Star className="h-3 w-3 fill-brand text-brand" />
+                            {p.rating.toFixed(1)} rating
+                          </span>
+                        )}
                       </div>
-                      <div>
-                        <p className="text-base font-bold text-foreground">
-                          {p.price != null ? `₹${p.price.toLocaleString("en-IN")}` : "—"}
+
+                      <div className="flex flex-1 flex-col p-5">
+                        <h3 className="text-lg font-bold leading-tight">{p.name}</h3>
+                        <p className="mt-1 text-[11px] uppercase leading-snug tracking-[0.16em] text-muted-foreground">
+                          {p.title}
                         </p>
-                        <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">
-                          Per session
-                        </p>
+
+                        <div className="mt-2.5 flex flex-wrap gap-1.5">
+                          {p.specialties.map((t) => (
+                            <span
+                              key={t}
+                              className="rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
+                            >
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="mt-4 grid grid-cols-2 gap-2 border-y border-border py-3 text-center">
+                          <div>
+                            <p className="text-base font-bold text-foreground">
+                              {p.yearsExperience != null ? `${p.yearsExperience}+` : "—"}
+                            </p>
+                            <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">
+                              Years exp
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-base font-bold text-foreground">
+                              {p.price != null ? `₹${p.price.toLocaleString("en-IN")}` : "—"}
+                            </p>
+                            <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">
+                              Per session
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="mt-auto flex flex-col gap-2 pt-4">
+                          <Link
+                            to="/employee/book/$clinicianId"
+                            params={{ clinicianId: p.id }}
+                            className="w-full rounded-full bg-brand py-2.5 text-center text-[11px] font-bold uppercase tracking-wide text-brand-foreground transition-transform duration-200 ease-out group-hover:scale-[1.02]"
+                          >
+                            Book now
+                          </Link>
+                          <Link
+                            to="/contact"
+                            className="w-full rounded-full border border-border py-2.5 text-center text-[11px] font-bold uppercase tracking-wide text-muted-foreground transition hover:border-foreground hover:text-foreground"
+                          >
+                            View profile
+                          </Link>
+                        </div>
                       </div>
-                    </div>
+                    </article>
+                  </StaggerItem>
+                );
+              })}
+            </StaggerContainer>
+          )}
 
-                    <div className="mt-auto flex flex-col gap-2 pt-4">
-                      <Link
-                        to="/employee/book/$clinicianId"
-                        params={{ clinicianId: p.id }}
-                        className="w-full rounded-full bg-brand py-2.5 text-center text-[11px] font-bold uppercase tracking-wide text-brand-foreground transition-transform duration-200 ease-out group-hover:scale-[1.02]"
-                      >
-                        Book now
-                      </Link>
-                      <Link
-                        to="/contact"
-                        className="w-full rounded-full border border-border py-2.5 text-center text-[11px] font-bold uppercase tracking-wide text-muted-foreground transition hover:border-foreground hover:text-foreground"
-                      >
-                        View profile
-                      </Link>
-                    </div>
-                  </div>
-                </article>
-              </StaggerItem>
-            );
-          })}
-        </StaggerContainer>
-            )}
-
-            <div className="relative mt-8 flex justify-center">
-              <Link
-                to="/contact"
-                className="inline-flex items-center gap-2 rounded-full border border-foreground px-6 py-3 text-xs font-bold uppercase tracking-wide text-foreground transition hover:bg-foreground hover:text-background"
-              >
-                View more
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
+          <div className="relative mt-8 flex justify-center">
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-2 rounded-full border border-foreground px-6 py-3 text-xs font-bold uppercase tracking-wide text-foreground transition hover:bg-foreground hover:text-background"
+            >
+              View more
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </ScrollReveal>
       </div>
     </section>
