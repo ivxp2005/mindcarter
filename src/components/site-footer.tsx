@@ -10,7 +10,7 @@ export function SiteFooter() {
           <div>
             <img src={logoImg} alt="Mindcarter" className="h-12 w-auto brightness-0 invert" />
             <p className="mt-4 text-sm leading-relaxed text-background/70">
-              A premium psychology & organizational consulting practice — research-backed care for individuals and enterprises.
+              An organisational psychology consulting firm helping organizations build future ready, high performing workplaces through behavioral science.
             </p>
             <p className="mt-6 text-xs uppercase tracking-[0.2em] text-background/50">Founded by</p>
             <p className="text-sm font-medium">Amar Rajan</p>

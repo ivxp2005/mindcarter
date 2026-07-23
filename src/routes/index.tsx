@@ -288,32 +288,32 @@ function HomeAbout() {
 
 const FLAGSHIP_SERVICES = [
   {
-    image: imageCopy4Img,
-    title: "Employee Assistance Program (EAP)",
-    tag: "High ROI · Cost Effective · AI-Enabled · Human-Supported",
-    desc: "Confidential, AI-enabled employee wellbeing support with 24/7 check-ins and seamless access to qualified psychologists.",
-    anchor: "eap",
+    image: imageImg,
+    title: "Behavioral AI Governance",
+    tag: "AI-Ready · Human-Centered · Responsible · Future-Focused",
+    desc: "Prepares your workforce and leadership to bridge the gap between human judgment and artificial intelligence, driving confident adoption while ensuring responsible oversight.",
+    anchor: "behavioral-ai-governance",
   },
   {
     image: imageCopy2Img,
     title: "Psychometric Assessments",
     tag: "Scientific · Objective · Predictive · Actionable",
-    desc: "Scientifically validated assessments that turn insights on personality, cognition and behavior into confident people decisions.",
+    desc: "Delivers evidence-based insights into personality, motivation, and leadership potential to drive smarter, objective talent and hiring decisions.",
     anchor: "psychometric-assessments",
   },
   {
     image: imageCopy3Img,
-    title: "Personality-Based Leadership Development",
+    title: "Leadership Development",
     tag: "Self-Aware · Evidence Based · Personalised · Transformational",
-    desc: "Personalised development journeys that help leaders understand how their personality shapes their leadership.",
+    desc: "Blends executive coaching, psychology, and hands-on learning to cultivate adaptable, high-performing leaders who foster trust and navigate organizational change.",
     anchor: "leadership-development",
   },
   {
-    image: imageImg,
-    title: "Behavioral Interview Program",
-    tag: "Structured · Bias Aware · Competency-Based · Evidence Driven",
-    desc: "Structured, evidence-based interview frameworks that improve hiring quality and reduce bias.",
-    anchor: "behavioral-interview",
+    image: imageCopy4Img,
+    title: "Employee Assistance Program (EAP)",
+    tag: "High ROI · Cost Effective · AI-Enabled · Human-Supported",
+    desc: "Combines confidential psychological counseling with preventive wellness initiatives to safeguard mental health, reduce risk, and build a resilient workforce.",
+    anchor: "eap",
   },
 ];
 

@@ -4,10 +4,9 @@ import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown, Phone } from "lucide-react";
 import { SiteShell } from "../components/site-shell";
 import amarRajanImg from "../assets/amar-rajan.png";
-import heroImg from "../assets/hero.jpg";
 import aboutUsImg from "../assets/345.png";
 import aboutBannerImg from "../assets/image copy.png";
-import { ScrollReveal, StaggerContainer, StaggerItem } from "../components/scroll-reveal";
+import { ScrollReveal } from "../components/scroll-reveal";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -212,24 +211,30 @@ function OurStory() {
         <ScrollReveal variant="slide-right" className="lg:pr-10">
           <Eyebrow>Our story</Eyebrow>
           <h2 className="font-display mt-4 text-3xl font-black tracking-tight sm:text-4xl">
-            Built on the Science of Human Behavior. Designed for the Future of Work.
+            Built on the Science of Human Behavior. Inspired by the Future of Work.
           </h2>
           <p className="mt-6 leading-relaxed text-muted-foreground">
-            MindCarter was founded with a simple belief: organizations perform at their best when
-            they understand the people behind performance. As workplaces become increasingly shaped
-            by AI, technological disruption, and changing workforce expectations, success depends not
-            only on innovation but also on understanding human behavior.
+            Organizations often invest heavily in technology, processes, and strategy to improve
+            performance. Yet the most significant opportunities—and the greatest challenges—continue
+            to lie with people.
           </p>
           <p className="mt-4 leading-relaxed text-muted-foreground">
-            Drawing on the principles of organizational psychology and behavioral science, we help
-            organizations make better people decisions—from selecting and developing talent to
-            strengthening leadership, supporting employee wellbeing, and building high-performing
-            teams. Every solution we deliver is grounded in scientific evidence, informed by real
-            workplace challenges, and designed to create measurable organizational impact.
+            MINDCARTER was established from a simple observation: lasting organizational success is
+            achieved when business decisions are informed by a deep understanding of human behavior.
+            This conviction has shaped our approach from the beginning and continues to guide how we
+            work with organizations today.
           </p>
           <p className="mt-4 leading-relaxed text-muted-foreground">
-            At MindCarter, we exist to help individuals discover their potential, enable meaningful
-            growth, and evolve alongside the organizations they help shape.
+            As workplaces evolve through rapid technological advancement and artificial intelligence,
+            the need to understand people has become even more critical. Technology may transform how
+            work is done, but people determine how successfully change is adopted, how leaders inspire
+            confidence, and how organizations sustain performance.
+          </p>
+          <p className="mt-4 leading-relaxed text-muted-foreground">
+            This belief continues to shape our journey. We combine organizational psychology,
+            behavioral science, and emerging perspectives on Behavioral AI Governance to help
+            organizations strengthen the human systems that enable performance today while preparing
+            for the workplace of tomorrow.
           </p>
         </ScrollReveal>
 
@@ -274,7 +279,7 @@ function OurStory() {
   );
 }
 
-/* ── 4. Mission & Vision — centered heading above, three panels below ────── */
+/* ── 4. Mission, Vision & Team — heading above, cross layout around photo ── */
 function MissionVision() {
   return (
     <section className="relative border-t border-border bg-background pt-20 sm:pt-28">
@@ -292,9 +297,13 @@ function MissionVision() {
         </div>
       </ScrollReveal>
 
+      {/* Three panels side by side: Vision, Team, Mission */}
       <div className="mt-14 grid lg:grid-cols-3">
         {/* Vision — cream panel */}
-        <ScrollReveal variant="slide-left" className="flex flex-col items-center justify-center bg-[#fdf6e0] px-8 py-16 text-center text-foreground sm:px-12 lg:py-24">
+        <ScrollReveal
+          variant="slide-left"
+          className="flex flex-col items-center justify-center bg-[#fdf6e0] px-8 py-16 text-center text-foreground sm:px-12 lg:py-24"
+        >
           <h2 className="font-display text-3xl font-black uppercase leading-tight tracking-wide">
             Our
             <br />
@@ -309,18 +318,21 @@ function MissionVision() {
           </p>
         </ScrollReveal>
 
-        {/* Middle — team photo on white */}
+        {/* Center — Team */}
         <ScrollReveal
           variant="zoom-in"
           delay={0.1}
-          className="flex items-center justify-center bg-background px-8 py-10 sm:px-12"
+          className="flex flex-col items-center justify-center bg-muted/40 px-8 py-16 text-center sm:px-12 lg:py-24"
         >
-          <img
-            src={heroImg}
-            alt="The Mindcarter team"
-            className="max-h-[440px] w-full object-cover"
-            loading="lazy"
-          />
+          <h2 className="font-display text-3xl font-black uppercase leading-tight tracking-wide">
+            Our <span className="text-brand">Team</span>
+          </h2>
+          <div aria-hidden className="mt-5 h-0.5 w-10 bg-brand" />
+          <p className="mx-auto mt-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
+            A multidisciplinary team bringing together organizational psychologists, data
+            scientists, AI specialists, academics, and industry practitioners to deliver
+            evidence-based solutions for the future of work.
+          </p>
         </ScrollReveal>
 
         {/* Mission — gold panel */}
@@ -347,98 +359,25 @@ function MissionVision() {
   );
 }
 
-
-
-/* ── 5. Why choose Mindcarter — dark panel, four numbered pillars ────────── */
-const WHY_ITEMS = [
-  {
-    k: "01",
-    t: "Evidence-based",
-    sub: "Research, not intuition",
-    d: "A premier authority in organizational behavior, offering evidence-based solutions grounded in academic rigor and published research.",
-  },
-  {
-    k: "02",
-    t: "Global expertise",
-    sub: "Practitioners, not theorists",
-    d: "A team of global experts and revered industry practitioners keeps us at the forefront of the latest trends.",
-  },
-  {
-    k: "03",
-    t: "Specialized offerings",
-    sub: "Assessments to coaching",
-    d: "Internationally recognized psychometric assessments, comprehensive training, developmental initiatives and coaching programs.",
-  },
-  {
-    k: "04",
-    t: "Lasting impact",
-    sub: "Built to last",
-    d: "Practical, research-rooted solutions that enhance organizational effectiveness and nurture employee satisfaction.",
-  },
-];
-
-function WhyItem({ item }: { item: (typeof WHY_ITEMS)[number] }) {
-  return (
-    <div className="group">
-      <p className="font-mono text-xs text-brand transition-transform duration-300 ease-out group-hover:-translate-y-0.5">
-        {item.k}
-      </p>
-      <h3 className="mt-3 text-lg font-semibold text-background">{item.t}</h3>
-      <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-brand/80">{item.sub}</p>
-      <p className="mt-2 text-sm leading-relaxed text-background/60">{item.d}</p>
-    </div>
-  );
-}
-
+/* ── 5. Why choose Mindcarter ─────────────────────────────────────────────── */
 function WhyChoose() {
   return (
     <section className="border-b border-border bg-foreground py-24 text-background">
       <div className="mx-auto max-w-7xl px-6">
         <ScrollReveal variant="blur-in">
           <div className="text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-background/60">
-              <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand align-middle" />
-              Why Mindcarter
-            </p>
-            <h2 className="font-display mx-auto mt-3 max-w-2xl text-5xl font-black leading-[1.0] tracking-tight sm:text-6xl">
-              Why Choose <span className="text-brand">Mindcarter?</span>
+            <h2 className="font-display mx-auto max-w-2xl text-5xl font-black leading-[1.0] tracking-tight sm:text-6xl">
+              Why <span className="text-brand">MindCarter?</span>
             </h2>
+            <p className="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-background/70">
+              Organizations choose MindCarter because our solutions combine organizational
+              psychology, behavioral science, and business insight to address the human dimensions
+              of organizational performance. Every engagement is grounded in evidence, tailored to
+              organizational context, and designed to deliver measurable outcomes that strengthen
+              people, leadership, and organizational capability.
+            </p>
           </div>
         </ScrollReveal>
-
-        <div className="relative mt-20">
-          <svg
-            aria-hidden
-            viewBox="0 0 1200 160"
-            preserveAspectRatio="none"
-            className="pointer-events-none absolute -top-14 left-0 hidden h-28 w-full lg:block"
-          >
-            <path
-              d="M0,140 Q600,-40 1200,140"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeDasharray="2 10"
-              strokeLinecap="round"
-              className="text-background/25"
-            />
-          </svg>
-
-          <StaggerContainer className="grid gap-14 sm:grid-cols-2 lg:gap-x-24">
-            <StaggerItem>
-              <WhyItem item={WHY_ITEMS[0]} />
-            </StaggerItem>
-            <StaggerItem>
-              <WhyItem item={WHY_ITEMS[1]} />
-            </StaggerItem>
-            <StaggerItem>
-              <WhyItem item={WHY_ITEMS[2]} />
-            </StaggerItem>
-            <StaggerItem>
-              <WhyItem item={WHY_ITEMS[3]} />
-            </StaggerItem>
-          </StaggerContainer>
-        </div>
       </div>
     </section>
   );
