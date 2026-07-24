@@ -240,8 +240,8 @@ export function WellnessShell({ children }: { children: ReactNode }) {
               >
                 <Menu className="h-4 w-4" />
               </button>
-              <p className="truncate text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Wellness ·{" "}
+              <p className="truncate text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground sm:tracking-[0.2em]">
+                <span className="hidden sm:inline">Wellness · </span>
                 <span className="text-foreground">{sectionLabel(location.pathname)}</span>
               </p>
             </div>
