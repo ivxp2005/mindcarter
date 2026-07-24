@@ -107,7 +107,7 @@ export function SiteNav() {
             : "bg-background/10 backdrop-blur-sm border-b border-transparent"
       }`}
     >
-      <div className="mx-auto grid h-20 max-w-7xl grid-cols-3 items-center px-6">
+      <div className="mx-auto grid h-20 max-w-7xl grid-cols-3 items-center px-4 sm:px-6">
         <Link
           to="/"
           className="col-start-2 row-start-1 flex items-center justify-self-center md:col-start-1 md:justify-self-start"

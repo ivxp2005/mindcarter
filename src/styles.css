@@ -149,6 +149,14 @@
 }
 
 @layer base {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
   * {
     border-color: var(--color-border);
   }
@@ -156,5 +164,6 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    position: relative;
   }
 }

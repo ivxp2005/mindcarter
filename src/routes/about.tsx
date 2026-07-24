@@ -282,7 +282,7 @@ function OurStory() {
 /* ── 4. Mission, Vision & Team — heading above, cross layout around photo ── */
 function MissionVision() {
   return (
-    <section className="relative border-t border-border bg-background pt-20 sm:pt-28">
+    <section className="relative overflow-hidden border-t border-border bg-background pt-20 sm:pt-28">
       {/* section heading */}
       <ScrollReveal variant="fade-down">
         <div className="mx-auto max-w-3xl px-6 text-center">
@@ -362,7 +362,7 @@ function MissionVision() {
 /* ── 5. Why choose Mindcarter ─────────────────────────────────────────────── */
 function WhyChoose() {
   return (
-    <section className="border-b border-border bg-foreground py-24 text-background">
+    <section className="relative overflow-hidden border-b border-border bg-foreground py-24 text-background">
       <div className="mx-auto max-w-7xl px-6">
         <ScrollReveal variant="blur-in">
           <div className="text-center">
@@ -386,7 +386,7 @@ function WhyChoose() {
 /* ── 6. Final CTA — gold rounded panel with booking actions ──────────────── */
 function FinalCTA() {
   return (
-    <section className="bg-background">
+    <section className="relative overflow-hidden bg-background">
       <ScrollReveal variant="flip-up" className="mx-auto max-w-7xl px-6 py-24">
         <div
           className="relative overflow-hidden rounded-3xl bg-brand bg-cover bg-center p-10 sm:p-16"

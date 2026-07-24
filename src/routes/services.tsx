@@ -179,7 +179,7 @@ function WhatWeDo() {
                   className="grid scroll-mt-28 items-center gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16"
                 >
                   <div className={reversed ? "md:order-2" : ""}>
-                    <div className="relative mx-auto grid h-[300px] w-[300px] place-items-center sm:h-[380px] sm:w-[380px]">
+                    <div className="relative mx-auto grid h-[300px] w-[300px] max-w-full overflow-hidden place-items-center sm:h-[380px] sm:w-[380px]">
                       <div
                         aria-hidden
                         className="absolute h-[200px] w-[200px] sm:h-[240px] sm:w-[240px] rounded-[60%_40%_30%_70%/60%_30%_70%_40%] bg-brand/15"
@@ -232,7 +232,7 @@ function WhatWeDo() {
 // ─── 4. How we work ─────────────────────────────────────────────────────────
 function HowWeWork() {
   return (
-    <section className="bg-background py-20 sm:py-28">
+    <section className="relative overflow-hidden bg-background py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-6">
         <ScrollReveal variant="slide-left">
           <Eyebrow label="How we work" />
