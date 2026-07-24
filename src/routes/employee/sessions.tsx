@@ -226,17 +226,17 @@ function SessionsPage() {
 
       {/* ─────────────────────────── Stat tiles ─────────────────────────── */}
       <ScrollReveal>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
           {stats.map((s) => (
             <div
               key={s.label}
-              className="rounded-2xl border border-border bg-background p-5 text-center transition-all duration-300 ease-out hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]"
+              className="min-w-0 rounded-2xl border border-border bg-background p-3 text-center transition-all duration-300 ease-out hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)] sm:p-5"
             >
-              <p className="text-2xl font-black tracking-tight sm:text-3xl">
+              <p className="text-xl font-black tracking-tight sm:text-3xl">
                 <CountUp value={s.value} />
                 {s.suffix}
               </p>
-              <p className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground sm:text-xs">
+              <p className="mt-1 truncate text-[9px] uppercase tracking-wide text-muted-foreground sm:text-xs sm:tracking-widest">
                 {s.label}
               </p>
             </div>
@@ -248,10 +248,16 @@ function SessionsPage() {
       <div className="grid min-w-0 gap-4 overflow-x-hidden lg:grid-cols-[1.3fr_1fr]">
         <ScrollReveal className="min-w-0 rounded-2xl border border-border bg-background p-6">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-            <TabsList>
-              <TabsTrigger value="upcoming">Upcoming ({upcoming.length})</TabsTrigger>
-              <TabsTrigger value="past">Past ({past.length})</TabsTrigger>
-              <TabsTrigger value="canceled">Canceled ({canceled.length})</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-3 sm:inline-flex sm:w-auto">
+              <TabsTrigger value="upcoming" className="px-1.5 text-xs sm:px-3 sm:text-sm">
+                Upcoming ({upcoming.length})
+              </TabsTrigger>
+              <TabsTrigger value="past" className="px-1.5 text-xs sm:px-3 sm:text-sm">
+                Past ({past.length})
+              </TabsTrigger>
+              <TabsTrigger value="canceled" className="px-1.5 text-xs sm:px-3 sm:text-sm">
+                Canceled ({canceled.length})
+              </TabsTrigger>
             </TabsList>
             {(["upcoming", "past", "canceled"] as const).map((tab) => (
               <TabsContent key={tab} value={tab}>
