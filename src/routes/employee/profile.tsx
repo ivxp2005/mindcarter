@@ -18,6 +18,7 @@ import { GradientAvatar } from "../../components/gradient-avatar";
 import { ScrollReveal } from "../../components/scroll-reveal";
 import { usePatientData, parseISODate } from "../../lib/patient-store";
 import { emailSchema, phoneSchema } from "../../lib/auth-schemas";
+import { requestPasswordResetFn } from "../../lib/auth.server";
 
 function phoneError(value: string): string | null {
   return phoneSchema.safeParse(value).success ? null : "Enter a 10-digit phone number";
@@ -289,7 +290,13 @@ function ProfilePage() {
               </p>
               <button
                 type="button"
-                onClick={() => toast.success("Password reset link sent to your email (mock).")}
+                onClick={async () => {
+                  if (!email) return;
+                  await requestPasswordResetFn({ data: { email } });
+                  toast.success("Password reset link sent to your email.", {
+                    description: "Can't find it? Check your spam/junk folder — it sometimes lands there.",
+                  });
+                }}
                 className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-semibold transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-muted active:translate-y-0 active:scale-95"
               >
                 <KeyRound className="h-4 w-4" /> Change password
