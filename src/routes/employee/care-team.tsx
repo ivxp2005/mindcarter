@@ -106,11 +106,11 @@ function CareTeamPage() {
             <StaggerItem key={member.id}>
               <section className="group flex h-full flex-col rounded-2xl border border-border bg-background p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]">
                 <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-4">
+                  <div className="flex min-w-0 items-center gap-4">
                     <GradientAvatar name={member.name} size="xl" />
-                    <div>
-                      <p className="text-lg font-bold leading-tight">{member.name}</p>
-                      <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                    <div className="min-w-0">
+                      <p className="truncate text-lg font-bold leading-tight">{member.name}</p>
+                      <p className="truncate text-xs uppercase tracking-[0.16em] text-muted-foreground">
                         {member.title}
                       </p>
                     </div>
@@ -162,11 +162,12 @@ function CareTeamPage() {
                 </div>
 
                 <div className="mt-4 space-y-1.5 text-sm text-muted-foreground">
-                  <p className="flex items-center gap-2">
-                    <Mail className="h-3.5 w-3.5" /> {member.email}
+                  <p className="flex items-start gap-2">
+                    <Mail className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                    <span className="min-w-0 break-words">{member.email}</span>
                   </p>
                   <p className="flex items-center gap-2">
-                    <Phone className="h-3.5 w-3.5" /> {member.phone}
+                    <Phone className="h-3.5 w-3.5 shrink-0" /> {member.phone}
                   </p>
                   {history.length > 0 && (
                     <p className="flex items-center gap-2">

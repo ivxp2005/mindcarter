@@ -261,14 +261,17 @@ function ProfilePage() {
             <section className="rounded-2xl border border-border bg-background p-6 transition-all duration-300 ease-out hover:border-brand/40 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]">
               <h2 className="text-sm font-semibold">Contact</h2>
               <div className="mt-4 space-y-2 text-sm text-muted-foreground">
-                <p className="flex items-center gap-2">
-                  <Mail className="h-3.5 w-3.5" /> {email}
+                <p className="flex items-start gap-2">
+                  <Mail className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                  <span className="min-w-0 break-words">{email}</span>
                 </p>
-                <p className="flex items-center gap-2">
-                  <Phone className="h-3.5 w-3.5" /> {phone}
+                <p className="flex items-start gap-2">
+                  <Phone className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                  <span className="min-w-0 break-words">{phone}</span>
                 </p>
-                <p className="flex items-center gap-2">
-                  <MapPin className="h-3.5 w-3.5" /> {address}
+                <p className="flex items-start gap-2">
+                  <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                  <span className="min-w-0 break-words">{address}</span>
                 </p>
               </div>
             </section>

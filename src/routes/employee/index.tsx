@@ -204,15 +204,15 @@ function EmployeeDashboard() {
                   : "A quick check-in keeps your streak alive."}
               </p>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="flex gap-2">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
                 {([1, 2, 3, 4, 5] as Mood[]).map((m) => (
                   <button
                     key={m}
                     onClick={() => handleCheckIn(m)}
                     aria-label={MOOD_LABEL[m]}
                     title={MOOD_LABEL[m]}
-                    className={`grid h-11 w-11 place-items-center rounded-xl text-2xl transition-all duration-200 ease-out hover:-translate-y-1 active:scale-90 ${
+                    className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl text-xl transition-all duration-200 ease-out hover:-translate-y-1 active:scale-90 sm:h-11 sm:w-11 sm:text-2xl ${
                       checkedInMood === m
                         ? "bg-brand/20 ring-2 ring-brand"
                         : "bg-muted hover:bg-muted/70"
@@ -246,14 +246,14 @@ function EmployeeDashboard() {
               </span>
               <ArrowUpRight className="h-4 w-4 translate-y-1 text-muted-foreground opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100" />
             </div>
-            <div className="mt-6 flex items-end justify-between gap-4">
-              <div>
-                <p className="text-3xl font-black tracking-tight">
+            <div className="mt-6 flex items-end justify-between gap-3">
+              <div className="min-w-0">
+                <p className="truncate text-2xl font-black tracking-tight sm:text-3xl">
                   {nextSession ? formatDate(nextSession.date) : "None booked"}
                 </p>
                 <p className="mt-1 text-sm text-muted-foreground">Next session</p>
               </div>
-              <div className="h-14 w-28">
+              <div className="h-14 w-16 shrink-0 sm:w-28">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={moodTrend}>
                     <defs>
@@ -379,11 +379,11 @@ function EmployeeDashboard() {
                         <span className="relative">{formatDate(s.date).slice(0, 3)}</span>
                       </span>
                       <div className="group flex flex-1 items-center justify-between gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3 transition-all duration-200 ease-out hover:border-brand/40 hover:bg-muted">
-                        <div className="flex items-center gap-3">
+                        <div className="flex min-w-0 items-center gap-3">
                           <GradientAvatar name={s.psychologistName} size="sm" />
-                          <div>
-                            <p className="text-sm font-semibold">{s.psychologistName}</p>
-                            <p className="text-xs text-muted-foreground">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold">{s.psychologistName}</p>
+                            <p className="truncate text-xs text-muted-foreground">
                               {formatDate(s.date)} · {s.time} · {s.kind}
                             </p>
                           </div>

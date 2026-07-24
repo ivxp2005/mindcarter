@@ -126,14 +126,14 @@ function JournalPage() {
               <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-background/50">
                 Today's check-in — how are you feeling?
               </p>
-              <div className="mt-3 flex items-center gap-3">
-                <div className="flex gap-2">
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {([1, 2, 3, 4, 5] as Mood[]).map((m) => (
                     <button
                       key={m}
                       onClick={() => handleCheckIn(m)}
                       disabled={isLockedIn}
-                      className={`grid h-12 w-12 place-items-center rounded-2xl text-2xl transition-all duration-200 ease-out ${
+                      className={`grid h-10 w-10 shrink-0 place-items-center rounded-2xl text-xl transition-all duration-200 ease-out sm:h-12 sm:w-12 sm:text-2xl ${
                         isLockedIn
                           ? "cursor-not-allowed opacity-50"
                           : "hover:-translate-y-1 active:scale-90"
@@ -227,13 +227,13 @@ function JournalPage() {
             <PenLine className="h-4 w-4 text-brand" /> New journal entry
           </h2>
           <form onSubmit={handleSaveEntry} className="mt-4 space-y-4">
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {([1, 2, 3, 4, 5] as Mood[]).map((m) => (
                 <button
                   type="button"
                   key={m}
                   onClick={() => setMood(m)}
-                  className={`grid h-10 w-10 place-items-center rounded-xl text-xl transition-all duration-200 ease-out hover:-translate-y-0.5 ${
+                  className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl text-lg transition-all duration-200 ease-out hover:-translate-y-0.5 sm:h-10 sm:w-10 sm:text-xl ${
                     mood === m ? "bg-brand/20 ring-2 ring-brand" : "bg-muted hover:bg-muted/70"
                   }`}
                   aria-label={MOOD_LABEL[m]}
