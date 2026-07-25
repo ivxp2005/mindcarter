@@ -98,13 +98,13 @@ function NavLinks({ idPrefix, onNavigate }: { idPrefix: string; onNavigate?: () 
               to={item.to}
               onClick={onNavigate}
               className={`group relative flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-200 ${
-                active ? "text-background" : "text-muted-foreground hover:text-foreground"
+                active ? "text-brand-foreground" : "text-muted-foreground hover:text-foreground"
               }`}
             >
               {active ? (
                 <motion.span
                   layoutId={`${idPrefix}-nav-pill`}
-                  className="absolute inset-0 -z-0 rounded-lg bg-foreground will-change-transform"
+                  className="absolute inset-0 -z-0 rounded-lg bg-brand will-change-transform"
                   transition={NAV_SPRING}
                 />
               ) : (
@@ -124,7 +124,11 @@ function NavLinks({ idPrefix, onNavigate }: { idPrefix: string; onNavigate?: () 
               </motion.span>
               <span className="relative z-10">{item.label}</span>
               {badge !== null && (
-                <span className="relative z-10 ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-brand px-1.5 text-[10px] font-bold text-brand-foreground">
+                <span
+                  className={`relative z-10 ml-auto grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[10px] font-bold ${
+                    active ? "bg-brand-foreground text-brand" : "bg-foreground text-background"
+                  }`}
+                >
                   {badge}
                 </span>
               )}
