@@ -102,13 +102,13 @@ function JournalPage() {
           transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        <div className="relative flex flex-col gap-6 p-8 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
+        <div className="relative flex flex-col gap-6 p-[clamp(1.5rem,5vw,2.5rem)] lg:flex-row lg:items-center lg:justify-between">
           <div className="min-w-0">
-            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-background/60">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand" />
+            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-background/60 sm:tracking-[0.24em]">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
               Wellness
             </p>
-            <h1 className="font-display mt-3 overflow-hidden text-3xl font-black leading-[1.05] tracking-tight sm:text-4xl lg:text-5xl">
+            <h1 className="font-display mt-3 overflow-hidden break-words text-[clamp(1.75rem,1.1rem+2.6vw,3rem)] font-black leading-[1.05] tracking-tight">
               <motion.span
                 className="block"
                 initial={{ y: "110%" }}
@@ -157,12 +157,12 @@ function JournalPage() {
           </div>
 
           <motion.div
-            className="grid shrink-0 grid-cols-3 gap-4 rounded-2xl border border-background/15 bg-background/10 p-5 text-center backdrop-blur-md"
+            className="grid w-full grid-cols-3 gap-2 rounded-2xl border border-background/15 bg-background/10 p-4 text-center backdrop-blur-md sm:gap-4 sm:p-5 lg:w-auto lg:shrink-0"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.28, ease: EASE_OUT }}
           >
-            <div>
+            <div className="min-w-0">
               <p className="text-2xl font-black">
                 <CountUp value={stats.streakDays} />
               </p>
@@ -170,7 +170,7 @@ function JournalPage() {
                 Day streak
               </p>
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="text-2xl font-black">
                 <CountUp value={stats.avgMood} decimals={1} />
               </p>
@@ -178,7 +178,7 @@ function JournalPage() {
                 Avg mood
               </p>
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="text-2xl font-black">
                 <CountUp value={entries.length} />
               </p>
@@ -260,10 +260,15 @@ function JournalPage() {
               {tags.map((tag) => (
                 <span
                   key={tag}
-                  className="flex items-center gap-1.5 rounded-full bg-brand/10 px-3 py-1 text-xs font-medium text-foreground"
+                  className="flex max-w-[12rem] items-center gap-1.5 rounded-full bg-brand/10 px-3 py-1 text-xs font-medium text-foreground"
                 >
-                  {tag}
-                  <button type="button" onClick={() => removeTag(tag)} aria-label={`Remove ${tag}`}>
+                  <span className="truncate">{tag}</span>
+                  <button
+                    type="button"
+                    onClick={() => removeTag(tag)}
+                    aria-label={`Remove ${tag}`}
+                    className="shrink-0"
+                  >
                     <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
                   </button>
                 </span>
@@ -292,8 +297,8 @@ function JournalPage() {
       </ScrollReveal>
 
       {/* Entries list + detail */}
-      <div className="grid gap-4 lg:grid-cols-[380px_1fr]">
-        <StaggerContainer className="space-y-2" staggerDelay={0.05}>
+      <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
+        <StaggerContainer className="min-w-0 space-y-2" staggerDelay={0.05}>
           {entries.map((e) => (
             <StaggerItem key={e.id}>
               <button
@@ -315,7 +320,7 @@ function JournalPage() {
                     <p className="truncate text-sm font-semibold">{e.title}</p>
                     <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{e.content}</p>
                     <p className="mt-2 flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                      <Clock className="h-3 w-3" /> {formatDate(e.date)}
+                      <Clock className="h-3 w-3 shrink-0" /> {formatDate(e.date)}
                     </p>
                   </div>
                 </div>
@@ -325,14 +330,16 @@ function JournalPage() {
         </StaggerContainer>
 
         {detail ? (
-          <section className="rounded-2xl border border-border bg-background p-6">
+          <section className="min-w-0 rounded-2xl border border-border bg-background p-6">
             <div className="flex items-start justify-between gap-4">
-              <div className="flex items-center gap-4">
+              <div className="flex min-w-0 items-center gap-4">
                 <span className="text-3xl leading-none" aria-hidden>
                   {MOOD_EMOJI[detail.mood]}
                 </span>
-                <div>
-                  <h2 className="text-xl font-black tracking-tight">{detail.title}</h2>
+                <div className="min-w-0">
+                  <h2 className="break-words text-xl font-black tracking-tight">
+                    {detail.title}
+                  </h2>
                   <p className="text-sm text-muted-foreground">
                     {formatDate(detail.date)} · Feeling {MOOD_LABEL[detail.mood]}
                   </p>
@@ -342,7 +349,7 @@ function JournalPage() {
 
             <div className="relative mt-6 rounded-2xl bg-muted/40 p-5">
               <Quote className="h-5 w-5 text-brand/60" />
-              <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-foreground">
+              <p className="break-anywhere mt-2 whitespace-pre-line text-sm leading-relaxed text-foreground">
                 {detail.content}
               </p>
             </div>
@@ -352,7 +359,7 @@ function JournalPage() {
                 {detail.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
+                    className="max-w-[12rem] truncate rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
                   >
                     {tag}
                   </span>

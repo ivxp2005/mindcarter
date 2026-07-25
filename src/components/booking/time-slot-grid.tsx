@@ -73,8 +73,11 @@ export function TimeSlotGrid({
           </div>
         </div>
       ))}
-      <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-        <Clock className="h-3.5 w-3.5" /> {durationMin}-minute session · times shown in {timezone}
+      <p className="break-anywhere flex items-start gap-1.5 text-xs text-muted-foreground">
+        <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+        <span>
+          {durationMin}-minute session · times shown in {timezone}
+        </span>
       </p>
     </RadioGroup.Root>
   );

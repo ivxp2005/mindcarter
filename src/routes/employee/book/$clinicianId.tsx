@@ -39,7 +39,7 @@ const STEP_LABELS: { key: Step; label: string }[] = [
 function StepIndicator({ step }: { step: Step }) {
   const activeIdx = STEP_LABELS.findIndex((s) => s.key === step);
   return (
-    <ol className="flex items-center gap-2" aria-label="Booking progress">
+    <ol className="flex flex-wrap items-center gap-2" aria-label="Booking progress">
       {STEP_LABELS.map((s, i) => (
         <li key={s.key} className="flex items-center gap-2">
           {i > 0 && <span className="h-px w-6 bg-border" aria-hidden />}
@@ -211,7 +211,7 @@ function BookingDetailPage() {
       return (
         <div className="space-y-4">
           <div className="h-24 animate-pulse rounded-3xl bg-muted/60" />
-          <div className="grid gap-4 lg:grid-cols-[1fr_380px]">
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,380px)]">
             <div className="h-96 animate-pulse rounded-2xl bg-muted/60" />
             <div className="h-96 animate-pulse rounded-2xl bg-muted/60" />
           </div>
@@ -240,15 +240,15 @@ function BookingDetailPage() {
     <div className={step === "select" ? "pb-24 lg:pb-0" : undefined}>
       {/* ── Header: back + breadcrumb + clinician summary ── */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm">
+        <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-sm">
           <Link
             to="/employee/book"
-            className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground"
+            className="flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1.5 font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" /> Book
           </Link>
-          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/50" />
-          <span className="font-semibold">{clinician.name}</span>
+          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50" />
+          <span className="min-w-0 truncate font-semibold">{clinician.name}</span>
         </nav>
         <StepIndicator step={step} />
       </div>
@@ -259,15 +259,16 @@ function BookingDetailPage() {
           <h1
             ref={headingRef}
             tabIndex={-1}
-            className="font-display text-2xl font-black tracking-tight outline-none"
+            className="break-words text-2xl font-black tracking-tight outline-none"
           >
             {clinician.name}
           </h1>
-          <p className="mt-0.5 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+          <p className="mt-0.5 break-words text-[11px] uppercase tracking-[0.14em] text-muted-foreground sm:tracking-[0.16em]">
             {clinician.title}
             {clinician.rating > 0 && (
               <span className="ml-2 inline-flex items-center gap-1 normal-case tracking-normal">
-                <Star className="h-3 w-3 fill-brand text-brand" /> {clinician.rating.toFixed(1)}
+                <Star className="h-3 w-3 shrink-0 fill-brand text-brand" />{" "}
+                {clinician.rating.toFixed(1)}
               </span>
             )}
           </p>
@@ -275,7 +276,7 @@ function BookingDetailPage() {
             {clinician.specialties.slice(0, 4).map((tag) => (
               <span
                 key={tag}
-                className="rounded-full border border-border px-2 py-0.5 text-[10px] font-medium text-muted-foreground"
+                className="max-w-full truncate rounded-full border border-border px-2 py-0.5 text-[10px] font-medium text-muted-foreground"
               >
                 {tag}
               </span>
@@ -298,10 +299,10 @@ function BookingDetailPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.35, ease: EASE_OUT }}
-              className="grid items-start gap-6 lg:grid-cols-[1fr_380px]"
+              className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,380px)]"
             >
               {/* ── Left column: guided steps ── */}
-              <div className="space-y-8">
+              <div className="min-w-0 space-y-8">
                 <section className="space-y-3">
                   <SectionHeading step="01" title="Select a date" />
                   <DateStrip
@@ -350,7 +351,7 @@ function BookingDetailPage() {
               </div>
 
               {/* ── Right column: sticky summary rail (desktop) ── */}
-              <div className="hidden lg:sticky lg:top-24 lg:block">
+              <div className="hidden min-w-0 lg:sticky lg:top-24 lg:block">
                 <BookingSummaryRail
                   clinician={clinician}
                   selections={selections}

@@ -30,13 +30,14 @@ export function ModeToggle({
           <RadioGroup.Item
             key={mode}
             value={mode}
-            className={`flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-2 py-2 text-xs font-semibold outline-none transition-all duration-200 ease-out focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 sm:px-4 sm:text-sm ${
+            className={`flex min-w-0 items-center justify-center gap-1 rounded-full px-1.5 py-2 text-xs font-semibold outline-none transition-all duration-200 ease-out focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 sm:gap-1.5 sm:px-4 sm:text-sm ${
               selected === mode
                 ? "bg-foreground text-background shadow-md"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <Icon className="h-3.5 w-3.5" /> {mode}
+            <Icon className="h-3.5 w-3.5 shrink-0" />
+            <span className="truncate">{mode}</span>
           </RadioGroup.Item>
         );
       })}

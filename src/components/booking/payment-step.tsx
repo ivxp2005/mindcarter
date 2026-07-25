@@ -58,7 +58,7 @@ export function PaymentStep({
           <GradientAvatar name={clinician.name} size="md" />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-bold">{clinician.name}</p>
-            <p className="text-xs text-muted-foreground">
+            <p className="break-anywhere text-xs text-muted-foreground">
               {formatLongDate(selections.date)} · {selections.time} · {kind.label} ·{" "}
               {selections.mode}
             </p>
@@ -72,7 +72,7 @@ export function PaymentStep({
             className="mt-2.5 flex items-center gap-1.5 text-xs text-muted-foreground"
             aria-live="polite"
           >
-            <Timer className="h-3.5 w-3.5" /> Slot held for{" "}
+            <Timer className="h-3.5 w-3.5 shrink-0" /> Slot held for{" "}
             <span className="font-bold tabular-nums" aria-hidden>
               {formatCountdown(holdMsLeft)}
             </span>
@@ -119,7 +119,7 @@ export function PaymentStep({
             className={inputCls}
           />
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 xs:grid-cols-2">
           <div className="space-y-1.5">
             <label htmlFor="pay-expiry" className={labelCls}>
               Expiry
@@ -165,8 +165,8 @@ export function PaymentStep({
         </button>
 
         <p className="flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
-          <Lock className="h-3 w-3" /> Demo checkout — no charge is made and card details are not
-          stored.
+          <Lock className="h-3 w-3 shrink-0" /> Demo checkout — no charge is made and card details
+          are not stored.
         </p>
       </form>
     </div>

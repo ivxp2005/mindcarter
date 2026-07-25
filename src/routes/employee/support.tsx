@@ -49,11 +49,13 @@ function SupportPage() {
 
   return (
     <div className="space-y-4">
-      <section className="rounded-2xl border border-border bg-foreground p-8 text-background">
-        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-background/60">
-          <LifeBuoy className="h-3.5 w-3.5" /> Support
+      <section className="rounded-2xl border border-border bg-foreground p-[clamp(1.5rem,5vw,2.5rem)] text-background">
+        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-background/60 sm:tracking-[0.24em]">
+          <LifeBuoy className="h-3.5 w-3.5 shrink-0" /> Support
         </p>
-        <h1 className="font-display mt-3 text-3xl font-black tracking-tight">Help &amp; Support</h1>
+        <h1 className="font-display mt-3 break-words text-[clamp(1.75rem,1.3rem+1.8vw,2.5rem)] font-black tracking-tight">
+          Help &amp; Support
+        </h1>
         <p className="mt-2 max-w-md text-sm text-background/60">
           Run into a problem or have feedback? File a ticket and our team will get back to you here.
         </p>
@@ -69,7 +71,7 @@ function SupportPage() {
               placeholder="What's this about?"
               className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none transition-colors focus:border-foreground"
             />
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {PRIORITIES.map((p) => (
                 <button
                   type="button"
@@ -102,8 +104,8 @@ function SupportPage() {
         </section>
       </ScrollReveal>
 
-      <div className="grid gap-4 lg:grid-cols-[340px_1fr]">
-        <StaggerContainer className="space-y-2" staggerDelay={0.05}>
+      <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
+        <StaggerContainer className="min-w-0 space-y-2" staggerDelay={0.05}>
           {tickets.map((t) => (
             <StaggerItem key={t.id}>
               <button
@@ -136,16 +138,16 @@ function SupportPage() {
         </StaggerContainer>
 
         {detail ? (
-          <section className="flex flex-col rounded-2xl border border-border bg-background">
+          <section className="flex min-w-0 flex-col rounded-2xl border border-border bg-background">
             <div className="flex items-center justify-between gap-4 border-b border-border p-5">
-              <div>
-                <h2 className="text-base font-black">{detail.subject}</h2>
+              <div className="min-w-0">
+                <h2 className="truncate text-base font-black">{detail.subject}</h2>
                 <p className="mt-1 text-xs text-muted-foreground">
                   Opened {new Date(detail.createdAt).toLocaleDateString()}
                 </p>
               </div>
               <span
-                className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${STATUS_COLOR[detail.status]}`}
+                className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold ${STATUS_COLOR[detail.status]}`}
               >
                 {STATUS_LABEL[detail.status]}
               </span>
@@ -154,11 +156,11 @@ function SupportPage() {
               {detail.messages.map((m) => (
                 <div key={m.id} className={`flex ${m.sender === "user" ? "justify-end" : ""}`}>
                   <div
-                    className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm ${
+                    className={`max-w-[75%] min-w-0 rounded-2xl px-4 py-3 text-sm ${
                       m.sender === "user" ? "bg-brand/10" : "bg-muted"
                     }`}
                   >
-                    <p>{m.text}</p>
+                    <p className="break-anywhere">{m.text}</p>
                     <p className="mt-1 text-[11px] text-muted-foreground">
                       {new Date(m.time).toLocaleString()}
                     </p>

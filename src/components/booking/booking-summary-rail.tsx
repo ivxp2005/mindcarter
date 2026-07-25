@@ -49,11 +49,11 @@ export function BookingSummaryRail({
 
   return (
     <div className="rounded-2xl border border-border bg-background p-6 shadow-sm">
-      <div className="flex items-center gap-3 border-b border-border pb-4">
+      <div className="flex min-w-0 items-center gap-3 border-b border-border pb-4">
         <GradientAvatar name={clinician.name} size="lg" />
         <div className="min-w-0">
           <p className="truncate font-bold">{clinician.name}</p>
-          <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+          <p className="truncate text-[11px] uppercase tracking-[0.14em] text-muted-foreground sm:tracking-[0.16em]">
             {clinician.title}
           </p>
         </div>
@@ -61,36 +61,38 @@ export function BookingSummaryRail({
 
       <dl className="mt-4 space-y-2.5 text-sm">
         <div className="flex items-start justify-between gap-3">
-          <dt className="flex items-center gap-1.5 text-muted-foreground">
-            <CalendarDays className="h-3.5 w-3.5" /> Date
+          <dt className="flex shrink-0 items-center gap-1.5 text-muted-foreground">
+            <CalendarDays className="h-3.5 w-3.5 shrink-0" /> Date
           </dt>
           <dd
-            className={`text-right font-semibold ${selections.date ? "" : "text-muted-foreground/60"}`}
+            className={`min-w-0 text-right font-semibold ${selections.date ? "" : "text-muted-foreground/60"}`}
           >
             {selections.date ? formatLongDate(selections.date) : "Not selected"}
           </dd>
         </div>
         <div className="flex items-center justify-between gap-3">
-          <dt className="flex items-center gap-1.5 text-muted-foreground">
-            <Clock className="h-3.5 w-3.5" /> Time
+          <dt className="flex shrink-0 items-center gap-1.5 text-muted-foreground">
+            <Clock className="h-3.5 w-3.5 shrink-0" /> Time
           </dt>
-          <dd className={`font-semibold ${selections.time ? "" : "text-muted-foreground/60"}`}>
+          <dd
+            className={`min-w-0 text-right font-semibold ${selections.time ? "" : "text-muted-foreground/60"}`}
+          >
             {selections.time ?? "Not selected"}
           </dd>
         </div>
         <div className="flex items-center justify-between gap-3">
-          <dt className="text-muted-foreground">Type</dt>
-          <dd className="font-semibold">
+          <dt className="shrink-0 text-muted-foreground">Type</dt>
+          <dd className="min-w-0 text-right font-semibold">
             {kind.label} · {kind.durationMin} min
           </dd>
         </div>
         <div className="flex items-center justify-between gap-3">
-          <dt className="text-muted-foreground">Mode</dt>
-          <dd className="font-semibold">{selections.mode}</dd>
+          <dt className="shrink-0 text-muted-foreground">Mode</dt>
+          <dd className="min-w-0 text-right font-semibold">{selections.mode}</dd>
         </div>
       </dl>
 
-      <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-4">
         <p className="text-sm text-muted-foreground">Session fee</p>
         <p className="text-xl font-black tracking-tight">
           {hasPrice ? formatINR(clinician.price) : "Confirmed at booking"}
@@ -125,10 +127,10 @@ export function BookingSummaryRail({
 
       <div className="mt-4 space-y-1.5 border-t border-border pt-4 text-xs text-muted-foreground">
         <p className="flex items-center gap-1.5">
-          <Lock className="h-3 w-3" /> Secure, confidential checkout
+          <Lock className="h-3 w-3 shrink-0" /> Secure, confidential checkout
         </p>
         <p className="flex items-center gap-1.5">
-          <ShieldCheck className="h-3 w-3" /> Reschedule or cancel anytime from Sessions
+          <ShieldCheck className="h-3 w-3 shrink-0" /> Reschedule or cancel anytime from Sessions
         </p>
       </div>
     </div>

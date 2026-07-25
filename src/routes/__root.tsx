@@ -149,7 +149,7 @@ function RootComponent() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-          className="min-h-screen max-w-full overflow-x-hidden"
+          className="min-h-screen max-w-full"
         >
           <Outlet />
         </motion.div>

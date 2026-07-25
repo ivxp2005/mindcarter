@@ -100,7 +100,7 @@ export function RescheduleSessionDialog() {
 
   return (
     <Dialog open={bookingOpen} onOpenChange={(o) => !o && closeBooking()}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
+      <DialogContent className="max-h-[90vh] max-w-[calc(100%-2rem)] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Reschedule session</DialogTitle>
           <DialogDescription>

@@ -220,7 +220,7 @@ export function WellnessShell({ children }: { children: ReactNode }) {
 
         {/* ── Sidebar (mobile drawer) */}
         <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
-          <SheetContent side="left" className="flex w-72 flex-col p-0">
+          <SheetContent side="left" className="flex w-[min(18rem,85vw)] flex-col p-0">
             <BrandHeader />
             <NavLinks idPrefix="mobile" onNavigate={() => setMobileNavOpen(false)} />
             <StreakPill />
@@ -229,9 +229,9 @@ export function WellnessShell({ children }: { children: ReactNode }) {
         </Sheet>
 
         {/* ── Main content */}
-        <div className="lg:pl-64">
+        <div className="min-w-0 lg:pl-64">
           {/* Top header */}
-          <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-border bg-background/85 px-6 backdrop-blur">
+          <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-border bg-background/85 px-4 backdrop-blur sm:px-6">
             <div className="flex min-w-0 items-center gap-3">
               <button
                 onClick={() => setMobileNavOpen(true)}
@@ -295,7 +295,9 @@ export function WellnessShell({ children }: { children: ReactNode }) {
             </div>
           </header>
 
-          <main className="mx-auto max-w-7xl px-6 py-10">{children}</main>
+          <main className="mx-auto min-w-0 max-w-7xl px-4 py-[clamp(1.5rem,4vw,2.5rem)] xs:px-5 sm:px-6">
+            {children}
+          </main>
         </div>
       </div>
     </MotionConfig>

@@ -132,7 +132,7 @@ function DateOfBirthField({
             <CalendarIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
           </button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent className="w-auto max-w-[calc(100vw-2rem)] p-0" align="start">
           <Calendar
             mode="single"
             selected={selected}
@@ -226,7 +226,7 @@ function ProfilePage() {
           animate={{ scale: [1, 1.18, 1], x: [0, 18, 0], y: [0, -12, 0] }}
           transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
         />
-        <div className="relative flex flex-col items-center gap-4 p-8 text-center sm:p-10">
+        <div className="relative flex flex-col items-center gap-4 p-[clamp(1.5rem,5vw,2.5rem)] text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -238,8 +238,8 @@ function ProfilePage() {
               className="ring-4 ring-background/10"
             />
           </motion.div>
-          <div>
-            <h1 className="font-display text-2xl font-black tracking-tight sm:text-3xl">
+          <div className="min-w-0 max-w-full">
+            <h1 className="font-display break-words text-2xl font-black tracking-tight sm:text-3xl">
               {needsOnboarding ? "Welcome — let's set up your profile" : name || "Your profile"}
             </h1>
             <p className="text-sm text-background/60">
@@ -255,9 +255,9 @@ function ProfilePage() {
       </section>
 
       <ScrollReveal>
-        <div className="grid gap-4 lg:grid-cols-[300px_1fr]">
+        <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,300px)_minmax(0,1fr)]">
           {/* Sidebar summary */}
-          <div className="space-y-4">
+          <div className="min-w-0 space-y-4">
             <section className="rounded-2xl border border-border bg-background p-6 transition-all duration-300 ease-out hover:border-brand/40 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]">
               <h2 className="text-sm font-semibold">Contact</h2>
               <div className="mt-4 space-y-2 text-sm text-muted-foreground">
@@ -281,8 +281,8 @@ function ProfilePage() {
                 <HeartHandshake className="h-3.5 w-3.5 text-brand" /> Emergency contact
               </h2>
               <div className="mt-4 space-y-2 text-sm text-muted-foreground">
-                <p className="font-medium text-foreground">{emergencyName}</p>
-                <p>{emergencyPhone}</p>
+                <p className="min-w-0 break-words font-medium text-foreground">{emergencyName}</p>
+                <p className="min-w-0 break-words">{emergencyPhone}</p>
               </div>
             </section>
 
@@ -342,7 +342,7 @@ function ProfilePage() {
                 navigate({ to: "/employee" });
               }
             }}
-            className="space-y-4"
+            className="min-w-0 space-y-4"
           >
             {attempted && hasErrors && (
               <div className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">

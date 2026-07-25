@@ -73,37 +73,37 @@ export function ConfirmationStep({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.35, ease: EASE_OUT }}
       >
-        <div className="flex items-center gap-3 border-b border-border pb-4">
+        <div className="flex min-w-0 items-center gap-3 border-b border-border pb-4">
           <GradientAvatar name={booking.clinicianName} size="lg" />
           <div className="min-w-0">
             <p className="truncate font-bold">{booking.clinicianName}</p>
-            <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+            <p className="truncate text-[11px] uppercase tracking-[0.14em] text-muted-foreground sm:tracking-[0.16em]">
               {booking.clinicianTitle}
             </p>
           </div>
         </div>
         <dl className="mt-4 space-y-2 text-sm">
-          <div className="flex justify-between gap-3">
-            <dt className="text-muted-foreground">Date</dt>
-            <dd className="text-right font-semibold">{formatLongDate(booking.date)}</dd>
+          <div className="flex flex-wrap justify-between gap-2">
+            <dt className="shrink-0 text-muted-foreground">Date</dt>
+            <dd className="min-w-0 text-right font-semibold">{formatLongDate(booking.date)}</dd>
           </div>
           <div className="flex justify-between gap-3">
-            <dt className="text-muted-foreground">Time</dt>
-            <dd className="font-semibold">{booking.time}</dd>
+            <dt className="shrink-0 text-muted-foreground">Time</dt>
+            <dd className="min-w-0 text-right font-semibold">{booking.time}</dd>
           </div>
           <div className="flex justify-between gap-3">
-            <dt className="text-muted-foreground">Type</dt>
-            <dd className="font-semibold">
+            <dt className="shrink-0 text-muted-foreground">Type</dt>
+            <dd className="min-w-0 text-right font-semibold">
               {booking.kind} · {booking.durationMin} min
             </dd>
           </div>
           <div className="flex justify-between gap-3">
-            <dt className="text-muted-foreground">Mode</dt>
-            <dd className="font-semibold">{booking.mode}</dd>
+            <dt className="shrink-0 text-muted-foreground">Mode</dt>
+            <dd className="min-w-0 text-right font-semibold">{booking.mode}</dd>
           </div>
-          <div className="flex justify-between gap-3 border-t border-border pt-2">
-            <dt className="text-muted-foreground">Amount paid</dt>
-            <dd className="font-black">
+          <div className="flex flex-wrap justify-between gap-2 border-t border-border pt-2">
+            <dt className="shrink-0 text-muted-foreground">Amount paid</dt>
+            <dd className="min-w-0 text-right font-black">
               {booking.amount > 0 ? formatINR(booking.amount) : "Confirmed at booking"}
             </dd>
           </div>

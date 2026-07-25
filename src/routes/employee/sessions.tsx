@@ -153,13 +153,13 @@ function SessionsPage() {
           transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        <div className="relative flex flex-col gap-8 p-8 sm:p-10 lg:flex-row lg:items-end lg:justify-between">
+        <div className="relative flex flex-col gap-8 p-[clamp(1.5rem,5vw,2.5rem)] lg:flex-row lg:items-end lg:justify-between">
           <div className="min-w-0">
-            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-background/60">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand" />
+            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-background/60 sm:tracking-[0.24em]">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
               Schedule
             </p>
-            <h1 className="font-display mt-3 overflow-hidden text-3xl font-black leading-[1.05] tracking-tight sm:text-4xl lg:text-5xl">
+            <h1 className="font-display mt-3 overflow-hidden break-words text-[clamp(1.75rem,1.1rem+2.6vw,3rem)] font-black leading-[1.05] tracking-tight">
               <motion.span
                 className="block"
                 initial={{ y: "110%" }}
@@ -245,17 +245,26 @@ function SessionsPage() {
       </ScrollReveal>
 
       {/* ─────────────────────── Table + calendar ─────────────────────── */}
-      <div className="grid min-w-0 gap-4 overflow-x-hidden lg:grid-cols-[1.3fr_1fr]">
+      <div className="grid min-w-0 gap-4 overflow-x-hidden lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         <ScrollReveal className="min-w-0 rounded-2xl border border-border bg-background p-6">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
             <TabsList className="grid w-full grid-cols-3 sm:inline-flex sm:w-auto">
-              <TabsTrigger value="upcoming" className="px-1.5 text-xs sm:px-3 sm:text-sm">
+              <TabsTrigger
+                value="upcoming"
+                className="min-w-0 truncate px-1 text-xs sm:px-3 sm:text-sm"
+              >
                 Upcoming ({upcoming.length})
               </TabsTrigger>
-              <TabsTrigger value="past" className="px-1.5 text-xs sm:px-3 sm:text-sm">
+              <TabsTrigger
+                value="past"
+                className="min-w-0 truncate px-1 text-xs sm:px-3 sm:text-sm"
+              >
                 Past ({past.length})
               </TabsTrigger>
-              <TabsTrigger value="canceled" className="px-1.5 text-xs sm:px-3 sm:text-sm">
+              <TabsTrigger
+                value="canceled"
+                className="min-w-0 truncate px-1 text-xs sm:px-3 sm:text-sm"
+              >
                 Canceled ({canceled.length})
               </TabsTrigger>
             </TabsList>
@@ -293,7 +302,7 @@ function SessionsPage() {
                           <TableCell className="text-muted-foreground">{s.kind}</TableCell>
                           <TableCell>
                             <span className="flex items-center gap-1.5 text-muted-foreground">
-                              <ModeIcon className="h-3.5 w-3.5" /> {s.mode}
+                              <ModeIcon className="h-3.5 w-3.5 shrink-0" /> {s.mode}
                             </span>
                           </TableCell>
                           <TableCell>{statusBadge(effectiveStatus(s))}</TableCell>
@@ -344,15 +353,15 @@ function SessionsPage() {
       </div>
 
       <Dialog open={!!detail} onOpenChange={(o) => !o && closeDialog()}>
-        <DialogContent>
+        <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-lg">
           {detail && (
             <>
               <DialogHeader>
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 items-center gap-3">
                   <GradientAvatar name={detail.psychologistName} size="lg" />
-                  <div>
-                    <DialogTitle>{detail.psychologistName}</DialogTitle>
-                    <DialogDescription>
+                  <div className="min-w-0">
+                    <DialogTitle className="break-words">{detail.psychologistName}</DialogTitle>
+                    <DialogDescription className="break-anywhere">
                       {detail.kind} · {detail.mode} · {formatDate(detail.date)} at {detail.time} (
                       {detail.durationMin} min)
                     </DialogDescription>
@@ -397,9 +406,9 @@ function SessionsPage() {
       </Dialog>
 
       <AlertDialog open={confirmCancel} onOpenChange={setConfirmCancel}>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-[calc(100%-2rem)] sm:max-w-lg">
           <AlertDialogHeader>
-            <AlertDialogTitle>
+            <AlertDialogTitle className="break-words">
               Cancel this session with {detail?.psychologistName}
               {detail ? ` on ${formatDate(detail.date)} at ${detail.time}` : ""}?
             </AlertDialogTitle>

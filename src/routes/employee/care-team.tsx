@@ -46,13 +46,13 @@ function CareTeamPage() {
           transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        <div className="relative flex flex-col gap-8 p-8 sm:p-10 lg:flex-row lg:items-end lg:justify-between">
+        <div className="relative flex flex-col gap-8 p-[clamp(1.5rem,5vw,2.5rem)] lg:flex-row lg:items-end lg:justify-between">
           <div className="min-w-0">
-            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-background/60">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand" />
+            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-background/60 sm:tracking-[0.24em]">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
               Your care team
             </p>
-            <h1 className="font-display mt-3 overflow-hidden text-3xl font-black leading-[1.05] tracking-tight sm:text-4xl lg:text-5xl">
+            <h1 className="font-display mt-3 overflow-hidden break-words text-[clamp(1.75rem,1.1rem+2.6vw,3rem)] font-black leading-[1.05] tracking-tight">
               <motion.span
                 className="block"
                 initial={{ y: "110%" }}
@@ -74,12 +74,12 @@ function CareTeamPage() {
           </div>
 
           <motion.div
-            className="flex gap-4"
+            className="flex flex-wrap gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.28, ease: EASE_OUT }}
           >
-            <div className="rounded-2xl border border-background/15 bg-background/10 px-6 py-4 text-center backdrop-blur-md">
+            <div className="min-w-0 rounded-2xl border border-background/15 bg-background/10 px-6 py-4 text-center backdrop-blur-md">
               <p className="text-2xl font-black tracking-tight">
                 <CountUp value={careTeam.length} />
               </p>
@@ -87,7 +87,7 @@ function CareTeamPage() {
                 Clinicians
               </p>
             </div>
-            <div className="rounded-2xl border border-background/15 bg-background/10 px-6 py-4 text-center backdrop-blur-md">
+            <div className="min-w-0 rounded-2xl border border-background/15 bg-background/10 px-6 py-4 text-center backdrop-blur-md">
               <p className="text-2xl font-black tracking-tight">
                 <CountUp value={totalSessions} />
               </p>
@@ -99,7 +99,10 @@ function CareTeamPage() {
         </div>
       </section>
 
-      <StaggerContainer className="grid gap-4 lg:grid-cols-2" staggerDelay={0.08}>
+      <StaggerContainer
+        className="grid grid-cols-[repeat(auto-fit,minmax(min(280px,100%),1fr))] gap-4"
+        staggerDelay={0.08}
+      >
         {careTeam.map((member) => {
           const history = sessions.filter((s) => s.psychologistId === member.id);
           return (
@@ -120,13 +123,15 @@ function CareTeamPage() {
                   )}
                 </div>
 
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{member.bio}</p>
+                <p className="break-anywhere mt-4 text-sm leading-relaxed text-muted-foreground">
+                  {member.bio}
+                </p>
 
                 <div className="mt-4 flex flex-wrap gap-1.5">
                   {member.specialties.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground transition-colors group-hover:border-brand/30"
+                      className="max-w-full truncate rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground transition-colors group-hover:border-brand/30"
                     >
                       {tag}
                     </span>
@@ -134,7 +139,7 @@ function CareTeamPage() {
                 </div>
 
                 <div className="mt-5 grid grid-cols-3 gap-2 border-y border-border py-4 text-center">
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-base font-bold text-foreground">
                       <CountUp value={member.sessionCount} />
                     </p>
@@ -142,17 +147,17 @@ function CareTeamPage() {
                       Sessions
                     </p>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <p className="flex items-center justify-center gap-1 text-base font-bold text-foreground">
-                      <Star className="h-3.5 w-3.5 fill-brand text-brand" />{" "}
+                      <Star className="h-3.5 w-3.5 shrink-0 fill-brand text-brand" />{" "}
                       <CountUp value={member.rating} decimals={1} />
                     </p>
                     <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">
                       Rating
                     </p>
                   </div>
-                  <div>
-                    <p className="text-base font-bold text-foreground">
+                  <div className="min-w-0">
+                    <p className="truncate text-base font-bold text-foreground">
                       {member.nextSession ? formatDate(member.nextSession) : "—"}
                     </p>
                     <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">
@@ -166,12 +171,16 @@ function CareTeamPage() {
                     <Mail className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                     <span className="min-w-0 break-words">{member.email}</span>
                   </p>
-                  <p className="flex items-center gap-2">
-                    <Phone className="h-3.5 w-3.5 shrink-0" /> {member.phone}
+                  <p className="flex items-start gap-2">
+                    <Phone className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                    <span className="min-w-0 break-words">{member.phone}</span>
                   </p>
                   {history.length > 0 && (
-                    <p className="flex items-center gap-2">
-                      <CalendarClock className="h-3.5 w-3.5" /> {history.length} sessions on record
+                    <p className="flex items-start gap-2">
+                      <CalendarClock className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                      <span className="min-w-0 break-words">
+                        {history.length} sessions on record
+                      </span>
                     </p>
                   )}
                 </div>

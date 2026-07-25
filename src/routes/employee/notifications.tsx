@@ -58,10 +58,10 @@ function NotificationsPage() {
           transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        <div className="relative flex flex-col gap-8 p-8 sm:p-10 lg:flex-row lg:items-end lg:justify-between">
+        <div className="relative flex flex-col gap-8 p-[clamp(1.5rem,5vw,2.5rem)] lg:flex-row lg:items-end lg:justify-between">
           <div className="min-w-0">
-            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-background/60">
-              <span className="relative flex h-1.5 w-1.5">
+            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-background/60 sm:tracking-[0.24em]">
+              <span className="relative flex h-1.5 w-1.5 shrink-0">
                 {unreadCount > 0 && (
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75 motion-reduce:animate-none" />
                 )}
@@ -69,7 +69,7 @@ function NotificationsPage() {
               </span>
               Inbox · {unreadCount} unread
             </p>
-            <h1 className="font-display mt-3 overflow-hidden text-3xl font-black leading-[1.05] tracking-tight sm:text-4xl lg:text-5xl">
+            <h1 className="font-display mt-3 overflow-hidden break-words text-[clamp(1.75rem,1.1rem+2.6vw,3rem)] font-black leading-[1.05] tracking-tight">
               <motion.span
                 className="block"
                 initial={{ y: "110%" }}
@@ -85,12 +85,12 @@ function NotificationsPage() {
           </div>
 
           <motion.div
-            className="flex items-center gap-4"
+            className="flex flex-wrap items-center gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.28, ease: EASE_OUT }}
           >
-            <div className="rounded-2xl border border-background/15 bg-background/10 px-6 py-4 text-center backdrop-blur-md">
+            <div className="min-w-0 rounded-2xl border border-background/15 bg-background/10 px-6 py-4 text-center backdrop-blur-md">
               <p className="text-2xl font-black tracking-tight">
                 <CountUp value={unreadCount} />
               </p>
@@ -101,9 +101,9 @@ function NotificationsPage() {
             <button
               onClick={handleMarkAllRead}
               disabled={unreadCount === 0}
-              className="flex items-center gap-2 rounded-full bg-brand px-4 py-2.5 text-sm font-semibold text-brand-foreground transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+              className="flex shrink-0 items-center gap-2 rounded-full bg-brand px-4 py-2.5 text-sm font-semibold text-brand-foreground transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none"
             >
-              <CheckCheck className="h-4 w-4" /> Mark all as read
+              <CheckCheck className="h-4 w-4 shrink-0" /> Mark all as read
             </button>
           </motion.div>
         </div>
@@ -129,13 +129,13 @@ function NotificationsPage() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
                       <p
-                        className={`text-sm ${n.read ? "font-medium text-foreground" : "font-bold text-foreground"}`}
+                        className={`min-w-0 truncate text-sm ${n.read ? "font-medium text-foreground" : "font-bold text-foreground"}`}
                       >
                         {n.title}
                       </p>
                       <span className="shrink-0 text-[11px] text-muted-foreground">{n.time}</span>
                     </div>
-                    <p className="mt-0.5 text-sm text-muted-foreground">{n.body}</p>
+                    <p className="break-anywhere mt-0.5 text-sm text-muted-foreground">{n.body}</p>
                   </div>
                   {!n.read && (
                     <span className="absolute right-3 top-3 h-2 w-2 shrink-0 rounded-full bg-brand" />

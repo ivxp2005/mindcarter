@@ -100,15 +100,15 @@ function EmployeeDashboard() {
           transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        <div className="relative flex flex-col gap-8 p-8 sm:p-10 lg:flex-row lg:items-end lg:justify-between">
+        <div className="relative flex flex-col gap-8 p-[clamp(1.5rem,5vw,2.5rem)] lg:flex-row lg:items-end lg:justify-between">
           <div className="min-w-0">
-            <div className="flex items-center gap-3">
-              <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-background/60">
+            <div className="flex flex-wrap items-center gap-3">
+              <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-background/60 sm:tracking-[0.24em]">
                 <motion.span
                   animate={{ scale: [1, 1.25, 1], opacity: [0.7, 1, 0.7] }}
                   transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  <Sparkles className="h-3.5 w-3.5 text-brand" />
+                  <Sparkles className="h-3.5 w-3.5 shrink-0 text-brand" />
                 </motion.span>
                 Your wellness space
               </p>
@@ -117,7 +117,7 @@ function EmployeeDashboard() {
               </span>
             </div>
 
-            <h1 className="font-display mt-3 max-w-lg overflow-hidden text-3xl font-black leading-[1.05] tracking-tight sm:text-4xl lg:text-5xl">
+            <h1 className="font-display mt-3 max-w-lg overflow-hidden break-words text-[clamp(1.75rem,1.1rem+2.6vw,3rem)] font-black leading-[1.05] tracking-tight">
               <motion.span
                 className="block"
                 initial={{ y: "110%" }}
@@ -336,9 +336,9 @@ function EmployeeDashboard() {
       </ScrollReveal>
 
       {/* ─────────────────────────── Lower panels ─────────────────────────── */}
-      <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         {/* Upcoming sessions timeline */}
-        <ScrollReveal className="rounded-2xl border border-border bg-background p-6">
+        <ScrollReveal className="min-w-0 rounded-2xl border border-border bg-background p-6">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Upcoming sessions</h2>
             <Link
@@ -408,7 +408,7 @@ function EmployeeDashboard() {
         </ScrollReveal>
 
         {/* Recent journal entries */}
-        <ScrollReveal className="rounded-2xl border border-border bg-background p-6">
+        <ScrollReveal className="min-w-0 rounded-2xl border border-border bg-background p-6">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Recent journal entries</h2>
             <Link

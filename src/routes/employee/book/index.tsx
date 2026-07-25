@@ -104,12 +104,12 @@ function BookListingPage() {
           transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        <div className="relative p-8 sm:p-10">
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-background/60">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand" />
+        <div className="relative p-[clamp(1.5rem,5vw,2.5rem)]">
+          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-background/60 sm:tracking-[0.24em]">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
             Book a session
           </p>
-          <h1 className="font-display mt-3 max-w-xl overflow-hidden text-3xl font-black leading-[1.05] tracking-tight sm:text-4xl lg:text-5xl">
+          <h1 className="font-display mt-3 max-w-xl overflow-hidden break-words text-[clamp(1.75rem,1.1rem+2.6vw,3rem)] font-black leading-[1.05] tracking-tight">
             <motion.span
               className="block"
               initial={{ y: "110%" }}
@@ -136,7 +136,7 @@ function BookListingPage() {
           >
             {TRUST_SIGNALS.map(({ icon: Icon, label }) => (
               <span key={label} className="flex items-center gap-2 text-xs text-background/70">
-                <Icon className="h-3.5 w-3.5 text-brand" /> {label}
+                <Icon className="h-3.5 w-3.5 shrink-0 text-brand" /> {label}
               </span>
             ))}
           </motion.div>
@@ -196,7 +196,7 @@ function BookListingPage() {
 
       {/* ─────────────────────────── Clinician grid ─────────────────────── */}
       {isLoading && clinicians.length === 0 ? (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(280px,100%),1fr))] gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
@@ -211,7 +211,10 @@ function BookListingPage() {
           </p>
         </section>
       ) : (
-        <StaggerContainer className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" staggerDelay={0.08}>
+        <StaggerContainer
+          className="grid grid-cols-[repeat(auto-fit,minmax(min(280px,100%),1fr))] gap-4"
+          staggerDelay={0.08}
+        >
           {filtered.map((member) => {
             const idx = clinicians.indexOf(member);
             const n = nextAvailable[idx];

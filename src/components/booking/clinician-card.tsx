@@ -23,11 +23,11 @@ export function ClinicianCard({
   return (
     <article className="group flex h-full flex-col rounded-2xl border border-border bg-background p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]">
       <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-4">
+        <div className="flex min-w-0 items-center gap-4">
           <GradientAvatar name={member.name} size="xl" />
           <div className="min-w-0">
-            <h3 className="text-lg font-bold leading-tight">{member.name}</h3>
-            <p className="mt-0.5 text-[11px] uppercase leading-snug tracking-[0.16em] text-muted-foreground">
+            <h3 className="break-words text-lg font-bold leading-tight">{member.name}</h3>
+            <p className="mt-0.5 break-words text-[11px] uppercase leading-snug tracking-[0.14em] text-muted-foreground sm:tracking-[0.16em]">
               {member.title}
             </p>
           </div>
@@ -62,18 +62,21 @@ export function ClinicianCard({
         )}
       </div>
 
-      <div className="mt-5 flex items-center justify-between gap-2 border-y border-border py-3.5">
-        <div>
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-y border-border py-3.5">
+        <div className="min-w-0">
           <p className="text-[9px] uppercase tracking-wide text-muted-foreground">Per session</p>
-          <p className="text-base font-bold text-foreground">
+          <p className="break-words text-base font-bold text-foreground">
             {member.price > 0 ? formatINR(member.price) : "Fee confirmed at booking"}
           </p>
         </div>
         {nextAvailableLoading ? (
-          <span className="h-6 w-32 animate-pulse rounded-full bg-muted" aria-hidden />
+          <span
+            className="h-6 w-32 shrink-0 animate-pulse rounded-full bg-muted"
+            aria-hidden
+          />
         ) : (
           <span
-            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+            className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
               nextAvailable ? "bg-emerald-50 text-emerald-700" : "bg-muted text-muted-foreground"
             }`}
           >
