@@ -6,7 +6,6 @@ import { Home, LogOut, ChevronDown, Menu } from "lucide-react";
 import { Sheet, SheetContent } from "./ui/sheet";
 import { logoutFn } from "../lib/auth.server";
 import { useSession } from "../lib/use-session";
-import { PortalPageTransition } from "./portal-page-transition";
 
 type NavItem = { label: string; to?: string; exact?: boolean };
 
@@ -203,9 +202,7 @@ export function PortalShell({
           </div>
         </header>
 
-        <main className="mx-auto max-w-7xl px-6 py-10">
-          <PortalPageTransition>{children}</PortalPageTransition>
-        </main>
+        <main className="mx-auto max-w-7xl px-6 py-10">{children}</main>
       </div>
     </div>
   );

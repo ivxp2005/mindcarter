@@ -13,7 +13,6 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import appCss from "../styles.css?url";
 import { Toaster } from "../components/ui/sonner";
-import { RouteProgress } from "../components/route-progress";
 
 // After a redeploy, an already-open tab can hold an old bundle whose route
 // chunks (hashed filenames) no longer exist on the server. Reload once to
@@ -137,28 +136,19 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-/** Sub-trees that own a persistent shell + their own inner page transition. */
-const PERSISTENT_SECTIONS = ["/employee", "/psychologist"];
-
-function transitionKey(pathname: string) {
-  return (
-    PERSISTENT_SECTIONS.find((s) => pathname === s || pathname.startsWith(s + "/")) ?? pathname
-  );
-}
-
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const location = useRouterState({ select: (s) => s.location });
 
   return (
     <QueryClientProvider client={queryClient}>
-      <RouteProgress />
       <AnimatePresence mode="wait">
         <motion.div
-          key={transitionKey(location.pathname)}
+          key={location.pathname}
           initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } }}
-          exit={{ opacity: 0, y: -10, transition: { duration: 0.15, ease: "easeIn" } }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
           className="min-h-screen max-w-full"
         >
           <Outlet />
