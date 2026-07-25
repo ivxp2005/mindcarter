@@ -13,8 +13,7 @@ interface EdgeAutoScrollOptions {
  * Scrolls a horizontal container while the mouse hovers near its left/right
  * edge — the deeper into the edge zone, the faster it glides — and stops on
  * its own at either end. Lets a scrollbar-less strip be navigated with a plain
- * mouse. Touch/pen pointers are ignored (native swipe already works) and the
- * glide is skipped under prefers-reduced-motion.
+ * mouse. Touch/pen pointers are ignored (native swipe already works).
  */
 export function useEdgeAutoScroll<T extends HTMLElement>({
   zone = 88,
@@ -83,7 +82,6 @@ export function useEdgeAutoScroll<T extends HTMLElement>({
       if (e.pointerType !== "mouse") return;
       const el = ref.current;
       if (!el) return;
-      if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
       if (el.scrollWidth <= el.clientWidth) return;
 
       const rect = el.getBoundingClientRect();
