@@ -43,6 +43,12 @@ import {
 
 const QUERY_KEY = ["patient-portal"] as const;
 const TICKETS_QUERY_KEY = ["patient-support-tickets"] as const;
+/**
+ * Onboarding gate, cached so the `/employee` route guard doesn't re-fetch it on
+ * every navigation. Exported because that guard must read the same key, and
+ * because completing a profile has to bust it — see `profileMut` below.
+ */
+export const ONBOARDING_QUERY_KEY = ["onboarding-status"] as const;
 
 export type { CareTeamMemberDTO, PatientProfileDTO, TicketDTO };
 export type EnrichedCareMember = CareTeamMemberDTO & {
@@ -232,7 +238,16 @@ export function PatientDataProvider({ children }: { children: ReactNode }) {
   const checkInMut = useMutation({ mutationFn: checkInMoodFn, onSuccess: invalidate });
   const markReadMut = useMutation({ mutationFn: markNotificationReadFn, onSuccess: invalidate });
   const markAllMut = useMutation({ mutationFn: () => markAllReadFn(), onSuccess: invalidate });
-  const profileMut = useMutation({ mutationFn: updateProfileFn, onSuccess: invalidate });
+  // Saving a profile is what flips `onboardingComplete`, so the route guard's
+  // cached copy has to go with it — otherwise a user who just finished
+  // onboarding keeps getting redirected back to /employee/profile.
+  const profileMut = useMutation({
+    mutationFn: updateProfileFn,
+    onSuccess: () => {
+      invalidate();
+      queryClient.invalidateQueries({ queryKey: ONBOARDING_QUERY_KEY });
+    },
+  });
   const submitTicketMut = useMutation({ mutationFn: submitTicketFn, onSuccess: invalidateTickets });
   const replyTicketMut = useMutation({ mutationFn: replyToTicketFn, onSuccess: invalidateTickets });
 
