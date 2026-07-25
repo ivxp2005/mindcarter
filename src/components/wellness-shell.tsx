@@ -23,6 +23,7 @@ import { Sheet, SheetContent } from "./ui/sheet";
 import { logoutFn } from "../lib/auth.server";
 import { useSession } from "../lib/use-session";
 import { usePatientData } from "../lib/patient-store";
+import { PortalPageTransition } from "./portal-page-transition";
 
 type NavItem = { label: string; to: string; exact?: boolean; icon: React.ElementType };
 
@@ -296,7 +297,7 @@ export function WellnessShell({ children }: { children: ReactNode }) {
           </header>
 
           <main className="mx-auto min-w-0 max-w-7xl px-4 py-[clamp(1.5rem,4vw,2.5rem)] xs:px-5 sm:px-6">
-            {children}
+            <PortalPageTransition>{children}</PortalPageTransition>
           </main>
         </div>
       </div>
