@@ -19,6 +19,7 @@ import { useSession } from "../../lib/use-session";
 import { usePatientData } from "../../lib/patient-store";
 import { MOOD_EMOJI, MOOD_LABEL, todayISO, type Mood } from "../../lib/patient";
 import { useMoodCheckIn } from "../../lib/use-mood-checkin";
+import { PortalHeroBg } from "../../components/portal-hero-bg";
 
 export const Route = createFileRoute("/employee/")({
   component: EmployeeDashboard,
@@ -82,16 +83,7 @@ function EmployeeDashboard() {
     <div className="space-y-4">
       {/* ─────────────────────────── Hero band ─────────────────────────── */}
       <section className="relative overflow-hidden rounded-3xl bg-foreground text-background">
-        {/* Fine grid texture */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.06]"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        />
+        <PortalHeroBg />
         {/* Drifting gold glow */}
         <motion.div
           aria-hidden

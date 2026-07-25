@@ -8,6 +8,7 @@ import { ClinicianCard } from "../../../components/booking/clinician-card";
 import { usePatientData } from "../../../lib/patient-store";
 import { getClinicianBookedSlotsFn } from "../../../lib/patient-data.server";
 import { deriveNextAvailable } from "../../../lib/booking-flow";
+import { PortalHeroBg } from "../../../components/portal-hero-bg";
 
 export const Route = createFileRoute("/employee/book/")({
   component: BookListingPage,
@@ -88,15 +89,7 @@ function BookListingPage() {
     <div className="space-y-6">
       {/* ─────────────────────────── Hero band ─────────────────────────── */}
       <section className="relative overflow-hidden rounded-3xl bg-foreground text-background">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.06]"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        />
+        <PortalHeroBg />
         <motion.div
           aria-hidden
           className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-brand/25 blur-3xl"
