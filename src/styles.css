@@ -201,27 +201,14 @@
   }
 
   /* Landing page only: the default light OS scrollbar clashes with the
-     full-bleed dark hero photo — theme it dark/gold instead of hiding it. */
+     full-bleed dark hero photo — theme it dark/gold instead of hiding it.
+     Standard scrollbar-color/scrollbar-width only — do NOT also add
+     ::-webkit-scrollbar-* pseudo-element rules here. Modern Chromium
+     supports both APIs, and having both active on the same element paints
+     the legacy webkit scrollbar AND reserves/renders the standard one,
+     which looks like two stacked scrollbars at the right edge. */
   html.mc-dark-scrollbar {
     scrollbar-color: #f4c430 #111111;
     scrollbar-width: thin;
-  }
-
-  html.mc-dark-scrollbar::-webkit-scrollbar {
-    width: 10px;
-  }
-
-  html.mc-dark-scrollbar::-webkit-scrollbar-track {
-    background: #111111;
-  }
-
-  html.mc-dark-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #f4c430;
-    border-radius: 999px;
-    border: 2px solid #111111;
-  }
-
-  html.mc-dark-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: #ffd966;
   }
 }
