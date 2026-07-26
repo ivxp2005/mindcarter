@@ -35,6 +35,13 @@ export const Route = createFileRoute("/")({
 const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 
 function Index() {
+  // Hide the browser scrollbar on the landing page only — the full-bleed
+  // hero photo makes the default track/thumb stand out against it.
+  useEffect(() => {
+    document.documentElement.classList.add("mc-hide-scrollbar");
+    return () => document.documentElement.classList.remove("mc-hide-scrollbar");
+  }, []);
+
   return (
     <MotionConfig reducedMotion="user">
       <SiteShell>

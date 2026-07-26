@@ -192,4 +192,15 @@
     word-break: break-word;
     hyphens: auto;
   }
+
+  /* Landing page only: keep the page scrollable but hide the visible
+     scrollbar track/thumb (full-bleed hero photo makes it stand out). */
+  html.mc-hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  html.mc-hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
