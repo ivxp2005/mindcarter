@@ -8,6 +8,7 @@ import { ScrollReveal, StaggerContainer, StaggerItem } from "../../components/sc
 import { Badge } from "../../components/ui/badge";
 import { usePatientData } from "../../lib/patient-store";
 import { todayISO } from "../../lib/patient";
+import { PortalHeroBg } from "../../components/portal-hero-bg";
 
 export const Route = createFileRoute("/employee/care-team")({
   component: CareTeamPage,
@@ -30,15 +31,7 @@ function CareTeamPage() {
     <div className="space-y-4">
       {/* ─────────────────────────── Hero band ─────────────────────────── */}
       <section className="relative overflow-hidden rounded-3xl bg-foreground text-background">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.06]"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        />
+        <PortalHeroBg />
         <motion.div
           aria-hidden
           className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-brand/25 blur-3xl"

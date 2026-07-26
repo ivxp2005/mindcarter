@@ -15,6 +15,7 @@ import { CountUp } from "../../components/count-up";
 import { usePatientData } from "../../lib/patient-store";
 import { MOOD_EMOJI, MOOD_LABEL, todayISO, type Mood } from "../../lib/patient";
 import { useMoodCheckIn } from "../../lib/use-mood-checkin";
+import { PortalHeroBg } from "../../components/portal-hero-bg";
 
 export const Route = createFileRoute("/employee/journal")({
   validateSearch: (search: Record<string, unknown>): { open?: string } => ({
@@ -86,15 +87,7 @@ function JournalPage() {
     <div className="space-y-4">
       {/* ─────────────────── Hero band + mood check-in ─────────────────── */}
       <section className="relative overflow-hidden rounded-3xl bg-foreground text-background">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.06]"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        />
+        <PortalHeroBg />
         <motion.div
           aria-hidden
           className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand/25 blur-3xl"

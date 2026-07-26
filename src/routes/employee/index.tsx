@@ -19,6 +19,7 @@ import { useSession } from "../../lib/use-session";
 import { usePatientData } from "../../lib/patient-store";
 import { MOOD_EMOJI, MOOD_LABEL, todayISO, type Mood } from "../../lib/patient";
 import { useMoodCheckIn } from "../../lib/use-mood-checkin";
+import { PortalHeroBg } from "../../components/portal-hero-bg";
 
 export const Route = createFileRoute("/employee/")({
   component: EmployeeDashboard,
@@ -78,20 +79,57 @@ function EmployeeDashboard() {
   // the 10s edit window from the first click this session is still open.
   const showMoodCheckIn = !isLockedIn;
 
+  // The four headline metrics, described as data so every tile renders through
+  // one layout. `context` is always derived from real state — no invented
+  // trend percentages.
+  const statTiles = [
+    {
+      label: "Next session",
+      to: "/employee/sessions",
+      icon: CalendarHeart,
+      chip: "bg-brand text-brand-foreground",
+      value: nextSession ? formatDate(nextSession.date) : "None booked",
+      context: nextSession
+        ? `${nextSession.psychologistName} · ${nextSession.time}`
+        : "Book when you're ready",
+    },
+    {
+      label: "Wellness streak",
+      to: "/employee/journal",
+      icon: Flame,
+      chip: "bg-foreground text-background",
+      pulse: true,
+      value: (
+        <>
+          <CountUp value={stats.streakDays} /> days
+        </>
+      ),
+      context: stats.streakDays > 0 ? "Keep it going" : "Check in to start one",
+    },
+    {
+      label: "Journal entries",
+      to: "/employee/journal",
+      icon: NotebookPen,
+      chip: "bg-foreground text-background",
+      value: <CountUp value={stats.entriesThisMonth} />,
+      context: "This month",
+      spark: true,
+    },
+    {
+      label: "Notifications",
+      to: "/employee/notifications",
+      icon: Bell,
+      chip: "bg-foreground text-background",
+      value: <CountUp value={unreadNotifications} />,
+      context: unreadNotifications > 0 ? "Tap to review" : "You're all caught up",
+    },
+  ];
+
   return (
     <div className="space-y-4">
       {/* ─────────────────────────── Hero band ─────────────────────────── */}
       <section className="relative overflow-hidden rounded-3xl bg-foreground text-background">
-        {/* Fine grid texture */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.06]"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        />
+        <PortalHeroBg />
         {/* Drifting gold glow */}
         <motion.div
           aria-hidden
@@ -234,104 +272,71 @@ function EmployeeDashboard() {
 
       {/* ─────────────────────────── KPI tiles ─────────────────────────── */}
       <ScrollReveal>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Next session (wide) + sparkline */}
-          <Link
-            to="/employee/sessions"
-            className="group relative overflow-hidden rounded-2xl border border-border bg-background p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)] lg:col-span-2"
-          >
-            <div className="flex items-start justify-between">
-              <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand text-brand-foreground transition-transform duration-300 ease-out group-hover:scale-105 group-hover:-rotate-3">
-                <CalendarHeart className="h-4 w-4" />
-              </span>
-              <ArrowUpRight className="h-4 w-4 translate-y-1 text-muted-foreground opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100" />
-            </div>
-            <div className="mt-6 flex items-end justify-between gap-3">
-              <div className="min-w-0">
-                <p className="truncate text-2xl font-black tracking-tight sm:text-3xl">
-                  {nextSession ? formatDate(nextSession.date) : "None booked"}
-                </p>
-                <p className="mt-1 text-sm text-muted-foreground">Next session</p>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {statTiles.map((tile) => (
+            <Link
+              key={tile.label}
+              to={tile.to}
+              className="group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border border-border bg-background p-5 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]"
+            >
+              <div className="flex items-start justify-between gap-2">
+                {tile.pulse ? (
+                  <motion.span
+                    className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${tile.chip}`}
+                    animate={{ scale: [1, 1.12, 1], rotate: [0, -6, 6, 0] }}
+                    transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <tile.icon className="h-4 w-4" />
+                  </motion.span>
+                ) : (
+                  <span
+                    className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl transition-transform duration-300 ease-out group-hover:scale-105 group-hover:-rotate-3 ${tile.chip}`}
+                  >
+                    <tile.icon className="h-4 w-4" />
+                  </span>
+                )}
+                <ArrowUpRight className="h-4 w-4 shrink-0 translate-y-1 text-muted-foreground opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100" />
               </div>
-              <div className="h-14 w-16 shrink-0 sm:w-28">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={moodTrend}>
-                    <defs>
-                      <linearGradient id="dashMoodSpark" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="var(--brand)" stopOpacity={0.4} />
-                        <stop offset="95%" stopColor="var(--brand)" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <YAxis domain={[1, 5]} hide />
-                    <Area
-                      dataKey="mood"
-                      type="monotone"
-                      stroke="var(--brand)"
-                      strokeWidth={2}
-                      fill="url(#dashMoodSpark)"
-                      isAnimationActive
-                      animationDuration={1400}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          </Link>
 
-          {/* Wellness streak */}
-          <Link
-            to="/employee/journal"
-            className="group rounded-2xl border border-border bg-background p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]"
-          >
-            <div className="flex items-start justify-between">
-              <motion.span
-                className="grid h-10 w-10 place-items-center rounded-xl bg-foreground text-background"
-                animate={{ scale: [1, 1.12, 1], rotate: [0, -6, 6, 0] }}
-                transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <Flame className="h-4 w-4" />
-              </motion.span>
-              <ArrowUpRight className="h-4 w-4 translate-y-1 text-muted-foreground opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100" />
-            </div>
-            <p className="mt-6 text-3xl font-black tracking-tight">
-              <CountUp value={stats.streakDays} /> days
-            </p>
-            <p className="mt-1 text-sm text-muted-foreground">Wellness streak</p>
-          </Link>
+              <p className="mt-4 truncate text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                {tile.label}
+              </p>
+              <p className="mt-1 truncate text-2xl font-black tracking-tight sm:text-3xl">
+                {tile.value}
+              </p>
+              <p className="mt-1 truncate text-xs text-muted-foreground">{tile.context}</p>
 
-          {/* Journal entries this month */}
-          <Link
-            to="/employee/journal"
-            className="group rounded-2xl border border-border bg-background p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]"
-          >
-            <div className="flex items-start justify-between">
-              <span className="grid h-10 w-10 place-items-center rounded-xl bg-foreground text-background transition-transform duration-300 ease-out group-hover:scale-105 group-hover:-rotate-3">
-                <NotebookPen className="h-4 w-4" />
-              </span>
-              <ArrowUpRight className="h-4 w-4 translate-y-1 text-muted-foreground opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100" />
-            </div>
-            <p className="mt-6 text-3xl font-black tracking-tight">
-              <CountUp value={stats.entriesThisMonth} />
-            </p>
-            <p className="mt-1 text-sm text-muted-foreground">Journal entries this month</p>
-          </Link>
-
-          {/* Notifications */}
-          <Link
-            to="/employee/notifications"
-            className="group rounded-2xl border border-border bg-background p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]"
-          >
-            <div className="flex items-start justify-between">
-              <span className="grid h-10 w-10 place-items-center rounded-xl bg-foreground text-background transition-transform duration-300 ease-out group-hover:scale-105 group-hover:-rotate-3">
-                <Bell className="h-4 w-4" />
-              </span>
-              <ArrowUpRight className="h-4 w-4 translate-y-1 text-muted-foreground opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100" />
-            </div>
-            <p className="mt-6 text-3xl font-black tracking-tight">
-              <CountUp value={unreadNotifications} />
-            </p>
-            <p className="mt-1 text-sm text-muted-foreground">Unread notifications</p>
-          </Link>
+              {tile.spark && (
+                <div className="mt-auto pt-4">
+                  <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/70">
+                    Mood · 8 wks
+                  </p>
+                  <div className="mt-1 h-10 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={moodTrend} margin={{ top: 2, right: 0, bottom: 0, left: 0 }}>
+                        <defs>
+                          <linearGradient id="dashMoodSpark" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="var(--brand)" stopOpacity={0.4} />
+                            <stop offset="95%" stopColor="var(--brand)" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <YAxis domain={[1, 5]} hide />
+                        <Area
+                          dataKey="mood"
+                          type="monotone"
+                          stroke="var(--brand)"
+                          strokeWidth={2}
+                          fill="url(#dashMoodSpark)"
+                          isAnimationActive
+                          animationDuration={1400}
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              )}
+            </Link>
+          ))}
         </div>
       </ScrollReveal>
 
@@ -339,13 +344,19 @@ function EmployeeDashboard() {
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         {/* Upcoming sessions timeline */}
         <ScrollReveal className="min-w-0 rounded-2xl border border-border bg-background p-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Upcoming sessions</h2>
+          <div className="flex items-center justify-between gap-3 border-b border-border pb-4">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand/15 text-brand">
+                <CalendarHeart className="h-4 w-4" />
+              </span>
+              <h2 className="truncate text-base font-bold tracking-tight">Upcoming sessions</h2>
+            </div>
             <Link
               to="/employee/sessions"
-              className="text-xs font-semibold text-muted-foreground transition hover:text-foreground"
+              className="group flex shrink-0 items-center gap-1 rounded-full border border-border px-3 py-1.5 text-[11px] font-semibold text-muted-foreground transition-all duration-200 ease-out hover:border-brand/40 hover:text-foreground"
             >
               View all
+              <ArrowUpRight className="h-3 w-3 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
           </div>
           <div className="relative mt-6 space-y-6">
@@ -409,13 +420,19 @@ function EmployeeDashboard() {
 
         {/* Recent journal entries */}
         <ScrollReveal className="min-w-0 rounded-2xl border border-border bg-background p-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Recent journal entries</h2>
+          <div className="flex items-center justify-between gap-3 border-b border-border pb-4">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand/15 text-brand">
+                <NotebookPen className="h-4 w-4" />
+              </span>
+              <h2 className="truncate text-base font-bold tracking-tight">Recent entries</h2>
+            </div>
             <Link
               to="/employee/journal"
-              className="text-xs font-semibold text-muted-foreground transition hover:text-foreground"
+              className="group flex shrink-0 items-center gap-1 rounded-full border border-border px-3 py-1.5 text-[11px] font-semibold text-muted-foreground transition-all duration-200 ease-out hover:border-brand/40 hover:text-foreground"
             >
               View all
+              <ArrowUpRight className="h-3 w-3 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
           </div>
           <StaggerContainer className="mt-4 space-y-3" staggerDelay={0.05}>

@@ -19,6 +19,7 @@ import { ScrollReveal } from "../../components/scroll-reveal";
 import { usePatientData, parseISODate } from "../../lib/patient-store";
 import { emailSchema, phoneSchema } from "../../lib/auth-schemas";
 import { requestPasswordResetFn } from "../../lib/auth.server";
+import { PortalHeroBg } from "../../components/portal-hero-bg";
 
 function phoneError(value: string): string | null {
   return phoneSchema.safeParse(value).success ? null : "Enter a 10-digit phone number";
@@ -211,15 +212,7 @@ function ProfilePage() {
     <div className="space-y-4">
       {/* ─────────────────────── Identity hero band ─────────────────────── */}
       <section className="relative overflow-hidden rounded-3xl bg-foreground text-background">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.06]"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        />
+        <PortalHeroBg />
         <motion.div
           aria-hidden
           className="pointer-events-none absolute -left-16 -top-20 h-64 w-64 rounded-full bg-brand/20 blur-3xl"
