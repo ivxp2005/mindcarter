@@ -13,6 +13,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import appCss from "../styles.css?url";
 import { Toaster } from "../components/ui/sonner";
+import { SmoothScroll } from "../components/smooth-scroll";
 
 // After a redeploy, an already-open tab can hold an old bundle whose route
 // chunks (hashed filenames) no longer exist on the server. Reload once to
@@ -142,6 +143,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <SmoothScroll />
       <AnimatePresence mode="wait">
         <motion.div
           key={location.pathname}
