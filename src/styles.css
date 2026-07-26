@@ -193,14 +193,28 @@
     hyphens: auto;
   }
 
-  /* Landing page only: keep the page scrollable but hide the visible
-     scrollbar track/thumb (full-bleed hero photo makes it stand out). */
-  html.mc-hide-scrollbar {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+  /* Landing page only: the default light OS scrollbar clashes with the
+     full-bleed dark hero photo — theme it dark/gold instead of hiding it. */
+  html.mc-dark-scrollbar {
+    scrollbar-color: #f4c430 #111111;
+    scrollbar-width: thin;
   }
 
-  html.mc-hide-scrollbar::-webkit-scrollbar {
-    display: none;
+  html.mc-dark-scrollbar::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  html.mc-dark-scrollbar::-webkit-scrollbar-track {
+    background: #111111;
+  }
+
+  html.mc-dark-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #f4c430;
+    border-radius: 999px;
+    border: 2px solid #111111;
+  }
+
+  html.mc-dark-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #ffd966;
   }
 }
