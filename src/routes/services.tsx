@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { SiteShell } from "../components/site-shell";
 import { ScrollReveal } from "../components/scroll-reveal";
 import { ArrowRight } from "lucide-react";
@@ -318,6 +319,12 @@ function GetInTouch() {
 }
 
 function ServicesPage() {
+  // Theme the browser scrollbar dark/gold on this page, matching the home page.
+  useEffect(() => {
+    document.documentElement.classList.add("mc-dark-scrollbar");
+    return () => document.documentElement.classList.remove("mc-dark-scrollbar");
+  }, []);
+
   return (
     <SiteShell>
       <ServicesHero />

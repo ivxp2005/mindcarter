@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown, Phone } from "lucide-react";
 import { SiteShell } from "../components/site-shell";
@@ -431,6 +431,12 @@ function FinalCTA() {
 }
 
 function AboutPage() {
+  // Theme the browser scrollbar dark/gold on this page, matching the home page.
+  useEffect(() => {
+    document.documentElement.classList.add("mc-dark-scrollbar");
+    return () => document.documentElement.classList.remove("mc-dark-scrollbar");
+  }, []);
+
   return (
     <SiteShell>
       <AboutHero />

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SiteShell } from "../components/site-shell";
 import { PageHero } from "../components/page-hero";
 import { Facebook, Instagram, Twitter } from "lucide-react";
@@ -20,6 +20,13 @@ export const Route = createFileRoute("/contact")({
 
 function ContactPage() {
   const [sent, setSent] = useState(false);
+
+  // Theme the browser scrollbar dark/gold on this page, matching the home page.
+  useEffect(() => {
+    document.documentElement.classList.add("mc-dark-scrollbar");
+    return () => document.documentElement.classList.remove("mc-dark-scrollbar");
+  }, []);
+
   return (
     <SiteShell>
       <ScrollReveal variant="fade-down">

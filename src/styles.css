@@ -200,8 +200,9 @@
     hyphens: auto;
   }
 
-  /* Landing page only: the default light OS scrollbar clashes with the
-     full-bleed dark hero photo — theme it dark/gold instead of hiding it.
+  /* Marketing pages (home, about, services, contact) only: the default
+     light OS scrollbar clashes with the dark hero photo/sections — theme
+     it dark/gold instead of hiding it.
      Standard scrollbar-color/scrollbar-width only — do NOT also add
      ::-webkit-scrollbar-* pseudo-element rules here. Modern Chromium
      supports both APIs, and having both active on the same element paints
