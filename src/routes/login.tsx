@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { Lock, LogIn, User, Stethoscope } from "lucide-react";
 import { useState } from "react";
 import { loginFn, resendOtpFn } from "../lib/auth.server";
@@ -77,6 +78,7 @@ const ROLE_REDIRECT: Record<UserRole, string> = {
 
 function LoginPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { error: oauthError, notice } = Route.useSearch();
   const [role, setRole] = useState<Role>("patient");
   const cfg = ROLE_CONFIG[role];
@@ -106,6 +108,13 @@ function LoginPage() {
       }
       return;
     }
+    // The `/employee` guard's `ensureQueryData(["session"])` only refetches
+    // when there's no cache entry at all — `invalidateQueries` alone doesn't
+    // force it to revalidate. So if SiteNav cached a "logged out" session on
+    // a public page before sign-in, that stale entry would otherwise survive
+    // past login and bounce the user straight back here. Evict it so the
+    // guard has to fetch fresh.
+    queryClient.removeQueries({ queryKey: ["session"] });
     navigate({ to: ROLE_REDIRECT[result.role] });
   };
 

@@ -1,0 +1,34 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e5]:
+    - link "← Back to site" [ref=e6] [cursor=pointer]:
+      - /url: /
+    - heading "Sign in" [level=2] [ref=e7]
+    - paragraph [ref=e8]: Choose your role to access the right portal.
+    - generic [ref=e9]:
+      - button "Employee" [ref=e10]
+      - button "Psychologist" [ref=e14]
+    - paragraph [ref=e19]: Access your sessions, progress and wellness tools.
+    - link "Continue with Google" [ref=e23] [cursor=pointer]:
+      - /url: /auth/google
+    - generic [ref=e29]: or
+    - generic [ref=e33]:
+      - generic [ref=e34]:
+        - text: Email
+        - textbox "Email" [ref=e35]:
+          - /placeholder: you@example.com
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - generic [ref=e38]: Password
+          - link "Forgot password?" [ref=e39] [cursor=pointer]:
+            - /url: /forgot-password
+        - generic [ref=e40]:
+          - textbox "Password Forgot password? Show password" [ref=e41]:
+            - /placeholder: ••••••••
+          - button "Show password" [ref=e42]
+      - button "Sign in as Employee" [ref=e46]
+      - paragraph [ref=e50]: Encrypted end-to-end
+    - paragraph [ref=e54]:
+      - text: New to Mindcarter?
+      - link "Create an account" [ref=e55] [cursor=pointer]:
+        - /url: /signup
+  - region "Notifications alt+T"

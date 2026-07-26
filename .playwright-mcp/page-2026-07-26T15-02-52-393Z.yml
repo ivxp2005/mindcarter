@@ -1,0 +1,259 @@
+- generic [active] [ref=f2e1]:
+  - generic [ref=f2e3]:
+    - banner [ref=f2e4]:
+      - generic [ref=f2e5]:
+        - link [ref=f2e6] [cursor=pointer]:
+          - /url: /
+          - img "Mindcarter" [ref=f2e7]
+        - navigation [ref=f2e8]:
+          - navigation [ref=f2e9]:
+            - list [ref=f2e10]:
+              - listitem [ref=f2e11]:
+                - link "Home" [ref=f2e12] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=f2e13]:
+                - link "About" [ref=f2e14] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=f2e15]:
+                - link "Our Programs" [ref=f2e16] [cursor=pointer]:
+                  - /url: /services
+              - listitem [ref=f2e17]:
+                - link "Contact" [ref=f2e18] [cursor=pointer]:
+                  - /url: /contact
+        - generic [ref=f2e19]:
+          - link "Login" [ref=f2e334] [cursor=pointer]:
+            - /url: /login
+          - link "Book Consultation" [ref=f2e335] [cursor=pointer]:
+            - /url: /employee/book
+            - text: Book Consultation
+            - generic [ref=f2e336]: →
+    - main [ref=f2e23]:
+      - generic [ref=f2e29]:
+        - heading "Discover. Enable. Evolve." [level=1] [ref=f2e30]:
+          - generic [ref=f2e31]: Discover.
+          - generic [ref=f2e33]: Enable.
+          - generic [ref=f2e35]: Evolve.
+        - paragraph [ref=f2e37]: Empowering organizations and employees through evidence-based, innovative organizational behavior strategies.
+        - generic [ref=f2e38]:
+          - link "Book Consultation" [ref=f2e39] [cursor=pointer]:
+            - /url: /employee/book
+          - link "Call Us" [ref=f2e42] [cursor=pointer]:
+            - /url: tel:+14155550139
+      - generic [ref=f2e58]:
+        - heading "About Us" [level=2] [ref=f2e59]
+        - paragraph [ref=f2e60]: MINDCARTER is an organizational psychology consulting firm dedicated to building future-ready, high-performing workplaces by strengthening human systems. By combining evidence-based psychology with practical business insight, Mindcarter delivers tailored, ethically grounded interventions that enhance leadership, optimize talent decisions, and foster employee wellbeing. Crucially, as companies navigate rapid technological shifts, Mindcarter integrates behavioral AI governance to ensure organizations build AI-ready workforces that balance advanced technology with strong human oversight and responsible adoption.
+        - link "Read more" [ref=f2e61] [cursor=pointer]:
+          - /url: /about
+      - generic [ref=f2e66]:
+        - generic [ref=f2e67]:
+          - generic [ref=f2e68]:
+            - paragraph [ref=f2e69]: Our Team
+            - heading "Evidence-based professionals committed to helping people thrive at work." [level=2] [ref=f2e70]
+          - paragraph [ref=f2e71]: At Mindcarter we bring together psychologists with advanced academic training in psychology, including Master's, M.Phil., and Ph.D. qualifications. Drawing on organizational psychology and behavioral science, they help individuals and organizations address workplace challenges, strengthen leadership, improve performance, and foster healthier, more productive work environments.
+        - searchbox "Search by name, title, or specialty…" [ref=f2e73]
+        - generic [ref=f2e272]:
+          - article [ref=f2e274]:
+            - generic [ref=f2e275]:
+              - generic [ref=f2e276]: MV
+              - generic [ref=f2e277]: 4.8 rating
+            - generic [ref=f2e280]:
+              - heading "Dr. Marcus Vale" [level=3] [ref=f2e281]
+              - paragraph [ref=f2e282]: Organizational Psychologist
+              - generic [ref=f2e283]:
+                - generic [ref=f2e284]: Leadership
+                - generic [ref=f2e285]: Culture
+                - generic [ref=f2e286]: Conflict Resolution
+              - generic [ref=f2e287]:
+                - generic [ref=f2e288]:
+                  - paragraph [ref=f2e289]: 8+
+                  - paragraph [ref=f2e290]: Years exp
+                - generic [ref=f2e291]:
+                  - paragraph [ref=f2e292]: ₹1,200
+                  - paragraph [ref=f2e293]: Per session
+              - generic [ref=f2e294]:
+                - link "Book now" [ref=f2e295] [cursor=pointer]:
+                  - /url: /employee/book/33333333-3333-3333-3333-333333333333
+                - link "View profile" [ref=f2e296] [cursor=pointer]:
+                  - /url: /contact
+          - article [ref=f2e298]:
+            - generic [ref=f2e299]: a
+            - generic [ref=f2e301]:
+              - heading "akhilesh" [level=3] [ref=f2e302]
+              - paragraph [ref=f2e303]: Clinician
+              - generic [ref=f2e304]:
+                - generic [ref=f2e305]:
+                  - paragraph [ref=f2e306]: —
+                  - paragraph [ref=f2e307]: Years exp
+                - generic [ref=f2e308]:
+                  - paragraph [ref=f2e309]: —
+                  - paragraph [ref=f2e310]: Per session
+              - generic [ref=f2e311]:
+                - link "Book now" [ref=f2e312] [cursor=pointer]:
+                  - /url: /employee/book/8ea93f07-fa28-4d77-b13c-cfcec4951fd5
+                - link "View profile" [ref=f2e313] [cursor=pointer]:
+                  - /url: /contact
+        - link "View more" [ref=f2e80] [cursor=pointer]:
+          - /url: /contact
+      - generic [ref=f2e94]:
+        - generic [ref=f2e96]:
+          - paragraph [ref=f2e97]: Practice Areas
+          - heading "How We Help Organizations" [level=2] [ref=f2e99]
+          - paragraph [ref=f2e100]: Organizations succeed when their people, leaders, and systems evolve together. Mindcarter provides evidence-based organizational psychology solutions that strengthen organizational capability, improve decision-making, and prepare organizations for the future of work.
+        - generic [ref=f2e101]:
+          - generic [ref=f2e103]:
+            - heading "Behavioral AI Governance" [level=3] [ref=f2e107]
+            - paragraph [ref=f2e108]: AI-Ready · Human-Centered · Responsible · Future-Focused
+            - paragraph [ref=f2e109]: Prepares your workforce and leadership to bridge the gap between human judgment and artificial intelligence, driving confident adoption while ensuring responsible oversight.
+            - link "Read more" [ref=f2e110] [cursor=pointer]:
+              - /url: /services#behavioral-ai-governance
+          - generic [ref=f2e114]:
+            - heading "Psychometric Assessments" [level=3] [ref=f2e118]
+            - paragraph [ref=f2e119]: Scientific · Objective · Predictive · Actionable
+            - paragraph [ref=f2e120]: Delivers evidence-based insights into personality, motivation, and leadership potential to drive smarter, objective talent and hiring decisions.
+            - link "Read more" [ref=f2e121] [cursor=pointer]:
+              - /url: /services#psychometric-assessments
+          - generic [ref=f2e125]:
+            - heading "Leadership Development" [level=3] [ref=f2e129]
+            - paragraph [ref=f2e130]: Self-Aware · Evidence Based · Personalised · Transformational
+            - paragraph [ref=f2e131]: Blends executive coaching, psychology, and hands-on learning to cultivate adaptable, high-performing leaders who foster trust and navigate organizational change.
+            - link "Read more" [ref=f2e132] [cursor=pointer]:
+              - /url: /services#leadership-development
+          - generic [ref=f2e136]:
+            - heading "Employee Assistance Program (EAP)" [level=3] [ref=f2e140]
+            - paragraph [ref=f2e141]: High ROI · Cost Effective · AI-Enabled · Human-Supported
+            - paragraph [ref=f2e142]: Combines confidential psychological counseling with preventive wellness initiatives to safeguard mental health, reduce risk, and build a resilient workforce.
+            - link "Read more" [ref=f2e143] [cursor=pointer]:
+              - /url: /services#eap
+      - generic [ref=f2e147]:
+        - generic [ref=f2e149]:
+          - paragraph [ref=f2e150]: Our Clients
+          - heading "Trusted by industry leaders." [level=2] [ref=f2e152]
+          - paragraph [ref=f2e153]: We partner and serve the best people in the industry with best in class services.
+        - generic [ref=f2e156]:
+          - generic [ref=f2e157]:
+            - img "SunTec"
+          - generic [ref=f2e158]:
+            - img "Allianz"
+          - generic [ref=f2e159]:
+            - img "UST Global"
+          - generic [ref=f2e160]:
+            - img "TATA Consultancy Services"
+          - generic [ref=f2e161]:
+            - img "RR Donnelley"
+          - generic [ref=f2e162]:
+            - img "Reflections"
+          - generic [ref=f2e163]:
+            - img "D+H"
+          - generic [ref=f2e164]:
+            - img "Bhima"
+          - generic [ref=f2e165]:
+            - img "Lubrizol"
+          - generic [ref=f2e166]:
+            - img "TheMathCompany"
+          - generic [ref=f2e167]:
+            - img "Winning Edge"
+          - generic [ref=f2e168]:
+            - img "IBS"
+          - generic [ref=f2e169]:
+            - img "RM"
+          - generic [ref=f2e170]:
+            - img "SunTec"
+          - generic [ref=f2e171]:
+            - img "Allianz"
+          - generic [ref=f2e172]:
+            - img "UST Global"
+          - generic [ref=f2e173]:
+            - img "TATA Consultancy Services"
+          - generic [ref=f2e174]:
+            - img "RR Donnelley"
+          - generic [ref=f2e175]:
+            - img "Reflections"
+          - generic [ref=f2e176]:
+            - img "D+H"
+          - generic [ref=f2e177]:
+            - img "Bhima"
+          - generic [ref=f2e178]:
+            - img "Lubrizol"
+          - generic [ref=f2e179]:
+            - img "TheMathCompany"
+          - generic [ref=f2e180]:
+            - img "Winning Edge"
+          - generic [ref=f2e181]:
+            - img "IBS"
+          - generic [ref=f2e182]:
+            - img "RM"
+      - generic [ref=f2e186]:
+        - generic [ref=f2e187]:
+          - paragraph [ref=f2e188]: Begin
+          - heading "Ready to evolve? Book a confidential consultation." [level=2] [ref=f2e189]
+        - generic [ref=f2e190]:
+          - link "Book Consultation" [ref=f2e191] [cursor=pointer]:
+            - /url: /employee/book
+          - link "Call Us" [ref=f2e194] [cursor=pointer]:
+            - /url: tel:+14155550139
+    - contentinfo [ref=f2e197]:
+      - generic [ref=f2e198]:
+        - generic [ref=f2e199]:
+          - generic [ref=f2e200]:
+            - img "Mindcarter" [ref=f2e201]
+            - paragraph [ref=f2e202]: An organisational psychology consulting firm helping organizations build future ready, high performing workplaces through behavioral science.
+            - paragraph [ref=f2e203]: Founded by
+            - paragraph [ref=f2e204]: Amar Rajan
+          - generic [ref=f2e205]:
+            - heading "Quick Links" [level=4] [ref=f2e206]
+            - list [ref=f2e207]:
+              - listitem [ref=f2e208]:
+                - link "Home" [ref=f2e209] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=f2e210]:
+                - link "About Us" [ref=f2e211] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=f2e212]:
+                - link "Services" [ref=f2e213] [cursor=pointer]:
+                  - /url: /services
+              - listitem [ref=f2e214]:
+                - link "Contact" [ref=f2e215] [cursor=pointer]:
+                  - /url: /contact
+              - listitem [ref=f2e216]:
+                - link "Book Consultation" [ref=f2e217] [cursor=pointer]:
+                  - /url: /employee/book
+          - generic [ref=f2e218]:
+            - heading "Resources" [level=4] [ref=f2e219]
+            - list [ref=f2e220]:
+              - listitem [ref=f2e221]:
+                - link "Assessments" [ref=f2e222] [cursor=pointer]:
+                  - /url: /services
+              - listitem [ref=f2e223]:
+                - link "Executive Coaching" [ref=f2e224] [cursor=pointer]:
+                  - /url: /services
+              - listitem [ref=f2e225]:
+                - link "Corporate Wellness" [ref=f2e226] [cursor=pointer]:
+                  - /url: /services
+              - listitem [ref=f2e227]:
+                - link "Login" [ref=f2e228] [cursor=pointer]:
+                  - /url: /login
+          - generic [ref=f2e229]:
+            - heading "Contact" [level=4] [ref=f2e230]
+            - list [ref=f2e231]:
+              - listitem [ref=f2e232]: info@mindcarter.com
+              - listitem [ref=f2e233]: +91 75940 71071
+              - listitem [ref=f2e234]: "Module no: A, Tejaswini, Technopark,Trivandrum"
+            - generic [ref=f2e235]:
+              - link "LinkedIn" [ref=f2e236] [cursor=pointer]:
+                - /url: "#"
+              - link "Instagram" [ref=f2e241] [cursor=pointer]:
+                - /url: "#"
+              - link "Facebook" [ref=f2e245] [cursor=pointer]:
+                - /url: "#"
+              - link "YouTube" [ref=f2e248] [cursor=pointer]:
+                - /url: "#"
+        - generic [ref=f2e252]:
+          - paragraph [ref=f2e253]: © 2026 Mindcarter. All rights reserved.
+          - generic [ref=f2e254]:
+            - link "Privacy Policy" [ref=f2e255] [cursor=pointer]:
+              - /url: "#"
+            - link "Terms & Conditions" [ref=f2e256] [cursor=pointer]:
+              - /url: "#"
+            - link "Cookie Policy" [ref=f2e257] [cursor=pointer]:
+              - /url: "#"
+  - region "Notifications alt+T"
