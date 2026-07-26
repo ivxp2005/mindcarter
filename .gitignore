@@ -32,3 +32,6 @@ dist-ssr
 *.sw?
 .vercel
 .env
+
+# graphify (local knowledge-graph output, never pushed)
+graphify-out/
