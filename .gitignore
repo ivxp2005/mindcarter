@@ -36,3 +36,6 @@ dist-ssr
 # graphify (local knowledge-graph output, never pushed)
 graphify-out/
 .mcp.json
+
+# Playwright MCP session artifacts (snapshots/screenshots)
+.playwright-mcp/

@@ -1,8 +1,8 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { Lock, LogIn, User, Stethoscope } from "lucide-react";
 import { useState } from "react";
-import { loginFn, resendOtpFn } from "../lib/auth.server";
+import { loginFn, meFn, resendOtpFn } from "../lib/auth.server";
 import type { UserRole } from "../lib/auth-types";
 import { PasswordInput } from "../components/password-input";
 import logoImg from "../assets/mindcarter-logo.avif";
@@ -25,6 +25,16 @@ export const Route = createFileRoute("/login")({
     error: typeof search.error === "string" ? search.error : undefined,
     notice: typeof search.notice === "string" ? search.notice : undefined,
   }),
+  // Fetches fresh from the server on every visit (no query-cache lookup) —
+  // deliberately mirrors the psychologist portal's guard rather than the
+  // employee portal's cached one, since a cached check here risks bouncing
+  // an already-logged-in user back to this exact page (or vice versa).
+  beforeLoad: async () => {
+    const user = await meFn();
+    if (user) {
+      throw redirect({ to: ROLE_REDIRECT[user.role] });
+    }
+  },
   head: () => ({
     meta: [
       { title: "Sign in — Mindcarter" },
