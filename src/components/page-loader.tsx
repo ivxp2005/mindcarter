@@ -13,7 +13,7 @@ import loaderAnim from "../assets/loader-infinity.webp";
  * Rendered as a fixed overlay rather than an in-flow block so it covers the
  * whole screen — including the portal's sidebar and sticky header — and frosts
  * whatever is already painted behind it instead of blanking the page out.
- * The tint stays light and the blur does the work, so the page reads as
+ * The tint is near-absent and the blur does all the work, so the page reads as
  * out-of-focus rather than covered over.
  * z-[100] sits above every other layer in the app — the sticky header (z-30),
  * sheet/dialog overlays (z-50) and the admin console's menus (z-[61]).
@@ -23,13 +23,12 @@ export function PageLoader() {
     <div
       role="status"
       aria-live="polite"
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-4 bg-background/30 backdrop-blur-2xl"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-background/10 backdrop-blur-2xl"
     >
-      {/* Decorative — the visible "Loading" text below is what gets announced. */}
       <img src={loaderAnim} alt="" className="h-20 w-20" />
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-        Loading
-      </p>
+      {/* The caption is intentionally not shown — the spinner carries the state
+          visually — but assistive tech still needs something to announce. */}
+      <span className="sr-only">Loading</span>
     </div>
   );
 }

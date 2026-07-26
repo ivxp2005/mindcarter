@@ -1,14 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import {
-  CalendarHeart,
-  Flame,
-  NotebookPen,
-  Bell,
-  ArrowUpRight,
-  Sparkles,
-  Video,
-} from "lucide-react";
+// ArrowUpRight stays an icon on purpose: it's directional UI chrome for hover
+// affordances, not a symbol standing for a concept, and the emoji arrows render
+// inconsistently across platforms at this size.
+import { ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Area, AreaChart, ResponsiveContainer, YAxis } from "recharts";
@@ -17,7 +12,13 @@ import { GradientAvatar } from "../../components/gradient-avatar";
 import { CountUp } from "../../components/count-up";
 import { useSession } from "../../lib/use-session";
 import { usePatientData } from "../../lib/patient-store";
-import { MOOD_EMOJI, MOOD_LABEL, todayISO, type Mood } from "../../lib/patient";
+import {
+  MOOD_EMOJI,
+  MOOD_LABEL,
+  todayISO,
+  type Mood,
+  type PatientSession,
+} from "../../lib/patient";
 import { useMoodCheckIn } from "../../lib/use-mood-checkin";
 import { PortalHeroBg } from "../../components/portal-hero-bg";
 
@@ -27,6 +28,17 @@ export const Route = createFileRoute("/employee/")({
 
 /** Premium ease-out — matches the marketing site's motion language. */
 const EASE_OUT = [0.16, 1, 0.3, 1] as const;
+
+/**
+ * Session mode → emoji. Keyed off the mode union so adding a mode is a compile
+ * error here rather than a silently wrong glyph — the icon this replaced was
+ * hard-coded to a video camera and showed it for phone/in-person sessions too.
+ */
+const MODE_EMOJI: Record<PatientSession["mode"], string> = {
+  Video: "📹",
+  "In-person": "📍",
+  Phone: "📞",
+};
 
 function formatDate(dateStr: string) {
   if (dateStr === todayISO()) return "Today";
@@ -86,8 +98,8 @@ function EmployeeDashboard() {
     {
       label: "Next session",
       to: "/employee/sessions",
-      icon: CalendarHeart,
-      chip: "bg-brand text-brand-foreground",
+      emoji: "📅",
+      chip: "bg-brand/20",
       value: nextSession ? formatDate(nextSession.date) : "None booked",
       context: nextSession
         ? `${nextSession.psychologistName} · ${nextSession.time}`
@@ -96,8 +108,8 @@ function EmployeeDashboard() {
     {
       label: "Wellness streak",
       to: "/employee/journal",
-      icon: Flame,
-      chip: "bg-foreground text-background",
+      emoji: "🔥",
+      chip: "bg-muted",
       pulse: true,
       value: (
         <>
@@ -109,8 +121,8 @@ function EmployeeDashboard() {
     {
       label: "Journal entries",
       to: "/employee/journal",
-      icon: NotebookPen,
-      chip: "bg-foreground text-background",
+      emoji: "📝",
+      chip: "bg-muted",
       value: <CountUp value={stats.entriesThisMonth} />,
       context: "This month",
       spark: true,
@@ -118,8 +130,8 @@ function EmployeeDashboard() {
     {
       label: "Notifications",
       to: "/employee/notifications",
-      icon: Bell,
-      chip: "bg-foreground text-background",
+      emoji: "🔔",
+      chip: "bg-muted",
       value: <CountUp value={unreadNotifications} />,
       context: unreadNotifications > 0 ? "Tap to review" : "You're all caught up",
     },
@@ -143,10 +155,12 @@ function EmployeeDashboard() {
             <div className="flex flex-wrap items-center gap-3">
               <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-background/60 sm:tracking-[0.24em]">
                 <motion.span
+                  aria-hidden
+                  className="shrink-0 text-sm leading-none"
                   animate={{ scale: [1, 1.25, 1], opacity: [0.7, 1, 0.7] }}
                   transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  <Sparkles className="h-3.5 w-3.5 shrink-0 text-brand" />
+                  ✨
                 </motion.span>
                 Your wellness space
               </p>
@@ -222,7 +236,7 @@ function EmployeeDashboard() {
                   {formatDate(nextSession.date)} · {nextSession.time}
                 </span>
                 <span className="flex items-center gap-1">
-                  <Video className="h-3 w-3" /> {nextSession.mode}
+                  <span aria-hidden>{MODE_EMOJI[nextSession.mode]}</span> {nextSession.mode}
                 </span>
               </div>
             </motion.div>
@@ -282,17 +296,19 @@ function EmployeeDashboard() {
               <div className="flex items-start justify-between gap-2">
                 {tile.pulse ? (
                   <motion.span
-                    className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${tile.chip}`}
+                    aria-hidden
+                    className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl text-xl leading-none ${tile.chip}`}
                     animate={{ scale: [1, 1.12, 1], rotate: [0, -6, 6, 0] }}
                     transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
                   >
-                    <tile.icon className="h-4 w-4" />
+                    {tile.emoji}
                   </motion.span>
                 ) : (
                   <span
-                    className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl transition-transform duration-300 ease-out group-hover:scale-105 group-hover:-rotate-3 ${tile.chip}`}
+                    aria-hidden
+                    className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl text-xl leading-none transition-transform duration-300 ease-out group-hover:scale-105 group-hover:-rotate-3 ${tile.chip}`}
                   >
-                    <tile.icon className="h-4 w-4" />
+                    {tile.emoji}
                   </span>
                 )}
                 <ArrowUpRight className="h-4 w-4 shrink-0 translate-y-1 text-muted-foreground opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100" />
@@ -346,8 +362,11 @@ function EmployeeDashboard() {
         <ScrollReveal className="min-w-0 rounded-2xl border border-border bg-background p-6">
           <div className="flex items-center justify-between gap-3 border-b border-border pb-4">
             <div className="flex min-w-0 items-center gap-2.5">
-              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand/15 text-brand">
-                <CalendarHeart className="h-4 w-4" />
+              <span
+                aria-hidden
+                className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-muted text-base leading-none"
+              >
+                📅
               </span>
               <h2 className="truncate text-base font-bold tracking-tight">Upcoming sessions</h2>
             </div>
@@ -422,8 +441,11 @@ function EmployeeDashboard() {
         <ScrollReveal className="min-w-0 rounded-2xl border border-border bg-background p-6">
           <div className="flex items-center justify-between gap-3 border-b border-border pb-4">
             <div className="flex min-w-0 items-center gap-2.5">
-              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand/15 text-brand">
-                <NotebookPen className="h-4 w-4" />
+              <span
+                aria-hidden
+                className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-muted text-base leading-none"
+              >
+                📝
               </span>
               <h2 className="truncate text-base font-bold tracking-tight">Recent entries</h2>
             </div>
