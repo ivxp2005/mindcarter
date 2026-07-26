@@ -156,10 +156,17 @@
     box-sizing: border-box;
   }
 
-  html,
-  body {
+  /* overflow-x: hidden lives on html only — putting it on body too makes
+     both elements independently scrollable (the browser auto-promotes each
+     element's unset overflow-y to auto), which renders two stacked vertical
+     scrollbars instead of one. */
+  html {
     max-width: 100%;
     overflow-x: hidden;
+  }
+
+  body {
+    max-width: 100%;
     margin: 0;
     padding: 0;
   }
