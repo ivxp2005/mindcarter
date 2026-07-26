@@ -9,7 +9,7 @@
  */
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeader } from "@tanstack/react-start/server";
-import { and, desc, eq, gte, ne, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ne, sql } from "drizzle-orm";
 import { db } from "../db/client.server";
 import {
   bookings,
@@ -373,7 +373,8 @@ export const getPublicPsychologistsFn = createServerFn({ method: "GET" }).handle
       })
       .from(users)
       .leftJoin(psychologistProfiles, eq(psychologistProfiles.userId, users.id))
-      .where(and(eq(users.role, "psychologist"), eq(users.status, "active")));
+      .where(and(eq(users.role, "psychologist"), eq(users.status, "active")))
+      .orderBy(sql`${psychologistProfiles.rating} desc nulls last`, asc(users.name));
 
     return rows.map((r) => ({
       id: r.id,

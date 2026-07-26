@@ -14,6 +14,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SecureAdminPortalRouteImport } from './routes/secure-admin-portal'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as PsychologistsRouteImport } from './routes/psychologists'
 import { Route as PortalManagementAccessRouteImport } from './routes/portal-management-access'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
@@ -68,6 +69,11 @@ const SecureAdminPortalRoute = SecureAdminPortalRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PsychologistsRoute = PsychologistsRouteImport.update({
+  id: '/psychologists',
+  path: '/psychologists',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PortalManagementAccessRoute = PortalManagementAccessRouteImport.update({
@@ -234,6 +240,7 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/portal-management-access': typeof PortalManagementAccessRoute
+  '/psychologists': typeof PsychologistsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/secure-admin-portal': typeof SecureAdminPortalRoute
   '/services': typeof ServicesRoute
@@ -269,6 +276,7 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/portal-management-access': typeof PortalManagementAccessRoute
+  '/psychologists': typeof PsychologistsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/secure-admin-portal': typeof SecureAdminPortalRoute
   '/services': typeof ServicesRoute
@@ -307,6 +315,7 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/portal-management-access': typeof PortalManagementAccessRoute
+  '/psychologists': typeof PsychologistsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/secure-admin-portal': typeof SecureAdminPortalRoute
   '/services': typeof ServicesRoute
@@ -346,6 +355,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/portal-management-access'
+    | '/psychologists'
     | '/reset-password'
     | '/secure-admin-portal'
     | '/services'
@@ -381,6 +391,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/portal-management-access'
+    | '/psychologists'
     | '/reset-password'
     | '/secure-admin-portal'
     | '/services'
@@ -418,6 +429,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/portal-management-access'
+    | '/psychologists'
     | '/reset-password'
     | '/secure-admin-portal'
     | '/services'
@@ -456,6 +468,7 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   PortalManagementAccessRoute: typeof PortalManagementAccessRoute
+  PsychologistsRoute: typeof PsychologistsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SecureAdminPortalRoute: typeof SecureAdminPortalRoute
   ServicesRoute: typeof ServicesRoute
@@ -499,6 +512,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/psychologists': {
+      id: '/psychologists'
+      path: '/psychologists'
+      fullPath: '/psychologists'
+      preLoaderRoute: typeof PsychologistsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/portal-management-access': {
@@ -807,6 +827,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   PortalManagementAccessRoute: PortalManagementAccessRoute,
+  PsychologistsRoute: PsychologistsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SecureAdminPortalRoute: SecureAdminPortalRoute,
   ServicesRoute: ServicesRoute,

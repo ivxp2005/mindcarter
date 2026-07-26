@@ -6,14 +6,10 @@ import { motion, MotionConfig } from "framer-motion";
 import {
   ArrowRight,
   Phone,
-  Search,
-  Star,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  getPublicPsychologistsFn,
-  type PublicPsychologistDTO,
-} from "../lib/patient-data.server";
+import { getPublicPsychologistsFn } from "../lib/patient-data.server";
+import { PsychologistCard, PsychologistCardSkeleton } from "../components/psychologist-card";
 import heroBgImg from "../assets/890.png";
 import teamImg from "../assets/team.png";
 import imageImg from "../assets/image.png";
@@ -387,24 +383,13 @@ function Services() {
 }
 
 function Psychologists() {
-  const [query, setQuery] = useState("");
   const { data: psychologists = [], isLoading } = useQuery({
     queryKey: ["public-psychologists"],
     queryFn: () => getPublicPsychologistsFn(),
     staleTime: 5 * 60_000,
   });
 
-  const matchesQuery = (p: PublicPsychologistDTO) => {
-    const q = query.trim().toLowerCase();
-    if (!q) return true;
-    return (
-      p.name.toLowerCase().includes(q) ||
-      p.title.toLowerCase().includes(q) ||
-      p.specialties.some((t) => t.toLowerCase().includes(q))
-    );
-  };
-
-  const hasMatches = psychologists.some(matchesQuery);
+  const featured = psychologists.slice(0, 4);
 
   return (
     <section
@@ -441,130 +426,39 @@ function Psychologists() {
             </p>
           </div>
 
-          <div className="relative mx-auto mt-6 max-w-2xl">
-            <Search className="pointer-events-none absolute left-5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by name, title, or specialty…"
-              className="w-full rounded-full border border-border bg-background py-3 pl-12 pr-5 text-sm shadow-sm outline-none transition focus:border-foreground"
-            />
-          </div>
-
           {isLoading && (
-            <div className="relative mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="relative mt-6 flex flex-wrap justify-center gap-4">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-80 animate-pulse rounded-2xl border border-border bg-background/60"
-                  aria-hidden
-                />
+                <div key={i} className="w-full max-w-[320px] sm:w-[calc(50%-0.5rem)] xl:w-[calc(25%-0.75rem)]">
+                  <PsychologistCardSkeleton />
+                </div>
               ))}
             </div>
           )}
           {!isLoading && (
-            <StaggerContainer className="relative mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              {psychologists.length === 0 && (
-                <p className="col-span-full py-10 text-center text-sm text-foreground/70">
+            <StaggerContainer className="relative mt-6 flex flex-wrap items-start justify-center gap-4">
+              {featured.length === 0 && (
+                <p className="py-10 text-center text-sm text-foreground/70">
                   Our clinician directory is being updated. Please check back soon.
                 </p>
               )}
-              {psychologists.length > 0 && !hasMatches && (
-                <p className="col-span-full py-10 text-center text-sm text-foreground/70">
-                  No psychologists match your search.
-                </p>
-              )}
-              {psychologists.map((p) => {
-                const initials = p.name
-                  .replace(/^Dr\.\s*/, "")
-                  .split(" ")
-                  .map((w) => w[0])
-                  .join("")
-                  .slice(0, 2);
-                return (
-                  <StaggerItem key={p.id} className={matchesQuery(p) ? "" : "hidden"}>
-                    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-background transition-all duration-[400ms] ease-out hover:-translate-y-1 hover:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.25)]">
-                      <div className="relative aspect-[16/9] overflow-hidden bg-muted">
-                        <div
-                          className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand/25 to-brand/5 text-3xl font-black text-foreground/20 transition duration-700 group-hover:scale-105"
-                          aria-hidden
-                        >
-                          {initials}
-                        </div>
-                        {p.rating != null && p.rating > 0 && (
-                          <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-background/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest">
-                            <Star className="h-3 w-3 fill-brand text-brand" />
-                            {p.rating.toFixed(1)} rating
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex flex-1 flex-col p-5">
-                        <h3 className="text-lg font-bold leading-tight">{p.name}</h3>
-                        <p className="mt-1 text-[11px] uppercase leading-snug tracking-[0.16em] text-muted-foreground">
-                          {p.title}
-                        </p>
-
-                        <div className="mt-2.5 flex flex-wrap gap-1.5">
-                          {p.specialties.map((t) => (
-                            <span
-                              key={t}
-                              className="rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
-                            >
-                              {t}
-                            </span>
-                          ))}
-                        </div>
-
-                        <div className="mt-4 grid grid-cols-2 gap-2 border-y border-border py-3 text-center">
-                          <div>
-                            <p className="text-base font-bold text-foreground">
-                              {p.yearsExperience != null ? `${p.yearsExperience}+` : "—"}
-                            </p>
-                            <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">
-                              Years exp
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-base font-bold text-foreground">
-                              {p.price != null ? `₹${p.price.toLocaleString("en-IN")}` : "—"}
-                            </p>
-                            <p className="mt-0.5 text-[9px] uppercase leading-tight tracking-wide text-muted-foreground">
-                              Per session
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="mt-auto flex flex-col gap-2 pt-4">
-                          <Link
-                            to="/employee/book/$clinicianId"
-                            params={{ clinicianId: p.id }}
-                            className="w-full rounded-full bg-brand py-2.5 text-center text-[11px] font-bold uppercase tracking-wide text-brand-foreground transition-transform duration-200 ease-out group-hover:scale-[1.02]"
-                          >
-                            Book now
-                          </Link>
-                          <Link
-                            to="/contact"
-                            className="w-full rounded-full border border-border py-2.5 text-center text-[11px] font-bold uppercase tracking-wide text-muted-foreground transition hover:border-foreground hover:text-foreground"
-                          >
-                            View profile
-                          </Link>
-                        </div>
-                      </div>
-                    </article>
-                  </StaggerItem>
-                );
-              })}
+              {featured.map((p) => (
+                <StaggerItem
+                  key={p.id}
+                  className="w-full max-w-[320px] sm:w-[calc(50%-0.5rem)] xl:w-[calc(25%-0.75rem)]"
+                >
+                  <PsychologistCard p={p} />
+                </StaggerItem>
+              ))}
             </StaggerContainer>
           )}
 
           <div className="relative mt-8 flex justify-center">
             <Link
-              to="/contact"
+              to="/psychologists"
               className="inline-flex items-center gap-2 rounded-full border border-foreground px-6 py-3 text-xs font-bold uppercase tracking-wide text-foreground transition hover:bg-foreground hover:text-background"
             >
-              View more
+              View all psychologists
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
