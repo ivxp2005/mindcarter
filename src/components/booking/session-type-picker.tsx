@@ -21,10 +21,12 @@ export function SessionTypePicker({
         <RadioGroup.Item
           key={k.label}
           value={k.label}
-          className={`rounded-2xl border p-4 text-left outline-none transition-all duration-200 ease-out focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 ${
+          className={`rounded-2xl border bg-background p-4 text-left outline-none transition-all duration-200 ease-out focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 ${
             selected === k.label
-              ? "border-foreground bg-foreground text-background shadow-md"
-              : "border-border bg-background hover:-translate-y-0.5 hover:border-brand/50 hover:shadow-md"
+              ? // White like the rest, so selection reads from the brand border,
+                // ring and badge rather than a filled block.
+                "border-brand shadow-md ring-1 ring-brand"
+              : "border-border hover:-translate-y-0.5 hover:border-brand/50 hover:shadow-md"
           }`}
         >
           <div className="flex items-center justify-between gap-2">
@@ -39,11 +41,7 @@ export function SessionTypePicker({
               {k.durationMin} min
             </span>
           </div>
-          <p
-            className={`mt-1 text-xs ${selected === k.label ? "text-background/70" : "text-muted-foreground"}`}
-          >
-            {k.blurb}
-          </p>
+          <p className="mt-1 text-xs text-muted-foreground">{k.blurb}</p>
         </RadioGroup.Item>
       ))}
     </RadioGroup.Root>

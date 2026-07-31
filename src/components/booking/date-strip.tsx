@@ -78,7 +78,7 @@ export function DateStrip({
                 style={{ scrollSnapAlign: "start" }}
                 className={`flex w-16 shrink-0 flex-col items-center rounded-2xl border px-2 py-2.5 outline-none transition-all duration-200 ease-out focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 ${
                   selected === d.iso
-                    ? "border-foreground bg-foreground text-background"
+                    ? "border-brand bg-brand text-brand-foreground shadow-md"
                     : disabled
                       ? "cursor-not-allowed border-border text-muted-foreground/50"
                       : "border-border bg-background hover:-translate-y-0.5 hover:border-brand/50 hover:shadow-md"

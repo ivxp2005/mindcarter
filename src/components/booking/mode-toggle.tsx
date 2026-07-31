@@ -32,7 +32,9 @@ export function ModeToggle({
             value={mode}
             className={`flex min-w-0 items-center justify-center gap-1 rounded-full px-1.5 py-2 text-xs font-semibold outline-none transition-all duration-200 ease-out focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 sm:gap-1.5 sm:px-4 sm:text-sm ${
               selected === mode
-                ? "bg-foreground text-background shadow-md"
+                ? // White pill on the muted track — the standard segmented-control
+                  // read — with a brand ring instead of a black fill.
+                  "bg-background text-foreground shadow-md ring-1 ring-brand"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >

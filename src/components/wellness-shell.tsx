@@ -393,13 +393,10 @@ export function WellnessShell({ children }: { children: ReactNode }) {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div
-        className="min-h-screen text-foreground"
-        style={{
-          background: "linear-gradient(160deg, #eceae7 0%, #e3e2de 50%, #d9d8d3 100%)",
-          backgroundAttachment: "fixed",
-        }}
-      >
+      {/* White surface, matching `site-shell` on the marketing pages — the grey
+          gradient this replaced was a one-off that existed nowhere else in the
+          design system. Cards read against it via their borders. */}
+      <div className="min-h-screen bg-background text-foreground">
         {/* ── Sidebar (desktop) */}
         <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-border bg-background lg:flex">
           <BrandHeader />
